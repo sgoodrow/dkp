@@ -32,7 +32,7 @@ jobs:
           useLockFile: false
 
       - name: 🔬 Lint
-        run: npm run lint
+        run: yarn lint
 
   typecheck:
     name: ʦ TypeScript
@@ -55,7 +55,7 @@ jobs:
           useLockFile: false
 
       - name: 🔎 Type check
-        run: npm run typecheck --if-present
+        run: yarn typecheck --if-present
 
   vitest:
     name: ⚡ Vitest
@@ -78,7 +78,7 @@ jobs:
           useLockFile: false
 
       - name: ⚡ Run vitest
-        run: npm run test -- --coverage
+        run: yarn test --coverage
 
   build:
     name: 🐳 Build
