@@ -12,6 +12,7 @@ FROM base as deps
 
 WORKDIR /myapp
 
+COPY patches/ patches/
 ADD package.json yarn.lock ./
 RUN yarn install --production=false
 
