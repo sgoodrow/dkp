@@ -55,7 +55,7 @@ jobs:
           useLockFile: false
 
       - name: 🔎 Type check
-        run: yarn typecheck --if-present
+        run: yarn typecheck
 
   vitest:
     name: ⚡ Vitest
