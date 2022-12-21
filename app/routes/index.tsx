@@ -13,11 +13,15 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function Index() {
-  const returnTo = useLoaderData() || "/notes";
+  const returnTo = useLoaderData();
+  let action = "/auth/login";
+  if (returnTo) {
+    action += `?returnTo=${returnTo}`;
+  }
   return (
     <main className="relative min-h-screen bg-white sm:flex sm:items-center sm:justify-center">
       <div className="relative sm:pb-16 sm:pt-8">
-        <Form action={`/auth/login?returnTo=${returnTo}`} method="post">
+        <Form action={encodeURI(action)} method="post">
           <button>Log In with Discord</button>
         </Form>
       </div>
