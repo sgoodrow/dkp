@@ -1,8 +1,8 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      CLIENT_ID: string;
-      CLIENT_SECRET: string;
+      DISCORD_CLIENT_ID: string;
+      DISCORD_CLIENT_SECRET: string;
       BASE_URL: string;
       NODE_ENV: "development" | "production";
       PORT?: string;

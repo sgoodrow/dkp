@@ -14,8 +14,8 @@ export const authenticator = new Authenticator<User>(sessionStorage, {
 authenticator.use(
   new DiscordStrategy(
     {
-      clientID: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
+      clientID: process.env.DISCORD_CLIENT_ID,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET,
       callbackURL: `${process.env.BASE_URL}/auth/callback`,
     },
     async ({ profile }) => {
