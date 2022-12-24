@@ -1,10 +1,7 @@
 import { Authenticator } from "remix-auth";
 import { sessionStorage } from "./session.server";
 import type { User } from "~/models/user.server";
-import {
-  createUser,
-  getUserByEmail as getUserByDiscordId,
-} from "~/models/user.server";
+import { createUser, getUserByDiscordId } from "~/models/user.server";
 import { DiscordStrategy } from "remix-auth-socials";
 
 export const authenticator = new Authenticator<User>(sessionStorage, {
