@@ -1,13 +1,18 @@
 import { RemixBrowser } from "@remix-run/react";
 import { startTransition, StrictMode } from "react";
 import { hydrateRoot } from "react-dom/client";
+import { LocaleContextProvider } from "./providers/localeProvider";
+
+const locales = window.navigator.languages;
 
 const hydrate = () => {
   startTransition(() => {
     hydrateRoot(
       document,
       <StrictMode>
-        <RemixBrowser />
+        <LocaleContextProvider locales={[...locales]}>
+          <RemixBrowser />
+        </LocaleContextProvider>
       </StrictMode>
     );
   });

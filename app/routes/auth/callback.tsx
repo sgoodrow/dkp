@@ -18,8 +18,9 @@ const getOAuth2State = (request: Request) => {
 
 export async function loader({ request }: LoaderArgs) {
   const state = getOAuth2State(request);
+  console.log(state);
   return authenticator.authenticate(SocialsProvider.DISCORD, request, {
-    failureRedirect: "/",
+    throwOnError: true,
     successRedirect: state?.returnTo || "/notes",
   });
 }
