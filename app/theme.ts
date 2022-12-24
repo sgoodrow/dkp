@@ -14,5 +14,10 @@ export const theme = createTheme({
         variant: "contained",
       },
     },
+    MuiTooltip: {
+      defaultProps: {
+        arrow: true,
+      },
+    },
   },
 });
