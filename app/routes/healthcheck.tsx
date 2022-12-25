@@ -2,7 +2,7 @@
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { prisma } from "~/db.server";
 
-export async function loader({ request }: LoaderArgs) {
+export const loader = async ({ request }: LoaderArgs) => {
   const host =
     request.headers.get("X-Forwarded-Host") ?? request.headers.get("host");
 
@@ -21,4 +21,4 @@ export async function loader({ request }: LoaderArgs) {
     console.log("healthcheck ❌", { error });
     return new Response("ERROR", { status: 500 });
   }
-}
+};

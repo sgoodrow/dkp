@@ -1,3 +1,4 @@
+import { Box, CssBaseline, ThemeProvider } from "@mui/material";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -7,32 +8,38 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { config } from "./config";
 
-import tailwindStylesheetUrl from "./styles/tailwind.css";
+import { theme } from "./theme";
 
 export const links: LinksFunction = () => {
-  return [{ rel: "stylesheet", href: tailwindStylesheetUrl }];
+  return [];
 };
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Remix Notes",
+  title: `${config.guildName} DKP`,
   viewport: "width=device-width,initial-scale=1",
 });
 
-export default function App() {
-  return (
-    <html lang="en" className="h-full">
-      <head>
-        <Meta />
-        <Links />
-      </head>
-      <body className="h-full">
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
-  );
-}
+const App = () => (
+  <Box component="html" lang="en" sx={{ height: "100vh" }}>
+    <head>
+      <Meta />
+      <Links />
+    </head>
+    <body>
+      <ThemeProvider theme={theme}>
+        <Box display="flex" width={1} height={1}>
+          <CssBaseline />
+          <Outlet />
+        </Box>
+      </ThemeProvider>
+      <ScrollRestoration />
+      <Scripts />
+      <LiveReload />
+    </body>
+  </Box>
+);
+
+export default App;

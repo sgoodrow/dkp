@@ -4,28 +4,23 @@ import { prisma } from "~/db.server";
 
 export type { User } from "@prisma/client";
 
-export async function getUserById(id: User["id"]) {
-  return prisma.user.findUnique({ where: { id } });
-}
+export const getUserById = async (id: User["id"]) =>
+  prisma.user.findUnique({ where: { id } });
 
-export async function getUserByDiscordId(discordId: User["discordId"]) {
-  return prisma.user.findUnique({ where: { discordId } });
-}
+export const getUserByDiscordId = async (discordId: User["discordId"]) =>
+  prisma.user.findUnique({ where: { discordId } });
 
-export async function createUser(discordId: User["discordId"]) {
-  return prisma.user.create({
+export const createUser = async (discordId: User["discordId"]) =>
+  prisma.user.create({
     data: {
       discordId,
     },
   });
-}
 
-export async function deleteUserByDiscordId(discordId: User["discordId"]) {
-  return prisma.user.delete({ where: { discordId } });
-}
+export const deleteUserByDiscordId = async (discordId: User["discordId"]) =>
+  prisma.user.delete({ where: { discordId } });
 
-export async function verifyLogin(discordId: User["discordId"]) {
-  return await prisma.user.findUnique({
+export const verifyLogin = async (discordId: User["discordId"]) =>
+  prisma.user.findUnique({
     where: { discordId },
   });
-}

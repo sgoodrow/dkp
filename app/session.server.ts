@@ -2,8 +2,10 @@ import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import invariant from "tiny-invariant";
 
 import { authenticator } from "./auth.server";
+import { paths } from "./paths";
+import { secrets } from "./secrets.server";
 
-invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
+invariant(secrets.sessionSecret, "SESSION_SECRET must be set");
 
 export const sessionStorage = createCookieSessionStorage({
   cookie: {
@@ -11,17 +13,16 @@ export const sessionStorage = createCookieSessionStorage({
     httpOnly: true,
     path: "/",
     sameSite: "lax",
-    secrets: [process.env.SESSION_SECRET],
+    secrets: [secrets.sessionSecret],
     secure: process.env.NODE_ENV === "production",
   },
 });
 
-export async function requireUserId(
-  request: Request,
-  returnTo: string = new URL(request.url).pathname
-) {
-  const searchParams = new URLSearchParams([["returnTo", returnTo]]);
-  const failureRedirect = `/?${searchParams}`;
+export const requireUserId = async (request: Request) => {
+  const returnTo = new URLSearchParams([
+    ["returnTo", new URL(request.url).pathname],
+  ]);
+  const failureRedirect = paths.login(`${returnTo}`);
   const { id } = await authenticator.isAuthenticated(request, {
     failureRedirect,
   });
@@ -30,4 +31,4 @@ export async function requireUserId(
     throw redirect(failureRedirect);
   }
   return id;
-}
+};

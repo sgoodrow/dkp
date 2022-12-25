@@ -1,6 +1,7 @@
 import type { LoaderArgs } from "@remix-run/node";
 import { SocialsProvider } from "remix-auth-socials";
 import { authenticator } from "~/auth.server";
+import { paths } from "~/paths";
 
 const decodeBase64 = (data: string) => {
   return Buffer.from(data, "base64").toString("ascii");
@@ -16,11 +17,10 @@ const getOAuth2State = (request: Request) => {
   return JSON.parse(decoded);
 };
 
-export async function loader({ request }: LoaderArgs) {
+export const loader = async ({ request }: LoaderArgs) => {
   const state = getOAuth2State(request);
-  console.log(state);
   return authenticator.authenticate(SocialsProvider.DISCORD, request, {
     throwOnError: true,
-    successRedirect: state?.returnTo || "/notes",
+    successRedirect: state?.returnTo || paths.dashboard(),
   });
-}
+};

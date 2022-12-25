@@ -20,12 +20,14 @@ export const GradientBackground: FC<{
     indigo[400],
     deepPurple[400],
   ],
-}) => (
-  <Box
-    sx={{
-      background: `linear-gradient(-45deg, ${colors.join(", ")})`,
-      backgroundSize: `${colors.length * 100}% ${colors.length * 100}%`,
-      animation: `${keyframes`
+}) => {
+  const size = (colors.length - 1) * 100;
+  return (
+    <Box
+      sx={{
+        background: `linear-gradient(-45deg, ${colors.join(", ")})`,
+        backgroundSize: `${size}% ${size}%`,
+        animation: `${keyframes`
     0% {
       background-position: 0% 50%;
     }
@@ -36,9 +38,11 @@ export const GradientBackground: FC<{
       background-position: 0% 50%;
     }
   `} ${colors.length * 7}s ease infinite`,
-    }}
-    height={1}
-  >
-    {children}
-  </Box>
-);
+      }}
+      width={1}
+      height={1}
+    >
+      {children}
+    </Box>
+  );
+};
