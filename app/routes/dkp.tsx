@@ -1,3 +1,4 @@
+import { Box, Paper } from "@mui/material";
 import { Outlet } from "@remix-run/react";
 import type { LoaderArgs } from "@remix-run/server-runtime";
 import { authenticator } from "~/auth.server";
@@ -20,9 +21,9 @@ export const loader = async ({ request }: LoaderArgs) => {
 export default () => {
   return (
     <Navigation>
-      <>
+      <Box flexGrow={1} component={Paper} p={2}>
         <Outlet />
-      </>
+      </Box>
     </Navigation>
   );
 };

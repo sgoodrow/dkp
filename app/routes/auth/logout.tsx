@@ -28,7 +28,7 @@ export default () => {
   return (
     <>
       <Grid item xs={12}>
-        Are you sure you want to leave,{" "}
+        Are you sure you want to log out,{" "}
         <Typography fontWeight="bold" display="inline">
           {username}
         </Typography>
@@ -36,7 +36,10 @@ export default () => {
       </Grid>
       <Grid item xs={12}>
         No,
-        <RouteText to={paths.dashboard()} text="go back" terminating />.
+        <RouteText to={paths.dashboard()} terminating hideUnderline>
+          go back
+        </RouteText>
+        .
       </Grid>
       <Grid item xs={12}>
         <Form method="post">

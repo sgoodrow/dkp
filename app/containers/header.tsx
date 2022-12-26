@@ -1,75 +1,122 @@
-import { Form, Link } from "@remix-run/react";
+import { Link, useSubmit } from "@remix-run/react";
 import {
   AppBar,
+  Avatar,
   Box,
-  Button,
   IconButton,
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
   useTheme,
 } from "@mui/material";
 import type { FC, MouseEvent } from "react";
+import { useId } from "react";
 import { useState } from "react";
 import { config } from "~/config";
 import { paths } from "~/paths";
 import { GuildIcon } from "~/components/guildIcon";
-import { drawerWidth } from "./navigation";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useUsername } from "~/utils";
+import { UnderlineText } from "~/components/linkText";
+import { drawerWidthOpen } from "./sidebar";
 
-export const Header: FC = () => {
+export const Header: FC<{
+  onToggleSidebar: () => void;
+}> = ({ onToggleSidebar: onToggleDrawer }) => {
+  const submit = useSubmit();
   const theme = useTheme();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const username = useUsername();
+  const [settingsMenuAnchor, setSettingsMenuAnchor] =
+    useState<null | HTMLElement>(null);
+  const settingsButtonId = useId();
+  const settingsMenuId = useId();
+  const settingsMenuIsOpen = Boolean(settingsMenuAnchor);
 
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleOpenSettingsMenu = (event: MouseEvent<HTMLButtonElement>) =>
+    setSettingsMenuAnchor(event.currentTarget);
+
+  const handleLogout = () => {
+    handleClose();
+    submit(null, { method: "post", action: paths.logout() });
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  const handleClose = () => setSettingsMenuAnchor(null);
 
   return (
-    <AppBar position="fixed">
-      <Toolbar sx={{ alignItems: "center" }}>
-        <Box display="flex" justifyContent="space-between" width={drawerWidth}>
-          <Link to={paths.dashboard()} style={{ textDecoration: "none" }}>
-            <Box display="flex" alignItems="center">
+    <AppBar
+      position="fixed"
+      sx={{
+        marginTop: 0.5,
+        backgroundColor: theme.palette.background.default,
+        backgroundImage: "none",
+        boxShadow: "none",
+        zIndex: (theme) => theme.zIndex.drawer + 1,
+      }}
+    >
+      <Toolbar disableGutters>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          width={drawerWidthOpen}
+        >
+          <Box
+            display="flex"
+            alignItems="center"
+            ml={1}
+            component={Link}
+            to={paths.dashboard()}
+            overflow="hidden"
+            sx={{ textDecoration: "none" }}
+          >
+            <IconButton sx={{ marginRight: 1 }}>
               <GuildIcon bgcolor={theme.palette.primary.light} />
-              <Box ml={1} />
-              <Typography color={theme.palette.primary.light} variant="h6">
-                {config.guildName} DKP
-              </Typography>
-            </Box>
-          </Link>
-          <IconButton>
-            <MenuIcon />
-          </IconButton>
+            </IconButton>
+            <UnderlineText
+              color={theme.palette.primary.light}
+              variant="h6"
+              noWrap
+              hideUnderline
+            >
+              {config.guildName} DKP
+            </UnderlineText>
+          </Box>
+          <Box alignSelf="center">
+            <IconButton sx={{ marginLeft: 1 }} onClick={() => onToggleDrawer()}>
+              <MenuIcon />
+            </IconButton>
+          </Box>
         </Box>
         <Box sx={{ flexGrow: 1 }} />
-        <Button
-          id="basic-button"
-          aria-controls={open ? "basic-menu" : undefined}
+        <IconButton
+          id={settingsButtonId}
+          aria-controls={settingsMenuIsOpen ? settingsMenuId : undefined}
           aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleClick}
+          aria-expanded={settingsMenuIsOpen ? "true" : undefined}
+          onClick={handleOpenSettingsMenu}
+          sx={{ marginRight: 1 }}
         >
-          Settings
-        </Button>
+          <Avatar
+            sx={{
+              bgcolor: theme.palette.primary.main,
+            }}
+            alt={`${username} Settings`}
+          >
+            {username[0]}
+          </Avatar>
+        </IconButton>
         <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
+          id={settingsMenuId}
+          anchorEl={settingsMenuAnchor}
+          open={settingsMenuIsOpen}
           onClose={handleClose}
           MenuListProps={{
-            "aria-labelledby": "basic-button",
+            "aria-labelledby": settingsButtonId,
           }}
         >
-          <MenuItem onClick={handleClose}>Profile</MenuItem>
-          <MenuItem onClick={handleClose}>My account</MenuItem>
-          <MenuItem onClick={handleClose}>Logout</MenuItem>
+          <MenuItem dense divider disabled>
+            {username}
+          </MenuItem>
+          <MenuItem onClick={() => handleLogout()}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

@@ -18,6 +18,24 @@ export const paths = {
   dashboard: (): string => {
     return `/${dkp}/dashboard`;
   },
+  dashboardCharacters: (): string => {
+    return `${paths.dashboard()}/characters`;
+  },
+  dashboardAttendance: (): string => {
+    return `${paths.dashboard()}/attendance`;
+  },
+  dashboardTransactions: (): string => {
+    return `${paths.dashboard()}/transactions`;
+  },
+  activity: (): string => {
+    return `/${dkp}/activity`;
+  },
+  activityRaids: (): string => {
+    return `${paths.activity()}/raids`;
+  },
+  activityTransactions: (): string => {
+    return `${paths.activity()}/transactions`;
+  },
   userSettings: (): string => {
     return `/${dkp}/user/settings`;
   },
