@@ -1,0 +1,6 @@
+.next
+.playwright
+*-test-results/*
+deploy
+coverage
+cache

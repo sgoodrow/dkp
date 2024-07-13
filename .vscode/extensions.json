@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "yzhang.markdown-all-in-one",
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
+    "codeium.codeium"
+  ]
+}

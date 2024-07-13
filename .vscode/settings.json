@@ -1,0 +1,21 @@
+{
+  "editor.codeLensFontSize": 10,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "editor.indentSize": 2,
+  "editor.inlayHints.fontSize": 10,
+  "editor.insertSpaces": true,
+  "editor.linkedEditing": true,
+  "explorer.sortOrderLexicographicOptions": "upper",
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.referencesCodeLens.enabled": true,
+  "typescript.referencesCodeLens.showOnAllFunctions": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "codeium.enableExplainProblem": false,
+  "codeium.enableSearch": true
+}

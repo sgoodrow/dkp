@@ -1,0 +1,95 @@
+model User {
+  // Columns
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relationships
+  accounts      Account[]
+  sessions      Session[]
+  Authenticator Authenticator[]
+  apiKeys       ApiKey[]
+}
+
+model Account {
+  // Columns
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relationships
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Constraints
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  // Columns
+  sessionToken String   @unique
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  // Columns
+  identifier String
+  token      String
+  expires    DateTime
+
+  // Constraints
+  @@id([identifier, token])
+}
+
+model ApiKey {
+  // Columns
+  id           Int      @id @default(autoincrement())
+  name         String
+  hashedApiKey String   @unique
+  expires      DateTime
+  scopes       String[]
+
+  // Relationships
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Constraints
+  @@unique([userId, name])
+}
+
+model Authenticator {
+  // Columns
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  // Relationships
+  providerAccountId String
+  credentialID      String @unique
+  userId            String
+  user              User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Constraints
+  @@id([userId, credentialID])
+}
