@@ -1,4 +1,4 @@
-import { ApiKeysRoutePage } from "@/ui/settings/apiKeys/ApiKeysRoutePage";
+import { ApiKeysRoutePage } from "@/ui/apiKeys/ApiKeysRoutePage";
 
 export default function Page() {
   return <ApiKeysRoutePage />;

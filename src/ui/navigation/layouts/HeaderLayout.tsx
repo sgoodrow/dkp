@@ -6,9 +6,8 @@ import { ReactNode } from "react";
 const HEADER_HEIGHT = "32px";
 
 export const HeaderLayout: FCWithChildren<{
-  breadcrumbs: ReactNode;
   actions?: ReactNode;
-}> = ({ breadcrumbs, children, actions }) => {
+}> = ({ children, actions }) => {
   return (
     <Stack spacing={2} flexGrow={1}>
       <Box
@@ -17,7 +16,6 @@ export const HeaderLayout: FCWithChildren<{
         alignItems="flex-start"
         height={HEADER_HEIGHT}
       >
-        {breadcrumbs}
         {actions}
       </Box>
       {children}

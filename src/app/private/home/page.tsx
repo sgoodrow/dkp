@@ -8,7 +8,7 @@ export const generateMetadata = async (
   _: unknown,
   parent: ResolvingMetadata,
 ): Promise<Metadata> => {
-  return generateMetadataTitle(uiRoutes.private.home.name, parent);
+  return generateMetadataTitle(uiRoutes.home.name, parent);
 };
 
 export default function Page() {

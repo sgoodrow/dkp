@@ -9,7 +9,7 @@
 
 - Guild banner
 - My current DKP - labeled value card => `/private/player/<id>`
-- My recent characters - card with table => `/private/player/<id>/characters`
+- My recent characters - card with table => `/private/player/<id>`
 - My recent raids - card with table => `/private/raids?player=<id>`
 - My recent items - card with table => `/private/items?player=<id>`
 - My recent adjustments - card with table => `/private/adjustments?player=<id>`
@@ -19,7 +19,7 @@
 
 ## Page: `/private/players`
 
-- Players list - table with filters => `/private/player/<id>/characters`
+- Players list - table with filters => `/private/player/<id>`
 
 ### Sub-page: `/private/players/<id>`
 
@@ -41,7 +41,7 @@
 
 ### Sub-page: `/private/raids/<id>`
 
-- Attendees list - table by class => `/private/player/<id>/characters`
+- Attendees list - table by class => `/private/player/<id>`
 - Items list - table => `/private/items/<id>`
 - Adjustments list - table => `/private/adjustments`
 
@@ -56,12 +56,9 @@
 
 ## Page: `/private/adjustments`
 
+- Add adjustment button
 - Adjustments list - table with filters (by player, category) => `/private/adjustments/<id>`
-
-### Sub-page: `/private/adjustments/<id>`
-
-- Adjustment details - cards
-- Edit/Save adjustment button
+- Edit/save adjustment button - confirm dialog
 - Delete adjustment button - confirm dialog
 
 ## Page: `/private/leaderboard`
@@ -70,7 +67,7 @@
 
 ## Page `/private/admin`
 
-- Links to admin pages: raid-types, permissions
+- Links to admin pages: raid-types, permissions, unassigned characters, api keys
 
 ### Sub-page `/private/admin/raid-types`
 
@@ -78,7 +75,20 @@
 - Raid types list - table
 - Edit/Save raid type => dialog
 
+### Sub-page `/private/admin/permissions`
+
+- List of owners
+- Add/remove owner
+- List of admins
+- Add/remove admin
+
 ### Sub-page `/private/admin/unassigned-characters`
 
 - Characters list - table with filters (by class, level, dkp)
 - Assign character button => dialog => confirm dialog
+
+### Sub-page `/private/admin/api-keys`
+
+- List of all current API keys
+- Button to create API key
+- Button to revoke API key

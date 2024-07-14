@@ -18,9 +18,7 @@ export const SignInWithProviderButton: FC<{
       data-monitoring-id={monitoringId}
       color="primary"
       variant="contained"
-      onClick={() =>
-        signIn(providerName, { redirectTo: uiRoutes.private.home.href() })
-      }
+      onClick={() => signIn(providerName, { redirectTo: uiRoutes.home.href() })}
     >
       Sign in with {providerTitle}
     </Button>

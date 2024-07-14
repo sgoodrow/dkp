@@ -27,7 +27,7 @@ export default async function RootLayout({
     redirect(uiRoutes.login.href(), RedirectType.replace);
   }
   if (session && currentPathname === uiRoutes.login.href()) {
-    redirect(uiRoutes.private.home.href(), RedirectType.replace);
+    redirect(uiRoutes.home.href(), RedirectType.replace);
   }
 
   return (

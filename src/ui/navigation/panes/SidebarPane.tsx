@@ -2,35 +2,39 @@
 
 import { uiRoutes } from "@/app/uiRoutes";
 import { SignOutIconButton } from "@/ui/auth/buttons/SignOutIconButton";
+import {
+  SideBarIconButton,
+  SidebarItem,
+} from "@/ui/navigation/buttons/SidebarIconButton";
 import { WelcomeDialogIconButton } from "@/ui/navigation/buttons/WelcomeDialogIconButton";
 import { AppIcon } from "@/ui/shared/components/static/AppIcon";
-import { MonitoringId } from "@/ui/shared/constants/monitoringIds";
-import { SvgIconComponent } from "@mui/icons-material";
-import {
-  Box,
-  Divider,
-  Drawer,
-  Paper,
-  Stack,
-  Theme,
-  ToggleButton,
-  Tooltip,
-} from "@mui/material";
-import { usePathname } from "next/navigation";
-import { FC } from "react";
+import { Box, Divider, Drawer, Paper, Stack } from "@mui/material";
 
 const SIDEBAR_WIDTH = "56px";
 
 export const SidebarPane: FCWithChildren<{}> = ({ children }) => {
+  const isAdmin = true;
+  const items: SidebarItem[] = [
+    uiRoutes.home,
+    uiRoutes.players,
+    uiRoutes.raids,
+    uiRoutes.items,
+    uiRoutes.adjustments,
+    uiRoutes.leaderboard,
+  ];
+  if (isAdmin) {
+    items.push(uiRoutes.admin);
+  }
   return (
     <>
       <Drawer open variant="permanent">
         <Stack direction="row" height={1}>
           <Stack direction="column" spacing={1} p={1} component={Paper}>
             <AppIcon />
-            <SideBarIconButton route={uiRoutes.private.home} />
+            {items.map((i) => (
+              <SideBarIconButton key={i.name} item={i} />
+            ))}
             <Box flexGrow={1} />
-            <SideBarIconButton route={uiRoutes.private.settings} />
             <Divider />
             <WelcomeDialogIconButton />
             <SignOutIconButton />
@@ -39,38 +43,5 @@ export const SidebarPane: FCWithChildren<{}> = ({ children }) => {
       </Drawer>
       <Box ml={SIDEBAR_WIDTH}>{children}</Box>
     </>
-  );
-};
-
-const SideBarIconButton: FC<{
-  route: {
-    dataMonitoringId: MonitoringId;
-    name: string;
-    href: () => string;
-    icon: SvgIconComponent;
-  };
-  disabled?: boolean;
-}> = ({ route, disabled }) => {
-  const pathname = usePathname();
-  const href = route.href();
-  const selected = pathname.startsWith(route.href());
-  return (
-    <Tooltip
-      title={disabled ? `${route.name} coming soon!` : `Go to ${route.name}.`}
-      placement="right"
-    >
-      <Box>
-        <ToggleButton
-          data-monitoring-id={route.dataMonitoringId}
-          value="check"
-          href={href}
-          selected={selected}
-          color={selected ? "primary" : undefined}
-          disabled={disabled}
-        >
-          <route.icon />
-        </ToggleButton>
-      </Box>
-    </Tooltip>
   );
 };
