@@ -3,21 +3,37 @@ import { SourceCodeLink } from "@/ui/shared/components/links/SourceCodeLink";
 import { SupportLink } from "@/ui/shared/components/links/SupportLink";
 import { BulletList } from "@/ui/shared/components/lists/BulletList";
 import { APP_TITLE, GUILD } from "@/ui/shared/components/static/copy";
+import { Close } from "@mui/icons-material";
 import {
+  AppBar,
   Dialog,
   DialogContent,
   DialogContentText,
-  DialogTitle,
+  IconButton,
+  Slide,
+  Toolbar,
+  Typography,
 } from "@mui/material";
-import { FC } from "react";
+import { TransitionProps } from "notistack";
+import { FC, forwardRef, Ref } from "react";
 
 const TITLE_ID = "about-app-dialog-title";
 const DESCRIPTION_ID = "about-app-dialog-description";
 
+const MobileTransition = forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement;
+  },
+  ref: Ref<unknown>,
+) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 export const AboutAppDialog: FC<{
   open: boolean;
   onClose: () => void;
-}> = ({ open, onClose }) => {
+  isMobile: boolean;
+}> = ({ open, onClose, isMobile }) => {
   const handleClose = () => onClose();
   return (
     <Dialog
@@ -25,8 +41,24 @@ export const AboutAppDialog: FC<{
       onClose={handleClose}
       aria-labelledby={TITLE_ID}
       aria-describedby={DESCRIPTION_ID}
+      fullScreen={isMobile}
+      TransitionComponent={isMobile ? MobileTransition : undefined}
     >
-      <DialogTitle id={TITLE_ID}>Welcome to {APP_TITLE} 👋</DialogTitle>
+      <AppBar sx={{ position: "relative" }}>
+        <Toolbar>
+          <IconButton
+            edge="start"
+            size="medium"
+            onClick={handleClose}
+            aria-label="close"
+          >
+            <Close />
+          </IconButton>
+          <Typography sx={{ ml: 2 }} variant="h4">
+            Welcome to {APP_TITLE} 👋
+          </Typography>
+        </Toolbar>
+      </AppBar>
       <DialogContent>
         <DialogContentText id={DESCRIPTION_ID}>
           This app is used by the {GUILD} guild to manage the currency earned
@@ -50,7 +82,7 @@ export const AboutAppDialog: FC<{
           </strong>
           <br />
           <br />
-          The app is maintained by <MaintainerLink /> and open sourced on{" "}
+          The app is maintained by <MaintainerLink /> and open source on{" "}
           <SourceCodeLink />.
         </DialogContentText>
       </DialogContent>

@@ -254,7 +254,7 @@ export const theme = experimental_extendTheme({
         },
         contrastThreshold: 3,
         background: {
-          default: "#101010",
+          default: "#1a1a1a",
         },
       },
     },

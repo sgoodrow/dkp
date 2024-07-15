@@ -77,13 +77,13 @@ export const uiRoutes = {
   },
   // Sub-pages
   player: {
-    href: (playerId: number) =>
+    href: (playerId: string) =>
       `${uiRoutes.players.href()}/${playerId}` as const,
     name: (name: string) => `Player - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_PLAYER,
   },
   character: {
-    href: (playerId: number, characterId: number) =>
+    href: (playerId: string, characterId: number) =>
       `${uiRoutes.player.href(playerId)}/character/${characterId}` as const,
     name: (name: string) => `Character - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_CHARACTER,

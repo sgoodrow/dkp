@@ -17,8 +17,9 @@ import {
   MonitoringId,
   monitoringIds,
 } from "@/ui/shared/constants/monitoringIds";
+import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
 
-export const ThemeModeIconButton: FC = () => {
+export const ThemeModeButton: FC<{ isMobile: boolean }> = ({ isMobile }) => {
   const { mode = "system", setMode } = useColorScheme();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -35,17 +36,14 @@ export const ThemeModeIconButton: FC = () => {
 
   return (
     <>
-      <Tooltip title="Change theme." placement="right">
-        <ToggleButton
-          data-monitoring-id={monitoringIds.TOGGLE_SETTINGS_OPEN}
-          value="check"
-          onClick={handleClick}
-          selected={Boolean(anchorEl)}
-          color={Boolean(anchorEl) ? "primary" : undefined}
-        >
-          <CurrentIcon />
-        </ToggleButton>
-      </Tooltip>
+      <SideBarButton
+        dataMonitoringId={monitoringIds.TOGGLE_THEME_CHANGE_OPEN}
+        icon={<CurrentIcon />}
+        name="Theme"
+        onClick={handleClick}
+        selected={Boolean(anchorEl)}
+        isMobile={isMobile}
+      />
       <Popover
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
@@ -66,21 +64,21 @@ export const ThemeModeIconButton: FC = () => {
           aria-label="Theme mode buttons"
           size="small"
         >
-          <ThemeModeButton
+          <Option
             text="Light"
             tooltip="Use light mode."
             value="light"
             dataMonitoringId={monitoringIds.TOGGLE_LIGHT_MODE_THEME}
             Icon={LightMode}
           />
-          <ThemeModeButton
+          <Option
             text="System"
             tooltip="Use system preferences to select theme."
             value="system"
             dataMonitoringId={monitoringIds.TOGGLE_SYSTEM_MODE_THEME}
             Icon={SettingsBrightness}
           />
-          <ThemeModeButton
+          <Option
             text="Dark"
             tooltip="Use dark mode."
             value="dark"
@@ -93,7 +91,7 @@ export const ThemeModeIconButton: FC = () => {
   );
 };
 
-const ThemeModeButton: FC<{
+const Option: FC<{
   text: string;
   tooltip: string;
   value: Mode;

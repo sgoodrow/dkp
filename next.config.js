@@ -7,6 +7,14 @@ const middleware = [(c) => c];
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+      },
+    ],
+  },
 };
 
 module.exports = middleware.reduce((c, m) => m(c), config);
