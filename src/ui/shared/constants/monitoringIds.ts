@@ -41,6 +41,12 @@ export const monitoringIds = keysAreSameAsValuesCheck({
   // External app navigation
   GOTO_DISCORD: "GOTO_DISCORD",
 
+  GOTO_DISCORD_MAINTAINER: "GOTO_DISCORD_MAINTAINER",
+
+  GOTO_DISCORD_SUPPORT: "GOTO_DISCORD_SUPPORT",
+
+  GOTO_SOURCE_CODE: "GOTO_SOURCE_CODE",
+
   GOTO_RULES: "GOTO_RULES",
 
   // Copy actions

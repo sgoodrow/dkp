@@ -6,6 +6,7 @@ import {
   SideBarIconButton,
   SidebarItem,
 } from "@/ui/navigation/buttons/SidebarIconButton";
+import { ThemeModeIconButton } from "@/ui/navigation/buttons/ThemeModeIconButton";
 import { WelcomeDialogIconButton } from "@/ui/navigation/buttons/WelcomeDialogIconButton";
 import { AppIcon } from "@/ui/shared/components/static/AppIcon";
 import { Box, Divider, Drawer, Paper, Stack } from "@mui/material";
@@ -37,6 +38,8 @@ export const SidebarPane: FCWithChildren<{}> = ({ children }) => {
             <Box flexGrow={1} />
             <Divider />
             <WelcomeDialogIconButton />
+            <ThemeModeIconButton />
+            {/* todo: move this into the header */}
             <SignOutIconButton />
           </Stack>
         </Stack>

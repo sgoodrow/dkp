@@ -3,7 +3,6 @@ import { QuestionMark } from "@mui/icons-material";
 import { Box, IconButton, Tooltip } from "@mui/material";
 import { FC, useState } from "react";
 
-// TODO: rebrand this as shortcuts menu?
 export const WelcomeDialogIconButton: FC<{}> = ({}) => {
   const [aboutAppDialogOpen, setAboutAppDialogOpen] = useState(false);
   return (

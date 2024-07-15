@@ -198,6 +198,11 @@ export const theme = experimental_extendTheme({
         disableScrollLock: true,
       },
     },
+    MuiDialogTitle: {
+      defaultProps: {
+        variant: "h4",
+      },
+    },
     MuiDialogContentText: {
       defaultProps: {
         component: "div",
