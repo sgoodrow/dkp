@@ -13,7 +13,7 @@ export const SignOutButton: FC<{ isMobile: boolean }> = ({ isMobile }) => {
       icon={<Logout />}
       onClick={() => signOut()}
       dataMonitoringId={monitoringIds.SIGN_OUT}
-      isMobile={isMobile}
+      hideLabel={isMobile}
     />
   );
 };

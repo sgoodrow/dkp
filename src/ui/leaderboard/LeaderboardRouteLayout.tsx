@@ -1,5 +1,5 @@
 import { HeaderLayout } from "@/ui/navigation/layouts/HeaderLayout";
 
-export const AdminRouteLayout: FCWithChildren<{}> = ({ children }) => {
+export const LeaderboardRouteLayout: FCWithChildren<{}> = ({ children }) => {
   return <HeaderLayout>{children}</HeaderLayout>;
 };

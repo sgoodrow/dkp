@@ -7,6 +7,14 @@ const middleware = [(c) => c];
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.node/,
+      use: "node-loader",
+    });
+
+    return config;
+  },
   images: {
     remotePatterns: [
       {

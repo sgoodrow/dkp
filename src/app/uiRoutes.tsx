@@ -1,11 +1,14 @@
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import {
   AdminPanelSettings,
+  AssignmentInd,
   AutoFixHigh,
   BusinessCenter,
   EmojiEvents,
   Event,
+  EventRepeat,
   Home,
+  Key,
   People,
 } from "@mui/icons-material";
 
@@ -103,20 +106,18 @@ export const uiRoutes = {
     href: () => `${uiRoutes.admin.href()}/raid-types` as const,
     name: "Raid Types",
     dataMonitoringId: monitoringIds.GOTO_RAID_TYPES,
-  },
-  permissions: {
-    href: () => `${uiRoutes.admin.href()}/permissions` as const,
-    name: "Permissions",
-    dataMonitoringId: monitoringIds.GOTO_PERMISSIONS,
+    icon: EventRepeat,
   },
   unassignedCharacters: {
     href: () => `${uiRoutes.admin.href()}/unassigned-characters` as const,
     name: "Unassigned Characters",
     dataMonitoringId: monitoringIds.GOTO_UNASSIGNED_CHARACTERS,
+    icon: AssignmentInd,
   },
   apiKeys: {
     href: () => `${uiRoutes.admin.href()}/api-keys` as const,
     name: "API Keys",
     dataMonitoringId: monitoringIds.GOTO_API_KEYS,
+    icon: Key,
   },
 } as const;

@@ -32,8 +32,8 @@ const MobileTransition = forwardRef(function Transition(
 export const AboutAppDialog: FC<{
   open: boolean;
   onClose: () => void;
-  isMobile: boolean;
-}> = ({ open, onClose, isMobile }) => {
+  fullScreen: boolean;
+}> = ({ open, onClose, fullScreen }) => {
   const handleClose = () => onClose();
   return (
     <Dialog
@@ -41,8 +41,8 @@ export const AboutAppDialog: FC<{
       onClose={handleClose}
       aria-labelledby={TITLE_ID}
       aria-describedby={DESCRIPTION_ID}
-      fullScreen={isMobile}
-      TransitionComponent={isMobile ? MobileTransition : undefined}
+      fullScreen={fullScreen}
+      TransitionComponent={fullScreen ? MobileTransition : undefined}
     >
       <AppBar sx={{ position: "relative" }}>
         <Toolbar>

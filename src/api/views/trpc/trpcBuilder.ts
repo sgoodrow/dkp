@@ -1,4 +1,5 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
+import { userController } from "@/api/controllers/userController";
 import { auth } from "@/auth";
 import { Scope } from "@/shared/constants/scopes";
 import { TRPCError, initTRPC } from "@trpc/server";
@@ -65,6 +66,21 @@ export const protectedProcedure = t.procedure.use(
     });
   },
 );
+
+export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  const isAdmin = await userController.isAdmin({
+    userId: ctx.userId,
+  });
+
+  if (!isAdmin) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You do not have access to this resource.",
+    });
+  }
+
+  return next();
+});
 
 export const protectedApiKeyProcedure = protectedProcedure
   .input(

@@ -1,9 +1,8 @@
 # Routes
 
-## 🚧 Layout: `/private`
+## ✅ Layout: `/private`
 
-- Navigation header - current user, logout, link to player page, current DKP & lifetime DKP
-- Navigation sidebar - nav to: home, players, raids, items, adjustments, leaderboard, admin (admin-only); links to: discord, rules; button for: darkmode toggle
+- Navigation sidebar - nav to: player, home, players, raids, items, adjustments, leaderboard, admin (admin-only); break; help, theme, links to: rules; discord, sign out
 
 ## 🚧 Page: `/private/home`
 

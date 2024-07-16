@@ -5,16 +5,16 @@ import { FC } from "react";
 
 export const BackButton: FC<{
   href: string;
-  isMobile: boolean;
+  hideLabel: boolean;
   ["data-monitoring-id"]: MonitoringId;
-}> = ({ href, ["data-monitoring-id"]: dataMonitoringId, isMobile }) => {
+}> = ({ href, ["data-monitoring-id"]: dataMonitoringId, hideLabel }) => {
   return (
     <SideBarButton
       name="Back"
       icon={<ArrowBack />}
       dataMonitoringId={dataMonitoringId}
       href={href}
-      isMobile={isMobile}
+      hideLabel={hideLabel}
     />
   );
 };

@@ -24,6 +24,8 @@ export const monitoringIds = keysAreSameAsValuesCheck({
 
   GOTO_ITEM: "GOTO_ITEM",
 
+  GO_BACK: "GO_BACK",
+
   GOTO_ADJUSTMENTS: "GOTO_ADJUSTMENTS",
 
   GOTO_LEADERBOARD: "GOTO_LEADERBOARD",

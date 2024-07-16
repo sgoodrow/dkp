@@ -4,9 +4,10 @@ import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { QuestionMark } from "@mui/icons-material";
 import { FC, useState } from "react";
 
-export const WelcomeDialogButton: FC<{ isMobile: boolean }> = ({
-  isMobile,
-}) => {
+export const WelcomeDialogButton: FC<{
+  hideButtonLabel: boolean;
+  fullScreenDialog: boolean;
+}> = ({ hideButtonLabel = false, fullScreenDialog = false }) => {
   const [aboutAppDialogOpen, setAboutAppDialogOpen] = useState(false);
   return (
     <>
@@ -16,12 +17,12 @@ export const WelcomeDialogButton: FC<{ isMobile: boolean }> = ({
         icon={<QuestionMark />}
         onClick={() => setAboutAppDialogOpen(true)}
         selected={aboutAppDialogOpen}
-        isMobile={isMobile}
+        hideLabel={hideButtonLabel}
       />
       <AboutAppDialog
         open={aboutAppDialogOpen}
         onClose={() => setAboutAppDialogOpen(false)}
-        isMobile={isMobile}
+        fullScreen={fullScreenDialog}
       />
     </>
   );

@@ -19,7 +19,7 @@ import {
 } from "@/ui/shared/constants/monitoringIds";
 import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
 
-export const ThemeModeButton: FC<{ isMobile: boolean }> = ({ isMobile }) => {
+export const ThemeModeButton: FC<{ hideLabel: boolean }> = ({ hideLabel }) => {
   const { mode = "system", setMode } = useColorScheme();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -42,7 +42,7 @@ export const ThemeModeButton: FC<{ isMobile: boolean }> = ({ isMobile }) => {
         name="Theme"
         onClick={handleClick}
         selected={Boolean(anchorEl)}
-        isMobile={isMobile}
+        hideLabel={hideLabel}
       />
       <Popover
         open={Boolean(anchorEl)}
@@ -102,7 +102,7 @@ const Option: FC<{
     <Tooltip title={tooltip}>
       <ToggleButton value={value} data-monitoring-id={dataMonitoringId}>
         <Box mx={1} display="flex" alignItems="center">
-          <Icon fontSize="small" sx={{ mr: 1 }} />
+          <Icon sx={{ mr: 1 }} />
           {text}
         </Box>
       </ToggleButton>

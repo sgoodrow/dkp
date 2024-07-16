@@ -1,7 +1,14 @@
 // Configuration
 export const GUILD = "Castle";
 
-export const GUILD_DISCORD_SERVER_ID = "539189546630381579";
+export const GUILD_DISCORD_SERVER_ID = "954825353392709682";
+
+export const GUILD_DISCORD_ADMIN_ROLE_ID = "954825353392709682";
+
+export const GUILD_DISCORD_INVITE_LINK = "https://discord.gg/castlegreen";
+
+export const GUILD_RULES_LINK =
+  "https://docs.google.com/document/d/1n7ccSVc3K1DSqynrWsEEfkLxuR0l18OHW8VP-2mfspw/edit?usp=sharing";
 
 export const MAINTAINER_NAME = "Pumped";
 
