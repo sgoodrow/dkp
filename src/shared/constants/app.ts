@@ -5,8 +5,11 @@ export const app = {
   maintainerDiscordUserId: "266714829010632705",
   sourceCodeHost: "GitHub",
   sourceCodeUrl: "https://github.com/sgoodrow/dkp",
-  appTitle: `${guild.name} DKP`,
-  appDescription: "An app for managing DKP.",
-  appTitleIcon: "💎",
-  noneAssociated: "None associated.",
+  name: "eq-dkp-app",
+  title: `${guild.name} DKP`,
+  titleIcon: "💎",
+  description: "An app for managing DKP.",
+  copy: {
+    noneAssociated: "None associated.",
+  },
 } as const;

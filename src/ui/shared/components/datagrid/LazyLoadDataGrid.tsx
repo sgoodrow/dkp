@@ -41,7 +41,7 @@ export const LazyLoadDataGrid = <R extends GridValidRowModel>({
   return currentRowCount === 0 ? (
     <List disablePadding>
       <ListItem>
-        <ListItemText primary={app.noneAssociated} />
+        <ListItemText primary={app.copy.noneAssociated} />
       </ListItem>
     </List>
   ) : (

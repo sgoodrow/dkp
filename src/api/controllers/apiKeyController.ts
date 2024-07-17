@@ -1,13 +1,12 @@
 import { ENV } from "@/api/env";
 import { apiKeyRepository } from "@/api/repositories/apiKeyRepository";
+import { app } from "@/shared/constants/app";
 import { SCOPE, Scope } from "@/shared/constants/scopes";
 import { TRPCError } from "@trpc/server";
 import { sign, verify } from "jsonwebtoken";
 import * as uuid from "uuid";
 
 const JWT_ALGORITHM = "HS256";
-const JWT_ISS = ENV.NAME;
-const JWT_AUD = ENV.NAME;
 const JWT_SECRET = ENV.JWT_SECRET;
 const AUTHORIZATION_HEADER_JWT_REGEXP = /^Bearer\s+(\S+\.\S+\.\S+)$/;
 
@@ -38,8 +37,8 @@ export const apiKeyController = {
     const apiKey = sign(
       {
         sub: userId,
-        iss: JWT_ISS,
-        aud: JWT_AUD,
+        iss: app.name,
+        aud: app.name,
         scopes,
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(expiresAt.getTime() / 1000),
@@ -90,8 +89,8 @@ export const apiKeyController = {
     }
     const apiKey = match[1];
     const decoded = verify(apiKey, JWT_SECRET, {
-      issuer: JWT_ISS,
-      audience: JWT_AUD,
+      issuer: app.name,
+      audience: app.name,
       algorithms: [JWT_ALGORITHM],
     });
     if (typeof decoded === "string") {

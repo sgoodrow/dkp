@@ -9,9 +9,9 @@ import { uiRoutes } from "@/app/uiRoutes";
 import { app } from "@/shared/constants/app";
 
 export const metadata: Metadata = {
-  title: app.appTitle,
-  applicationName: app.appTitle,
-  description: app.appDescription,
+  title: app.title,
+  applicationName: app.title,
+  description: app.description,
 };
 
 export default async function RootLayout({

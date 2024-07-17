@@ -6,10 +6,10 @@ export const AppTitle: FC<{ subtitle?: boolean }> = ({ subtitle = false }) => {
   return (
     <Box>
       <Typography variant="h1">
-        {app.appTitle} {app.appTitleIcon}
+        {app.title} {app.titleIcon}
       </Typography>
       {subtitle && (
-        <Typography variant="subtitle1">{app.appDescription}</Typography>
+        <Typography variant="subtitle1">{app.description}</Typography>
       )}
     </Box>
   );

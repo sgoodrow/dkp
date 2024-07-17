@@ -56,7 +56,7 @@ export const AboutAppDialog: FC<{
             <Close />
           </IconButton>
           <Typography sx={{ ml: 2 }} variant="h4">
-            Welcome to {app.appTitle} 👋
+            Welcome to {app.title} 👋
           </Typography>
         </Toolbar>
       </AppBar>
