@@ -9,10 +9,12 @@ export const userController = {
       userId,
       provider: "discord",
     });
-    const roleIds = await discordService.getUserDiscordRoleIds({
-      discordUserId: discordUserId,
+    const roleIds = await discordService.getMemberRoleIds({
+      memberId: discordUserId,
     });
-    return { isAdmin: roleIds.includes(guild.discordAdminRoleId) };
+    return {
+      isAdmin: roleIds.includes(guild.discordAdminRoleId),
+    };
   },
 
   get: async ({ userId }: { userId: string }) => {
