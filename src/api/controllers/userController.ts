@@ -1,7 +1,7 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
-import { ENV } from "@/api/env";
 import { userRepository } from "@/api/repositories/userRepository";
 import { discordService } from "@/api/services/discord";
+import { guild } from "@/shared/constants/guild";
 
 export const userController = {
   isAdmin: async ({ userId }: { userId: string }) => {
@@ -12,7 +12,7 @@ export const userController = {
     const roleIds = await discordService.getUserDiscordRoleIds({
       discordUserId: discordUserId,
     });
-    return { isAdmin: roleIds.includes(ENV.DISCORD_ADMIN_ROLE_ID) };
+    return { isAdmin: roleIds.includes(guild.discordAdminRoleId) };
   },
 
   get: async ({ userId }: { userId: string }) => {

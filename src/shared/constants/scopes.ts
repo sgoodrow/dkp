@@ -1,7 +1,7 @@
 import { keysAreSameAsValuesCheck } from "@/ui/shared/utils/keysAreSameAsValuesCheck";
 
 export const SCOPE = keysAreSameAsValuesCheck({
-  run_prompt: "run_prompt",
+  assign_character: "assign_character",
 });
 
 export type Scope = keyof typeof SCOPE;

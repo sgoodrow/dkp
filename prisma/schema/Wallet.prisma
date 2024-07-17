@@ -1,0 +1,58 @@
+model Wallet {
+    // Common
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Properties
+    balance Float @default(0)
+
+    // Relationships
+    userId       String        @unique
+    user         User          @relation(fields: [userId], references: [id])
+    transactions Transaction[]
+}
+
+enum TransactionType {
+    ADJUSTMENT
+    PURCHASE
+    EARNING
+}
+
+model Transaction {
+    // Common
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Properties
+    amount Float
+    type   TransactionType
+
+    // Relationships
+    walletId      Int
+    wallet        Wallet      @relation(fields: [walletId], references: [id])
+    adjustment    Adjustment?
+    purchase      Purchase?
+    earning       Payout?
+    createdById   String      @unique
+    createdByUser User        @relation("TransactionCreator", fields: [createdById], references: [id])
+    updatedById   String      @unique
+    updatedByUser User        @relation("TransactionLatestUpdater", fields: [updatedById], references: [id])
+
+    @@index([walletId])
+}
+
+model Adjustment {
+    // Common
+    id Int @id @default(autoincrement())
+
+    // Properties
+    reason String
+
+    // Relationships
+    raidActivityId Int?          @unique
+    raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
+    transactionId  Int           @unique
+    transaction    Transaction   @relation(fields: [transactionId], references: [id])
+}

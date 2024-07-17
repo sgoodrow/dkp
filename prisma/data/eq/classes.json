@@ -1,0 +1,50 @@
+[
+  {
+    "name": "Bard",
+    "hexColor": "#FFD700"
+  },
+  {
+    "name": "Cleric",
+    "hexColor": "#FFFFFF"
+  },
+  {
+    "name": "Druid",
+    "hexColor": "#32CD32"
+  },
+  {
+    "name": "Enchanter",
+    "hexColor": "#8A2BE2"
+  },
+  {
+    "name": "Magician",
+    "hexColor": "#FF4500"
+  },
+  {
+    "name": "Monk",
+    "hexColor": "#FF8C00"
+  },
+  {
+    "name": "Necromancer",
+    "hexColor": "#800080"
+  },
+  {
+    "name": "Paladin",
+    "hexColor": "#ADD8E6"
+  },
+  {
+    "name": "Ranger",
+    "hexColor": "#228B22"
+  },
+  {
+    "name": "Rogue",
+    "hexColor": "#DC143C"
+  },
+  {
+    "name": "Shadow Knight",
+    "hexColor": "#2F4F4F"
+  },
+  {
+    "name": "Shaman",
+    "hexColor": "#00CED1"
+  }
+]

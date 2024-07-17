@@ -9,10 +9,18 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // Relationships
-  accounts      Account[]
-  sessions      Session[]
-  Authenticator Authenticator[]
-  apiKeys       ApiKey[]
+  accounts                 Account[]
+  sessions                 Session[]
+  Authenticator            Authenticator[]
+  apiKeys                  ApiKey[]
+  characters               Character[]
+  wallet                   Wallet?
+  createdTransactions      Transaction[]      @relation("TransactionCreator")
+  createdRaidActivities    RaidActivity[]     @relation("RaidActivityCreator")
+  createdRaidActivityTypes RaidActivityType[] @relation("RaidActivityTypeCreator")
+  updatedTransactions      Transaction[]      @relation("TransactionLatestUpdater")
+  updatedRaidActivities    RaidActivity[]     @relation("RaidActivityLatestUpdater")
+  updatedRaidActivityTypes RaidActivityType[] @relation("RaidActivityTypeLatestUpdater")
 }
 
 model Account {

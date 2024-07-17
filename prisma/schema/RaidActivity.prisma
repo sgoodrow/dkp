@@ -1,0 +1,49 @@
+model Payout {
+    // Common
+    id Int @id @default(autoincrement())
+
+    // Relationships
+    raidActivity  RaidActivity?
+    transactionId Int           @unique
+    transaction   Transaction   @relation(fields: [transactionId], references: [id])
+}
+
+model RaidActivity {
+    // Common
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Properties
+    note String
+
+    // Relationships
+    items              Item[]
+    adjustments        Adjustment[]
+    payoutId           Int              @unique
+    payout             Payout           @relation(fields: [payoutId], references: [id])
+    raidActivityTypeId Int              @unique
+    raidActivityType   RaidActivityType @relation(fields: [raidActivityTypeId], references: [id])
+    createdById        String           @unique
+    createdByUser      User             @relation("RaidActivityCreator", fields: [createdById], references: [id])
+    updatedById        String           @unique
+    updatedByUser      User             @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
+}
+
+model RaidActivityType {
+    // Common
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Properties
+    name                           String @unique
+    defaultPayoutTransactionAmount Float
+
+    // Relationships
+    createdById    String         @unique
+    createdByUser  User           @relation("RaidActivityTypeCreator", fields: [createdById], references: [id])
+    updatedById    String         @unique
+    updatedByUser  User           @relation("RaidActivityTypeLatestUpdater", fields: [updatedById], references: [id])
+    raidActivities RaidActivity[]
+}

@@ -13,10 +13,13 @@ help:
 	@echo " * local-db-reset           reset only the core tables of the local database"
 	@echo " * local-pre-commit         run pre-commit hooks"
 	@echo
-	@echo "--- Utilities ---"
-	@echo " * db-migrate               migrate the local database"
+	@echo "--- Data Migrations ---"
+	@echo " * db-init                  initialize a database"
 	@echo " * db-reset                 reset the core tables of a database"
 	@echo " * db-testdata              seed the core tables of a database with test data"
+	@echo
+	@echo "--- Utilities ---"
+	@echo " * db-migrate               migrate the local database"
 	@echo " * db-browse                open prisma studio"
 	@echo " * app-version              get project version"
 	@echo
@@ -69,7 +72,8 @@ local-run:
 
 local-db-reset-total:
 	@docker-compose down
-	@docker volume rm dkpdb_postgres_data
+	@docker volume rm dkp_postgres_data
+	@docker-compose up -d
 	@make db-migrate
 	@make db-reset
 
@@ -86,16 +90,21 @@ local-pre-commit:
 		"prisma format" \
 		"tsc --noEmit"
 
+# ---- Data Migrations ----
+db-init:
+	@yarn run dotenv tsx ./prisma/dataMigrations/initDb/run.ts
+
+db-reset:
+	@yarn run dotenv tsx ./prisma/dataMigrations/resetDb/run.ts
+
+db-testdata:
+	@yarn run dotenv tsx ./prisma/dataMigrations/testdata/run.ts
+
 # --- Utilities ---
 
 db-migrate:
 	@yarn prisma migrate dev
 
-db-reset:
-	@yarn run dotenv tsx ./prisma/data/reset/main.ts
-
-db-testdata:
-	@yarn run dotenv tsx ./prisma/data/testdata/main.ts
 
 db-browse:
 	@npx prisma studio

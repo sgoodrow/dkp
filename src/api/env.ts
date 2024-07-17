@@ -11,7 +11,6 @@ const envSchema = z.object({
 
   // Discord API
   DISCORD_CLIENT_TOKEN: z.string(),
-  DISCORD_ADMIN_ROLE_ID: z.string(),
 
   // AuthJS
   AUTH_SECRET: z.string(),

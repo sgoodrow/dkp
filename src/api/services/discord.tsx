@@ -1,5 +1,5 @@
 import { ENV } from "@/api/env";
-import { GUILD_DISCORD_SERVER_ID } from "@/ui/shared/components/static/copy";
+import { guild } from "@/shared/constants/guild";
 import { Client, Events, GatewayIntentBits } from "discord.js";
 
 const base = new Client({
@@ -21,7 +21,7 @@ export const discordService = {
     discordUserId: string;
   }) => {
     const client = await loggedInClient;
-    const g = await client.guilds.fetch(GUILD_DISCORD_SERVER_ID);
+    const g = await client.guilds.fetch(guild.discordServerId);
     const m = await g.members.fetch({
       user: discordUserId,
     });

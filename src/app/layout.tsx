@@ -6,12 +6,12 @@ import { auth } from "@/auth";
 import { pathname } from "next-extra/pathname";
 import { RedirectType, redirect } from "next/navigation";
 import { uiRoutes } from "@/app/uiRoutes";
-import { APP_DESCRIPTION, APP_TITLE } from "@/ui/shared/components/static/copy";
+import { app } from "@/shared/constants/app";
 
 export const metadata: Metadata = {
-  title: APP_TITLE,
-  applicationName: APP_TITLE,
-  description: APP_DESCRIPTION,
+  title: app.appTitle,
+  applicationName: app.appTitle,
+  description: app.appDescription,
 };
 
 export default async function RootLayout({

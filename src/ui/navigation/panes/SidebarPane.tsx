@@ -2,6 +2,7 @@
 
 import { trpc } from "@/api/views/trpc/trpc";
 import { uiRoutes } from "@/app/uiRoutes";
+import { guild } from "@/shared/constants/guild";
 import { BackButton } from "@/ui/navigation/buttons/BackButton";
 import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
 import { SignOutButton } from "@/ui/navigation/buttons/SignOutButton";
@@ -10,10 +11,6 @@ import { UserButton } from "@/ui/navigation/buttons/UserButton";
 import { WelcomeDialogButton } from "@/ui/navigation/buttons/WelcomeDialogButton";
 import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 import { GoogleDriveDocumentsIcon } from "@/ui/shared/components/icons/GoogleDriveDocumentsIcon";
-import {
-  GUILD_DISCORD_INVITE_LINK,
-  GUILD_RULES_LINK,
-} from "@/ui/shared/components/static/copy";
 import {
   MonitoringId,
   monitoringIds,
@@ -119,14 +116,14 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
               dataMonitoringId={monitoringIds.GOTO_RULES}
               icon={<GoogleDriveDocumentsIcon />}
               name="Rules"
-              href={GUILD_RULES_LINK}
+              href={guild.rulesLink}
               hideLabel={isMobile}
             />
             <SideBarButton
               dataMonitoringId={monitoringIds.GOTO_DISCORD}
               icon={<DiscordIcon />}
               name="Discord"
-              href={GUILD_DISCORD_INVITE_LINK}
+              href={guild.discordInviteLink}
               hideLabel={isMobile}
             />
             <SignOutButton isMobile={isMobile} />

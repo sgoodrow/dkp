@@ -1,0 +1,41 @@
+model Character {
+    // Common
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    // Properties
+    name  String @unique
+    level Int
+
+    // Relationships
+    userId  String          @unique
+    user    User            @relation(fields: [userId], references: [id])
+    classId Int             @unique
+    class   CharacterClass? @relation(fields: [classId], references: [id])
+    raceId  Int             @unique
+    race    CharacterRace?  @relation(fields: [raceId], references: [id])
+}
+
+model CharacterClass {
+    // Common
+    id Int @id @default(autoincrement())
+
+    // Properties
+    name     String @unique
+    hexColor String
+
+    // Relationships
+    characters Character[]
+}
+
+model CharacterRace {
+    // Common
+    id Int @id @default(autoincrement())
+
+    // Properties
+    name String @unique
+
+    // Relationships
+    characters Character[]
+}

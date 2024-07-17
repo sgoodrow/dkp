@@ -1,5 +1,5 @@
 import { EmojiIcon } from "@/ui/shared/components/icons/EmojiIcon";
-import { APP_TITLE_ICON } from "@/ui/shared/components/static/copy";
+import { app } from "@/shared/constants/app";
 import { IconButton } from "@mui/material";
 import { FC } from "react";
 
@@ -17,7 +17,7 @@ export const AppIcon: FC<{}> = ({}) => {
         },
       }}
     >
-      <EmojiIcon emoji={APP_TITLE_ICON} />
+      <EmojiIcon emoji={app.appTitleIcon} />
     </IconButton>
   );
 };

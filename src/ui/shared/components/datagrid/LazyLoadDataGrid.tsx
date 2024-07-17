@@ -1,6 +1,6 @@
 "use client";
 
-import { NONE_ASSOCIATED } from "@/ui/shared/components/static/copy";
+import { app } from "@/shared/constants/app";
 import { Box, BoxProps, List, ListItem, ListItemText } from "@mui/material";
 import {
   DataGridPro,
@@ -41,7 +41,7 @@ export const LazyLoadDataGrid = <R extends GridValidRowModel>({
   return currentRowCount === 0 ? (
     <List disablePadding>
       <ListItem>
-        <ListItemText primary={NONE_ASSOCIATED} />
+        <ListItemText primary={app.noneAssociated} />
       </ListItem>
     </List>
   ) : (
