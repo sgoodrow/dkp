@@ -5,16 +5,16 @@ model Character {
     updatedAt DateTime @updatedAt
 
     // Properties
-    name  String @unique
-    level Int
+    name String @unique
 
     // Relationships
-    userId  String          @unique
-    user    User            @relation(fields: [userId], references: [id])
-    classId Int             @unique
-    class   CharacterClass? @relation(fields: [classId], references: [id])
-    raceId  Int             @unique
-    race    CharacterRace?  @relation(fields: [raceId], references: [id])
+    defaultPilotId         String?                 @unique
+    defaultPilot           User?                   @relation(fields: [defaultPilotId], references: [id])
+    classId                Int                     @unique
+    class                  CharacterClass?         @relation(fields: [classId], references: [id])
+    raceId                 Int                     @unique
+    race                   CharacterRace?          @relation(fields: [raceId], references: [id])
+    raidActivityAttendance RaidActivityAttendant[]
 }
 
 model CharacterClass {

@@ -15,12 +15,13 @@ model User {
   apiKeys                  ApiKey[]
   characters               Character[]
   wallet                   Wallet?
-  createdTransactions      Transaction[]      @relation("TransactionCreator")
-  createdRaidActivities    RaidActivity[]     @relation("RaidActivityCreator")
-  createdRaidActivityTypes RaidActivityType[] @relation("RaidActivityTypeCreator")
-  updatedTransactions      Transaction[]      @relation("TransactionLatestUpdater")
-  updatedRaidActivities    RaidActivity[]     @relation("RaidActivityLatestUpdater")
-  updatedRaidActivityTypes RaidActivityType[] @relation("RaidActivityTypeLatestUpdater")
+  createdTransactions      WalletTransaction[]     @relation("WalletTransactionCreator")
+  createdRaidActivities    RaidActivity[]          @relation("RaidActivityCreator")
+  createdRaidActivityTypes RaidActivityType[]      @relation("RaidActivityTypeCreator")
+  updatedTransactions      WalletTransaction[]     @relation("WalletTransactionLatestUpdater")
+  updatedRaidActivities    RaidActivity[]          @relation("RaidActivityLatestUpdater")
+  updatedRaidActivityTypes RaidActivityType[]      @relation("RaidActivityTypeLatestUpdater")
+  raidActivityAttendance   RaidActivityAttendant[]
 }
 
 model Account {

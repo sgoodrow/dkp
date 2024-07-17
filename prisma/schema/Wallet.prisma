@@ -6,20 +6,16 @@ model Wallet {
 
     // Properties
     balance Float @default(0)
+    earned  Float @default(0)
+    spent   Float @default(0)
 
     // Relationships
-    userId       String        @unique
-    user         User          @relation(fields: [userId], references: [id])
-    transactions Transaction[]
+    userId       String              @unique
+    user         User                @relation(fields: [userId], references: [id])
+    transactions WalletTransaction[]
 }
 
-enum TransactionType {
-    ADJUSTMENT
-    PURCHASE
-    EARNING
-}
-
-model Transaction {
+model WalletTransaction {
     // Common
     id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
@@ -27,32 +23,17 @@ model Transaction {
 
     // Properties
     amount Float
-    type   TransactionType
+    reason String?
 
     // Relationships
-    walletId      Int
-    wallet        Wallet      @relation(fields: [walletId], references: [id])
-    adjustment    Adjustment?
-    purchase      Purchase?
-    earning       Payout?
-    createdById   String      @unique
-    createdByUser User        @relation("TransactionCreator", fields: [createdById], references: [id])
-    updatedById   String      @unique
-    updatedByUser User        @relation("TransactionLatestUpdater", fields: [updatedById], references: [id])
-
-    @@index([walletId])
-}
-
-model Adjustment {
-    // Common
-    id Int @id @default(autoincrement())
-
-    // Properties
-    reason String
-
-    // Relationships
+    walletId       Int           @unique
+    wallet         Wallet        @relation(fields: [walletId], references: [id])
+    itemId         Int?          @unique
+    item           Item?         @relation(fields: [itemId], references: [id])
     raidActivityId Int?          @unique
     raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
-    transactionId  Int           @unique
-    transaction    Transaction   @relation(fields: [transactionId], references: [id])
+    createdById    String        @unique
+    createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
+    updatedById    String        @unique
+    updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
 }

@@ -1,14 +1,3 @@
-model Purchase {
-    // Common
-    id Int @id @default(autoincrement())
-
-    // Relationships
-    itemId        Int         @unique
-    item          Item        @relation(fields: [itemId], references: [id])
-    transactionId Int         @unique
-    transaction   Transaction @relation(fields: [transactionId], references: [id])
-}
-
 model Item {
     // Common
     id Int @id @default(autoincrement())
@@ -18,6 +7,6 @@ model Item {
     wikiSlug String
 
     // Relationships
-    purchases      Purchase[]
+    purchases      WalletTransaction[]
     raidActivities RaidActivity[]
 }

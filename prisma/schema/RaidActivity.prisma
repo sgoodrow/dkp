@@ -1,13 +1,3 @@
-model Payout {
-    // Common
-    id Int @id @default(autoincrement())
-
-    // Relationships
-    raidActivity  RaidActivity?
-    transactionId Int           @unique
-    transaction   Transaction   @relation(fields: [transactionId], references: [id])
-}
-
 model RaidActivity {
     // Common
     id        Int      @id @default(autoincrement())
@@ -15,19 +5,19 @@ model RaidActivity {
     updatedAt DateTime @updatedAt
 
     // Properties
-    note String
+    note   String
+    payout Float
 
     // Relationships
-    items              Item[]
-    adjustments        Adjustment[]
-    payoutId           Int              @unique
-    payout             Payout           @relation(fields: [payoutId], references: [id])
-    raidActivityTypeId Int              @unique
-    raidActivityType   RaidActivityType @relation(fields: [raidActivityTypeId], references: [id])
-    createdById        String           @unique
-    createdByUser      User             @relation("RaidActivityCreator", fields: [createdById], references: [id])
-    updatedById        String           @unique
-    updatedByUser      User             @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
+    attendees          RaidActivityAttendant[]
+    drops              Item[]
+    adjustments        WalletTransaction[]
+    raidActivityTypeId Int                     @unique
+    raidActivityType   RaidActivityType        @relation(fields: [raidActivityTypeId], references: [id])
+    createdById        String                  @unique
+    createdByUser      User                    @relation("RaidActivityCreator", fields: [createdById], references: [id])
+    updatedById        String                  @unique
+    updatedByUser      User                    @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
 }
 
 model RaidActivityType {
@@ -37,13 +27,26 @@ model RaidActivityType {
     updatedAt DateTime @updatedAt
 
     // Properties
-    name                           String @unique
-    defaultPayoutTransactionAmount Float
+    name          String @unique
+    defaultPayout Float
 
     // Relationships
+    raidActivities RaidActivity[]
     createdById    String         @unique
     createdByUser  User           @relation("RaidActivityTypeCreator", fields: [createdById], references: [id])
     updatedById    String         @unique
     updatedByUser  User           @relation("RaidActivityTypeLatestUpdater", fields: [updatedById], references: [id])
-    raidActivities RaidActivity[]
+}
+
+model RaidActivityAttendant {
+    // Common
+    id Int @id @default(autoincrement())
+
+    // Relationships
+    characterId    Int          @unique
+    character      Character    @relation(fields: [characterId], references: [id])
+    pilotId        String?      @unique
+    pilot          User?        @relation(fields: [pilotId], references: [id])
+    raidActivityId Int          @unique
+    raidActivity   RaidActivity @relation(fields: [raidActivityId], references: [id])
 }
