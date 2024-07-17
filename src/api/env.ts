@@ -2,8 +2,6 @@ import { z } from "zod";
 
 const envSchema = z.object({
   // Base
-  NAME: z.string(),
-  VERSION: z.string(),
   NODE_ENV: z.enum(["development", "test", "production"]),
 
   // Vercel
@@ -40,6 +38,4 @@ const envSchema = z.object({
 export const ENV = envSchema.parse({
   ...process.env,
   NODE_ENV: process.env.NODE_ENV || "development",
-  NAME: process.env.npm_package_name,
-  VERSION: process.env.npm_package_version,
 });

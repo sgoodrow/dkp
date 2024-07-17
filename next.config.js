@@ -6,10 +6,6 @@ const middleware = [(c) => c];
 
 /** @type {import('next').NextConfig} */
 const config = {
-  env: {
-    VERSION: process.env.npm_package_version,
-    NAME: process.env.npm_package_name,
-  },
   reactStrictMode: true,
   images: {
     remotePatterns: [
