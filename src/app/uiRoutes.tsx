@@ -80,14 +80,20 @@ export const uiRoutes = {
   },
   // Sub-pages
   player: {
-    href: (playerId: string) =>
+    href: ({ playerId }: { playerId: string }) =>
       `${uiRoutes.players.href()}/${playerId}` as const,
     name: (name: string) => `Player - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_PLAYER,
   },
   character: {
-    href: (playerId: string, characterId: number) =>
-      `${uiRoutes.player.href(playerId)}/character/${characterId}` as const,
+    href: ({
+      playerId,
+      characterId,
+    }: {
+      playerId: string;
+      characterId: number;
+    }) =>
+      `${uiRoutes.player.href({ playerId })}/character/${characterId}` as const,
     name: (name: string) => `Character - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_CHARACTER,
   },

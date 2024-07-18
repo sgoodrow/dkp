@@ -5,7 +5,9 @@ import { characterController } from "@/api/controllers/characterController";
 const schema = z.array(
   z.object({
     name: z.string(),
-    hexColor: z.string(),
+    colorHexLight: z.string(),
+    colorHexDark: z.string(),
+    allowedRaces: z.array(z.string()),
   }),
 );
 

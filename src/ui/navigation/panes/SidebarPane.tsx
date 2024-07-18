@@ -36,7 +36,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
   children,
 }) => {
   const pathname = usePathname();
-  const { data } = trpc.user.isAdmin.useQuery();
+  const { data: isAdmin } = trpc.user.isAdmin.useQuery();
   const [prevPageHref, setPrevPageHref] = useState<string>(
     uiRoutes.home.href(),
   );
@@ -90,7 +90,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
             )}
             {items.map(
               ({ href, name, icon: Icon, dataMonitoringId, adminOnly }) => {
-                if (adminOnly && !data?.isAdmin) {
+                if (adminOnly && !isAdmin) {
                   return null;
                 }
                 return (

@@ -11,11 +11,13 @@ import {
   createCallerFactory,
   createRoutes,
 } from "@/api/views/trpc/trpcBuilder";
+import { characterApiRoutes } from "@/api/views/apiRoutes/characterApiRoutes";
 
 export const trpcRoutes = createRoutes({
   health: healthApiRoutes,
   user: userApiRoutes,
   apiKey: apiKeyApiRoutes,
+  character: characterApiRoutes,
 });
 
 export const createSSRHelper = () =>

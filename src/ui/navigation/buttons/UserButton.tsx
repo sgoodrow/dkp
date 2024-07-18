@@ -3,7 +3,7 @@
 import { trpc } from "@/api/views/trpc/trpc";
 import { uiRoutes } from "@/app/uiRoutes";
 import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
-import { AccountCircle, Star } from "@mui/icons-material";
+import { AccountCircle } from "@mui/icons-material";
 import { Badge, Box, Popper, Skeleton, useTheme } from "@mui/material";
 import Image from "next/image";
 import { FC, useRef } from "react";
@@ -20,7 +20,7 @@ export const UserButton: FC<{ hideLabel: boolean }> = ({ hideLabel }) => {
       <Box ref={anchorEl}>
         <SideBarButton
           dataMonitoringId={route.dataMonitoringId}
-          href={route.href(data?.id || "")}
+          href={route.href({ playerId: data?.id || "" })}
           name={data?.name || <Skeleton />}
           icon={
             data === undefined ? (

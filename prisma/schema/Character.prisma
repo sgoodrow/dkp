@@ -5,16 +5,22 @@ model Character {
     updatedAt DateTime @updatedAt
 
     // Properties
-    name String @unique
+    name  String  @unique
+    isBot Boolean @default(false)
 
     // Relationships
-    defaultPilotId         String?                 @unique
+    defaultPilotId         String?
     defaultPilot           User?                   @relation(fields: [defaultPilotId], references: [id])
-    classId                Int                     @unique
-    class                  CharacterClass?         @relation(fields: [classId], references: [id])
-    raceId                 Int                     @unique
-    race                   CharacterRace?          @relation(fields: [raceId], references: [id])
+    classId                Int
+    class                  CharacterClass          @relation(fields: [classId], references: [id])
+    raceId                 Int
+    race                   CharacterRace           @relation(fields: [raceId], references: [id])
     raidActivityAttendance RaidActivityAttendant[]
+
+    // Indexes
+    @@index([defaultPilotId])
+    @@index([classId])
+    @@index([raceId])
 }
 
 model CharacterClass {
@@ -22,11 +28,13 @@ model CharacterClass {
     id Int @id @default(autoincrement())
 
     // Properties
-    name     String @unique
-    hexColor String
+    name          String @unique
+    colorHexDark  String
+    colorHexLight String
 
     // Relationships
-    characters Character[]
+    characters            Character[]
+    raceClassCombinations RaceClassCombination[]
 }
 
 model CharacterRace {
@@ -37,5 +45,17 @@ model CharacterRace {
     name String @unique
 
     // Relationships
-    characters Character[]
+    characters            Character[]
+    raceClassCombinations RaceClassCombination[]
+}
+
+model RaceClassCombination {
+    // Common
+    id Int @id @default(autoincrement())
+
+    // Relationships
+    raceId  Int
+    race    CharacterRace  @relation(fields: [raceId], references: [id])
+    classId Int
+    class   CharacterClass @relation(fields: [classId], references: [id])
 }

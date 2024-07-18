@@ -41,4 +41,19 @@ export const userRepository = {
       where: { email },
     });
   },
+
+  searchByName: async ({ search, take }: { search: string; take: number }) => {
+    return prisma.user.findMany({
+      where: {
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take,
+    });
+  },
 };

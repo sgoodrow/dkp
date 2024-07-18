@@ -6,6 +6,6 @@ import { ingestRaces } from "prisma/dataMigrations/initDb/ingestRaces";
 export const initDbDataMigration = async () => {
   console.log(`Running init DB data migration on ${ENV.POSTGRES_DATABASE}`);
   await ingestItems();
-  await ingestClasses();
   await ingestRaces();
+  await ingestClasses();
 };

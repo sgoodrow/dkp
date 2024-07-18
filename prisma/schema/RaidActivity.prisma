@@ -9,15 +9,15 @@ model RaidActivity {
     payout Float
 
     // Relationships
-    attendees          RaidActivityAttendant[]
-    drops              Item[]
-    adjustments        WalletTransaction[]
-    raidActivityTypeId Int                     @unique
-    raidActivityType   RaidActivityType        @relation(fields: [raidActivityTypeId], references: [id])
-    createdById        String                  @unique
-    createdByUser      User                    @relation("RaidActivityCreator", fields: [createdById], references: [id])
-    updatedById        String                  @unique
-    updatedByUser      User                    @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
+    attendees     RaidActivityAttendant[]
+    drops         Item[]
+    adjustments   WalletTransaction[]
+    typeId        Int
+    type          RaidActivityType        @relation(fields: [typeId], references: [id])
+    createdById   String
+    createdByUser User                    @relation("RaidActivityCreator", fields: [createdById], references: [id])
+    updatedById   String
+    updatedByUser User                    @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
 }
 
 model RaidActivityType {
@@ -32,9 +32,9 @@ model RaidActivityType {
 
     // Relationships
     raidActivities RaidActivity[]
-    createdById    String         @unique
+    createdById    String
     createdByUser  User           @relation("RaidActivityTypeCreator", fields: [createdById], references: [id])
-    updatedById    String         @unique
+    updatedById    String
     updatedByUser  User           @relation("RaidActivityTypeLatestUpdater", fields: [updatedById], references: [id])
 }
 
@@ -43,9 +43,9 @@ model RaidActivityAttendant {
     id Int @id @default(autoincrement())
 
     // Relationships
-    characterId    Int          @unique
+    characterId    Int
     character      Character    @relation(fields: [characterId], references: [id])
-    pilotId        String?      @unique
+    pilotId        String?
     pilot          User?        @relation(fields: [pilotId], references: [id])
     raidActivityId Int          @unique
     raidActivity   RaidActivity @relation(fields: [raidActivityId], references: [id])

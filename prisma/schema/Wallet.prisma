@@ -26,14 +26,14 @@ model WalletTransaction {
     reason String?
 
     // Relationships
-    walletId       Int           @unique
+    walletId       Int
     wallet         Wallet        @relation(fields: [walletId], references: [id])
-    itemId         Int?          @unique
+    itemId         Int?
     item           Item?         @relation(fields: [itemId], references: [id])
-    raidActivityId Int?          @unique
+    raidActivityId Int?
     raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
-    createdById    String        @unique
+    createdById    String
     createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
-    updatedById    String        @unique
+    updatedById    String
     updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
 }

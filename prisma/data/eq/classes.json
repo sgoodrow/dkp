@@ -1,50 +1,115 @@
 [
   {
-    "name": "Bard",
-    "hexColor": "#FFD700"
-  },
-  {
-    "name": "Cleric",
-    "hexColor": "#FFFFFF"
-  },
-  {
-    "name": "Druid",
-    "hexColor": "#32CD32"
-  },
-  {
     "name": "Enchanter",
-    "hexColor": "#8A2BE2"
+    "colorHexLight": "#6929c4",
+    "colorHexDark": "#8a3ffc",
+    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "High Elf", "Human"]
   },
   {
     "name": "Magician",
-    "hexColor": "#FF4500"
-  },
-  {
-    "name": "Monk",
-    "hexColor": "#FF8C00"
+    "colorHexLight": "#1192e8",
+    "colorHexDark": "#33b1ff",
+    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "High Elf", "Human"]
   },
   {
     "name": "Necromancer",
-    "hexColor": "#800080"
+    "colorHexLight": "#fa4d56",
+    "colorHexDark": "#fa4d56",
+    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "Iksar", "Human"]
   },
   {
-    "name": "Paladin",
-    "hexColor": "#ADD8E6"
+    "name": "Wizard",
+    "colorHexLight": "#9f1853",
+    "colorHexDark": "#ff7eb6",
+    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "High Elf", "Human"]
   },
   {
-    "name": "Ranger",
-    "hexColor": "#228B22"
+    "name": "Cleric",
+    "colorHexLight": "#570408",
+    "colorHexDark": "#fff1f1",
+    "allowedRaces": [
+      "Dark Elf",
+      "Erudite",
+      "Dwarf",
+      "Gnome",
+      "High Elf",
+      "Half Elf",
+      "Human",
+      "Halfling"
+    ]
   },
   {
-    "name": "Rogue",
-    "hexColor": "#DC143C"
-  },
-  {
-    "name": "Shadow Knight",
-    "hexColor": "#2F4F4F"
+    "name": "Druid",
+    "colorHexLight": "#198038",
+    "colorHexDark": "#6fdc8c",
+    "allowedRaces": ["Wood Elf", "Half Elf", "Halfling", "Human"]
   },
   {
     "name": "Shaman",
-    "hexColor": "#00CED1"
+    "colorHexLight": "#002d9c",
+    "colorHexDark": "#4589ff",
+    "allowedRaces": ["Barbarian", "Iksar", "Ogre", "Troll"]
+  },
+  {
+    "name": "Bard",
+    "colorHexLight": "#b28600",
+    "colorHexDark": "#d2a106",
+    "allowedRaces": ["Wood Elf", "Half Elf", "Human"]
+  },
+  {
+    "name": "Monk",
+    "colorHexLight": "#012749",
+    "colorHexDark": "#bae6ff",
+    "allowedRaces": ["Iksar", "Human"]
+  },
+  {
+    "name": "Ranger",
+    "colorHexLight": "#009d9a",
+    "colorHexDark": "#08bdba",
+    "allowedRaces": ["Half Elf", "Human", "Wood Elf"]
+  },
+  {
+    "name": "Rogue",
+    "colorHexLight": "#ee538b",
+    "colorHexDark": "#d12771",
+    "allowedRaces": [
+      "Barbarian",
+      "Dark Elf",
+      "Dwarf",
+      "Gnome",
+      "Half Elf",
+      "Halfling",
+      "Human",
+      "Wood Elf"
+    ]
+  },
+  {
+    "name": "Paladin",
+    "colorHexLight": "#a56eff",
+    "colorHexDark": "#d4bbff",
+    "allowedRaces": ["Dwarf", "Erudite", "Half Elf", "High Elf", "Human"]
+  },
+  {
+    "name": "Shadow Knight",
+    "colorHexLight": "#005d5d",
+    "colorHexDark": "#007d79",
+    "allowedRaces": ["Dark Elf", "Erudite", "Human", "Iksar", "Ogre", "Troll"]
+  },
+  {
+    "name": "Warrior",
+    "colorHexDark": "#ba4e00",
+    "colorHexLight": "#8a3800",
+    "allowedRaces": [
+      "Barbarian",
+      "Dark Elf",
+      "Dwarf",
+      "Gnome",
+      "Half Elf",
+      "Halfling",
+      "Human",
+      "Iksar",
+      "Ogre",
+      "Troll"
+    ]
   }
 ]

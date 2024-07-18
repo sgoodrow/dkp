@@ -9,12 +9,14 @@ export const LinkToSiteButton: FC<{
   href?: string;
   label: string;
 }> = ({ "data-monitoring-id": dataMonitoringId, href, label }) => {
+  const isExternal = href?.startsWith("http");
   return (
     <Button
       data-monitoring-id={dataMonitoringId}
       href={href || ""}
-      target="_blank"
-      endIcon={<OpenInNew />}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener" : undefined}
+      endIcon={isExternal && <OpenInNew />}
       size="small"
       disabled={!href}
     >

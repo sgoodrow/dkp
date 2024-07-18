@@ -97,7 +97,7 @@ To run locally, the app requires some secrets to be injected from environment va
 
 ## Deployment
 
-A/B GPT is deployed via Vercel.
+This project is deployed via Vercel.
 
 Deployment configuration is [here][deploy].
 

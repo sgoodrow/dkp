@@ -12,9 +12,7 @@ export const userController = {
     const roleIds = await discordService.getMemberRoleIds({
       memberId: discordUserId,
     });
-    return {
-      isAdmin: roleIds.includes(guild.discordAdminRoleId),
-    };
+    return roleIds.includes(guild.discordAdminRoleId);
   },
 
   get: async ({ userId }: { userId: string }) => {
@@ -30,5 +28,9 @@ export const userController = {
 
   getByEmail: async ({ email }: { email: string }) => {
     return userRepository.getByEmail({ email });
+  },
+
+  searchByName: async ({ search, take }: { search: string; take: number }) => {
+    return userRepository.searchByName({ search, take });
   },
 };

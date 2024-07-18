@@ -8,6 +8,7 @@ import { ThemeProvider } from "@/ui/shared/contexts/ThemeProvider";
 import { TrpcProvider } from "@/ui/shared/contexts/TrpcProvider";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { SessionProvider } from "next-auth/react";
 
 /*
  * A wrapper of React Context Providers (https://react.dev/reference/react/useContext) that are made
@@ -15,18 +16,20 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
  */
 export const ClientProviders: FCWithChildren = ({ children }) => {
   return (
-    <TrpcProvider>
-      <ThemeProvider>
-        <SnackbarProvider>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Suspense>
-              <QueryParamProvider adapter={NextAdapterApp}>
-                {children}
-              </QueryParamProvider>
-            </Suspense>
-          </LocalizationProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </TrpcProvider>
+    <SessionProvider>
+      <TrpcProvider>
+        <ThemeProvider>
+          <SnackbarProvider>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Suspense>
+                <QueryParamProvider adapter={NextAdapterApp}>
+                  {children}
+                </QueryParamProvider>
+              </Suspense>
+            </LocalizationProvider>
+          </SnackbarProvider>
+        </ThemeProvider>
+      </TrpcProvider>
+    </SessionProvider>
   );
 };
