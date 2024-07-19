@@ -48,12 +48,14 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
   const currentClassId = useStore((state) => state.values.classId);
 
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
-  const { data: classes } = trpc.character.getClasses.useQuery({
-    raceId: currentRaceId === -1 ? undefined : currentRaceId,
-  });
-  const { data: races } = trpc.character.getRaces.useQuery({
-    classId: currentClassId === -1 ? undefined : currentClassId,
-  });
+  const { data: classes, isAdmin: isLoadingClasses } =
+    trpc.character.getClasses.useQuery({
+      raceId: currentRaceId === -1 ? undefined : currentRaceId,
+    });
+  const { data: races, isLoading: isLoadingRaces } =
+    trpc.character.getRaces.useQuery({
+      classId: currentClassId === -1 ? undefined : currentClassId,
+    });
 
   const utils = trpc.useUtils();
 
@@ -156,6 +158,7 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                     field.handleChange(newValue?.id ?? -1);
                   }}
                   options={races || []}
+                  loading={isLoadingRaces}
                   fullWidth
                   autoHighlight
                   autoSelect
@@ -177,6 +180,7 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                     field.handleChange(newValue?.id ?? -1);
                   }}
                   options={classes || []}
+                  loading={isLoadingClasses}
                   fullWidth
                   autoHighlight
                   autoSelect
