@@ -48,7 +48,7 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
   const currentClassId = useStore((state) => state.values.classId);
 
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
-  const { data: classes, isAdmin: isLoadingClasses } =
+  const { data: classes, isLoading: isLoadingClasses } =
     trpc.character.getClasses.useQuery({
       raceId: currentRaceId === -1 ? undefined : currentRaceId,
     });
