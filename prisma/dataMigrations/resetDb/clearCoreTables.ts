@@ -1,6 +1,14 @@
 import { prisma } from "@/api/repositories/prisma";
+import {
+  logWorkflowComplete,
+  logWorkflowStarted,
+} from "prisma/dataMigrations/util";
+
+const workflowName = "Clearing core tables";
 
 export const clearCoreTables = async () => {
+  logWorkflowStarted(workflowName);
+
   const allTables = await prisma.$queryRaw<{ table_name: string }[]>`
           SELECT table_name
           FROM information_schema.tables
@@ -29,5 +37,5 @@ export const clearCoreTables = async () => {
 
   await prisma.$disconnect();
 
-  console.log(`...cleared core tables.`);
+  logWorkflowComplete(workflowName);
 };

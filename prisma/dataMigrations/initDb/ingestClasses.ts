@@ -1,6 +1,10 @@
 import { z } from "zod";
 import data from "prisma/data/eq/classes.json";
 import { characterController } from "@/api/controllers/characterController";
+import {
+  logWorkflowComplete,
+  logWorkflowStarted,
+} from "prisma/dataMigrations/util";
 
 const schema = z.array(
   z.object({
@@ -13,11 +17,14 @@ const schema = z.array(
 
 const classes = schema.parse(data);
 
+const workflowName = "Ingesting classes";
+
 export const ingestClasses = async () => {
-  await Promise.all(
-    classes.map((c) => {
-      return characterController.createClass(c);
-    }),
-  );
-  console.log(`...ingested all classes.`);
+  logWorkflowStarted(workflowName);
+
+  for (const c of classes) {
+    await characterController.createClass(c);
+  }
+
+  logWorkflowComplete(workflowName);
 };

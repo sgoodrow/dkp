@@ -1,24 +1,25 @@
 import { prisma } from "@/api/repositories/prisma";
 
 export const characterRepository = {
-  create: async ({
-    name,
-    raceId,
-    classId,
-    defaultPilotId,
+  createMany: async ({
+    characters,
   }: {
-    name: string;
-    raceId: number;
-    classId: number;
-    defaultPilotId?: string;
+    characters: {
+      name: string;
+      raceId: number;
+      classId: number;
+      defaultPilotId?: string;
+    }[];
   }) => {
-    return prisma.character.create({
-      data: {
-        name,
-        raceId,
-        classId,
-        defaultPilotId: defaultPilotId,
-      },
+    return prisma.character.createMany({
+      data: characters.map((c) => {
+        return {
+          name: c.name,
+          raceId: c.raceId,
+          classId: c.classId,
+          defaultPilotId: c.defaultPilotId,
+        };
+      }),
     });
   },
 
@@ -39,11 +40,11 @@ export const characterRepository = {
         colorHexLight,
         colorHexDark,
         raceClassCombinations: {
-          create: allowedRaces.map((r) => {
+          create: allowedRaces.map((raceName) => {
             return {
               race: {
                 connect: {
-                  name: r,
+                  name: raceName,
                 },
               },
             };

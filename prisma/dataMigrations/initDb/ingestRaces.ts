@@ -1,6 +1,10 @@
 import { z } from "zod";
 import data from "prisma/data/eq/races.json";
 import { characterController } from "@/api/controllers/characterController";
+import {
+  logWorkflowComplete,
+  logWorkflowStarted,
+} from "prisma/dataMigrations/util";
 
 const schema = z.array(
   z.object({
@@ -10,11 +14,14 @@ const schema = z.array(
 
 const races = schema.parse(data);
 
+const workflowName = "Ingesting races";
+
 export const ingestRaces = async () => {
-  await Promise.all(
-    races.map((r) => {
-      return characterController.createRace(r);
-    }),
-  );
-  console.log(`...ingested all races.`);
+  logWorkflowStarted(workflowName);
+
+  for (const r of races) {
+    await characterController.createRace(r);
+  }
+
+  logWorkflowComplete(workflowName);
 };

@@ -15,6 +15,7 @@ export const UserButton: FC<{ hideLabel: boolean }> = ({ hideLabel }) => {
   const { data } = trpc.user.get.useQuery();
   const route = uiRoutes.player;
   const theme = useTheme();
+
   return (
     <>
       <Box ref={anchorEl}>
@@ -52,7 +53,9 @@ export const UserButton: FC<{ hideLabel: boolean }> = ({ hideLabel }) => {
         open={!!anchorEl.current}
         anchorEl={anchorEl.current}
         placement="right-start"
-        sx={{ zIndex: 10000 }}
+        sx={{
+          zIndex: theme.zIndex.drawer,
+        }}
       >
         <Badge
           badgeContent={data?.currentDkp}

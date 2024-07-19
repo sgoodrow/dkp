@@ -5,23 +5,33 @@ const normalizeName = (name: string) => {
   return startCase(name);
 };
 
+type CreateCharacter = {
+  name: string;
+  raceId: number;
+  classId: number;
+  defaultPilotId?: string;
+};
+
 export const characterController = {
-  create: async ({
-    name,
-    raceId,
-    classId,
-    defaultPilotId,
-  }: {
-    name: string;
-    raceId: number;
-    classId: number;
-    defaultPilotId?: string;
-  }) => {
-    return characterRepository.create({
-      name: normalizeName(name),
-      raceId,
-      classId,
-      defaultPilotId,
+  createMany: async ({ characters }: { characters: CreateCharacter[] }) => {
+    return characterRepository.createMany({
+      characters: characters.map((c) => {
+        return {
+          ...c,
+          name: normalizeName(c.name),
+        };
+      }),
+    });
+  },
+
+  create: async (character: CreateCharacter) => {
+    return characterController.createMany({
+      characters: [
+        {
+          ...character,
+          name: normalizeName(character.name),
+        },
+      ],
     });
   },
 
@@ -37,15 +47,17 @@ export const characterController = {
     allowedRaces: string[];
   }) => {
     return characterRepository.createClass({
-      name,
+      name: normalizeName(name),
       colorHexLight,
       colorHexDark,
-      allowedRaces,
+      allowedRaces: allowedRaces.map((r) => normalizeName(r)),
     });
   },
 
   createRace: async ({ name }: { name: string }) => {
-    return characterRepository.createRace({ name });
+    return characterRepository.createRace({
+      name: normalizeName(name),
+    });
   },
 
   isNameAvailable: async ({ name }: { name: string }) => {
