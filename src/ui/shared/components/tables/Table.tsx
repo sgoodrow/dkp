@@ -1,20 +1,33 @@
 "use client";
 
-import { FC, memo, useMemo } from "react";
+import { FC, memo, useMemo, useRef } from "react";
 import {
   ColumnSizingColumn,
   ColumnSizingHeader,
   flexRender,
+  Row,
 } from "@tanstack/react-table";
-import { Box } from "@mui/material";
+import {
+  useVirtualizer,
+  VirtualItem,
+  Virtualizer,
+} from "@tanstack/react-virtual";
+import { Box, Typography, useTheme } from "@mui/material";
 
 export const Table = <TData,>({
   table,
+  rowHeight,
+  height,
 }: {
   table: import("@tanstack/table-core").Table<TData>;
+  rowHeight: number;
+  height: number;
 }) => {
   const columnSizingInfo = table.getState().columnSizingInfo;
   const columnSizing = table.getState().columnSizing;
+  const { rows } = table.getRowModel();
+
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   /**
    * Instead of calling `column.getSize()` on every render for every header
@@ -33,78 +46,140 @@ export const Table = <TData,>({
     [table, columnSizingInfo, columnSizing],
   );
 
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    estimateSize: () => rowHeight, //estimate row height for accurate scrollbar dragging
+    getScrollElement: () => tableContainerRef.current,
+    //measure dynamic row height, except in firefox because it measures table border height incorrectly
+    measureElement:
+      typeof window !== "undefined" &&
+      navigator.userAgent.indexOf("Firefox") === -1
+        ? (element) => element?.getBoundingClientRect().height
+        : undefined,
+    overscan: 5,
+  });
+
   return (
     <Box
+      ref={tableContainerRef}
+      position="relative" //needed for sticky header
+      height={height}
       sx={{
         overflowX: "auto",
       }}
     >
-      <Box
-        border="1px solid lightgray"
-        width={table.getTotalSize()}
-        sx={columnSizeVars}
-      >
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableRow key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <TableHeader key={header.id} headerId={header.id}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                <Resizer
-                  getIsResizing={header.column.getIsResizing}
-                  getResizeHandler={header.getResizeHandler}
-                  resetSize={header.column.resetSize}
-                />
-              </TableHeader>
-            ))}
-          </TableRow>
-        ))}
+      {/* table */}
+      <Box width={table.getTotalSize()} sx={columnSizeVars}>
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableHeaderRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHeaderCell key={header.id} headerId={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                  <TableHeaderCellResizer
+                    getIsResizing={header.column.getIsResizing}
+                    getResizeHandler={header.getResizeHandler}
+                    resetSize={header.column.resetSize}
+                  />
+                </TableHeaderCell>
+              ))}
+            </TableHeaderRow>
+          ))}
+        </TableHeader>
         {table.getState().columnSizingInfo.isResizingColumn ? (
-          <MemoizedTableBody table={table} />
+          <MemoizedTableBody rows={rows} rowVirtualizer={rowVirtualizer} />
         ) : (
-          <TableBody table={table} />
+          <TableBody rows={rows} rowVirtualizer={rowVirtualizer} />
         )}
       </Box>
     </Box>
   );
 };
 
-const TableBody = <TData,>({
-  table,
-}: {
-  table: import("@tanstack/table-core").Table<TData>;
-}) => {
+const TableHeader: FCWithChildren<{}> = ({ children }) => {
+  const theme = useTheme();
   return (
-    <div
-      {...{
-        className: "tbody",
+    <Box
+      position="sticky"
+      top={0}
+      zIndex={1}
+      sx={{
+        bgcolor: theme.palette.background.default,
       }}
     >
-      {table.getRowModel().rows.map((row) => (
-        <TableRow key={row.id}>
-          {row.getVisibleCells().map((cell) => {
-            return (
-              <TableCell key={cell.id} columnId={cell.column.id}>
-                {cell.renderValue<any>()}
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      ))}
-    </div>
+      {children}
+    </Box>
+  );
+};
+
+const TableBody = <TData,>({
+  rows,
+  rowVirtualizer,
+}: {
+  rows: Row<TData>[];
+  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+}) => {
+  return (
+    <Box
+      height={`${rowVirtualizer.getTotalSize()}px`} //tells scrollbar how big the table is
+      position="relative" //needed for absolute positioning of rows
+    >
+      {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+        const row = rows[virtualRow.index] as Row<TData>;
+        return (
+          <TableBodyRow
+            key={row.id}
+            rowVirtualizer={rowVirtualizer}
+            virtualRow={virtualRow}
+          >
+            {row.getVisibleCells().map((cell) => {
+              return (
+                <TableBodyCell key={cell.id} columnId={cell.column.id}>
+                  {cell.renderValue<any>()}
+                </TableBodyCell>
+              );
+            })}
+          </TableBodyRow>
+        );
+      })}
+    </Box>
   );
 };
 
 const MemoizedTableBody = memo(
   TableBody,
-  (prev, next) => prev.table.options.data === next.table.options.data,
+  (prev, next) => prev.rows === next.rows,
 ) as typeof TableBody;
 
-const Resizer: FC<{
+const TableHeaderRow: FCWithChildren<{}> = ({ children }) => {
+  return (
+    <Box width="fit-content" display="flex">
+      {children}
+    </Box>
+  );
+};
+
+const TableHeaderCell: FCWithChildren<{
+  headerId: string;
+}> = ({ headerId, children }) => {
+  return (
+    <Box
+      width={`calc(var(--header-${headerId}-size) * 1px)`}
+      p={1}
+      position="relative"
+      textAlign="center"
+    >
+      <Typography variant="h5">{children}</Typography>
+    </Box>
+  );
+};
+
+const TableHeaderCellResizer: FC<{
   getResizeHandler: ColumnSizingHeader["getResizeHandler"];
   getIsResizing: ColumnSizingColumn["getIsResizing"];
   resetSize: ColumnSizingColumn["resetSize"];
@@ -141,36 +216,30 @@ const Resizer: FC<{
   );
 };
 
-const TableHeader: FCWithChildren<{
-  headerId: string;
-}> = ({ headerId, children }) => {
+const TableBodyRow: FCWithChildren<{
+  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  virtualRow: VirtualItem<Element>;
+}> = ({ rowVirtualizer, virtualRow, children }) => {
   return (
     <Box
-      width={`calc(var(--header-${headerId}-size) * 1px)`}
-      boxShadow="inset 0 0 0 1px lightgray"
-      padding="2px 4px"
-      overflow="hidden"
-      textOverflow="ellipsis"
-      alignContent="center"
-      position="relative"
-      fontWeight="bold"
-      textAlign="center"
+      display="flex"
+      position="absolute"
+      width="fit-content"
       height="30px"
+      sx={{
+        transform: `translateY(${virtualRow.start}px)`, //this should always be a
+      }}
+      ref={(node: Element | null | undefined) =>
+        rowVirtualizer.measureElement(node)
+      } //measure dynamic row height
+      data-index={virtualRow.index} //needed for dynamic row height measurement
     >
       {children}
     </Box>
   );
 };
 
-const TableRow: FCWithChildren<{}> = ({ children }) => {
-  return (
-    <Box width="fit-content" height="30px" display="flex">
-      {children}
-    </Box>
-  );
-};
-
-const TableCell: FCWithChildren<{ columnId: string }> = ({
+const TableBodyCell: FCWithChildren<{ columnId: string }> = ({
   columnId,
   children,
 }) => {

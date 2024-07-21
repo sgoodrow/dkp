@@ -66,5 +66,5 @@ export const RaidsTable: FC<{}> = ({}) => {
     columnResizeMode: "onChange",
   });
 
-  return <Table table={table} />;
+  return <Table table={table} height={800} rowHeight={33} />;
 };
