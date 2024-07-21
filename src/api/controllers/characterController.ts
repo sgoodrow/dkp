@@ -77,11 +77,8 @@ export const characterController = {
     });
   },
 
-  get: async ({ take, userId }: { take: number; userId: string }) => {
-    return {
-      total: await characterRepository.getTotalCharacters({ userId }),
-      characters: await characterRepository.getCharacters({ take, userId }),
-    };
+  getByUserId: async ({ userId }: { userId: string }) => {
+    return characterRepository.getByUserId({ userId });
   },
 
   getClasses: async ({ raceId }: { raceId?: number }) => {

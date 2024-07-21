@@ -45,18 +45,11 @@ export const characterApiRoutes = createRoutes({
       });
     }),
 
-  get: protectedProcedure
-    .input(
-      z.object({
-        take: z.number().int().min(1).max(100),
-      }),
-    )
-    .query(async ({ input, ctx }) => {
-      return await characterController.get({
-        take: input.take,
-        userId: ctx.userId,
-      });
-    }),
+  getByUserId: protectedProcedure.query(async ({ ctx }) => {
+    return await characterController.getByUserId({
+      userId: ctx.userId,
+    });
+  }),
 
   getClasses: protectedProcedure
     .input(

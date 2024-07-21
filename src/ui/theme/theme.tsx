@@ -1,5 +1,10 @@
 import { green, grey, lightBlue } from "@mui/material/colors";
-import { experimental_extendTheme, listItemButtonClasses } from "@mui/material";
+import {
+  darkScrollbar,
+  experimental_extendTheme,
+  listItemButtonClasses,
+  Theme,
+} from "@mui/material";
 import NextLink, { LinkProps as NextLinkProps } from "next/link";
 import { forwardRef } from "react";
 import { font } from "@/ui/theme/font";
@@ -132,12 +137,23 @@ export const theme = experimental_extendTheme({
         variant: "outlined",
       },
     },
+    MuiCssBaseline: {
+      styleOverrides: (theme) => ({
+        html: theme.palette.mode === "dark" ? darkScrollbar() : null,
+        body: theme.palette.mode === "dark" ? darkScrollbar() : null,
+      }),
+    },
     MuiToggleButton: {
       defaultProps: {
         size: "small",
       },
     },
     MuiIconButton: {
+      defaultProps: {
+        size: "small",
+      },
+    },
+    MuiTable: {
       defaultProps: {
         size: "small",
       },

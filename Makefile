@@ -10,7 +10,7 @@ help:
 	@echo " * local-setup              install the local server dependencies"
 	@echo " * local-run                run local server"
 	@echo " * local-db-reset-total     reset all tables of the local database"
-	@echo " * local-db-reset           reset only the core tables of the local database"
+	@echo " * local-db-reset           reset the core tables of the local database and ingest test data"
 	@echo " * local-pre-commit         run pre-commit hooks"
 	@echo
 	@echo "--- Data Migrations ---"

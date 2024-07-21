@@ -87,7 +87,7 @@ export const characterRepository = {
     return combination !== null;
   },
 
-  getTotalCharacters: async ({ userId }: { userId: string }) => {
+  getCount: async ({ userId }: { userId: string }) => {
     return prisma.character.count({
       where: {
         defaultPilotId: userId,
@@ -95,7 +95,7 @@ export const characterRepository = {
     });
   },
 
-  getCharacters: async ({ take, userId }: { take: number; userId: string }) => {
+  getByUserId: async ({ userId }: { userId: string }) => {
     return prisma.character.findMany({
       where: {
         defaultPilotId: userId,
@@ -117,7 +117,6 @@ export const characterRepository = {
           },
         },
       },
-      take,
     });
   },
 
