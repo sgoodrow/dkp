@@ -12,7 +12,9 @@ import {
   VirtualItem,
   Virtualizer,
 } from "@tanstack/react-virtual";
-import { Box, Typography, useTheme } from "@mui/material";
+import { Box, Paper, Typography, useTheme } from "@mui/material";
+
+const ELEVATION = 1;
 
 export const Table = <TData,>({
   table,
@@ -67,6 +69,8 @@ export const Table = <TData,>({
       sx={{
         overflowX: "auto",
       }}
+      component={Paper}
+      elevation={ELEVATION}
     >
       {/* table */}
       <Box width={table.getTotalSize()} sx={columnSizeVars}>
@@ -108,9 +112,11 @@ const TableHeader: FCWithChildren<{}> = ({ children }) => {
       position="sticky"
       top={0}
       zIndex={1}
+      bgcolor={theme.palette.background.paper}
       sx={{
-        bgcolor: theme.palette.background.default,
+        backgroundImage: theme.overlays[ELEVATION],
       }}
+      boxShadow={theme.shadows[3]}
     >
       {children}
     </Box>
@@ -172,9 +178,8 @@ const TableHeaderCell: FCWithChildren<{
       width={`calc(var(--header-${headerId}-size) * 1px)`}
       p={1}
       position="relative"
-      textAlign="center"
     >
-      <Typography variant="h5">{children}</Typography>
+      <Typography variant="h6">{children}</Typography>
     </Box>
   );
 };
@@ -243,11 +248,13 @@ const TableBodyCell: FCWithChildren<{ columnId: string }> = ({
   columnId,
   children,
 }) => {
+  const theme = useTheme();
   return (
     <Box
       height="30px"
-      boxShadow="inset 0 0 0 1px lightgray;"
-      padding="0.25rem"
+      borderBottom={`1px solid ${theme.palette.divider}`}
+      //   boxShadow="inset 0 0 0 1px lightgray;"
+      px={1}
       overflow="hidden"
       textOverflow="ellipsis"
       alignContent="center"
