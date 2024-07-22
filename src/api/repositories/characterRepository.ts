@@ -1,4 +1,12 @@
 import { prisma } from "@/api/repositories/prisma";
+import {
+  AgFilterModel,
+  agFilterModelToPrismaWhere,
+} from "@/api/shared/agGridUtils/filter";
+import {
+  AgSortModel,
+  agSortModelToPrismaOrderBy,
+} from "@/api/shared/agGridUtils/sort";
 
 export const characterRepository = {
   createMany: async ({
@@ -87,20 +95,43 @@ export const characterRepository = {
     return combination !== null;
   },
 
-  getTotalCharacters: async ({ userId }: { userId: string }) => {
+  countByUserId: async ({
+    userId,
+    filterModel,
+    sortModel,
+  }: {
+    userId: string;
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
     return prisma.character.count({
       where: {
+        ...agFilterModelToPrismaWhere(filterModel),
         defaultPilotId: userId,
       },
+      orderBy: agSortModelToPrismaOrderBy(sortModel),
     });
   },
 
-  getCharacters: async ({ take, userId }: { take: number; userId: string }) => {
+  getManyByUserId: async ({
+    userId,
+    startRow,
+    endRow,
+    filterModel,
+    sortModel,
+  }: {
+    userId: string;
+    startRow: number;
+    endRow: number;
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
     return prisma.character.findMany({
       where: {
+        ...agFilterModelToPrismaWhere(filterModel),
         defaultPilotId: userId,
       },
-      orderBy: {
+      orderBy: agSortModelToPrismaOrderBy(sortModel) || {
         createdAt: "desc",
       },
       include: {
@@ -117,7 +148,8 @@ export const characterRepository = {
           },
         },
       },
-      take,
+      skip: startRow,
+      take: endRow - startRow,
     });
   },
 

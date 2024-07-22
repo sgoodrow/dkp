@@ -5,7 +5,7 @@ model RaidActivity {
     updatedAt DateTime @updatedAt
 
     // Properties
-    note   String
+    note   String?
     payout Float
 
     // Relationships

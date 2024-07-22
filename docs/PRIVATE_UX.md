@@ -6,9 +6,8 @@
 
 ## 🚧 Page: `/private/home`
 
-- Guild banner
 - My current DKP - labeled value card => `/private/player/<id>`
-- My recent characters - card with table => `/private/player/<id>`
+- My characters - card with table => `/private/player/<id>` ✅
 - My recent raids - card with table => `/private/raids?player=<id>`
 - My recent items - card with table => `/private/items?player=<id>`
 - My recent adjustments - card with table => `/private/adjustments?player=<id>`

@@ -1,0 +1,17 @@
+@import "ag-grid-community/styles/ag-theme-alpine.css";
+
+.ag-theme-alpine-dark {
+  --ag-background-color: var(--mui-palette-background-paper);
+  --ag-odd-row-background-color: var(--mui-palette-background-paper);
+  --ag-header-background-color: var(--mui-palette-background-paper);
+  --ag-border-color: var(--mui-palette-divider);
+}
+
+.ag-theme-alpine-dark .ag-body,
+.ag-row {
+  background-image: var(--mui-overlays-1);
+}
+
+.ag-theme-alpine-dark .ag-header {
+  background-image: var(--mui-overlays-5);
+}

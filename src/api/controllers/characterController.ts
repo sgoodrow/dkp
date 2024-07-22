@@ -1,4 +1,6 @@
 import { characterRepository } from "@/api/repositories/characterRepository";
+import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
+import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { startCase } from "lodash";
 
 const normalizeName = (name: string) => {
@@ -77,10 +79,36 @@ export const characterController = {
     });
   },
 
-  get: async ({ take, userId }: { take: number; userId: string }) => {
+  countByUserId: async ({ userId }: { userId: string }) => {
+    return characterRepository.countByUserId({ userId });
+  },
+
+  getManyByUserId: async ({
+    userId,
+    startRow,
+    endRow,
+    filterModel,
+    sortModel,
+  }: {
+    userId: string;
+    startRow: number;
+    endRow: number;
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
     return {
-      total: await characterRepository.getTotalCharacters({ userId }),
-      characters: await characterRepository.getCharacters({ take, userId }),
+      totalRowCount: await characterRepository.countByUserId({
+        userId,
+        filterModel,
+        sortModel,
+      }),
+      rows: await characterRepository.getManyByUserId({
+        userId,
+        startRow,
+        endRow,
+        filterModel,
+        sortModel,
+      }),
     };
   },
 

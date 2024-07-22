@@ -142,6 +142,11 @@ export const theme = experimental_extendTheme({
         size: "small",
       },
     },
+    MuiTable: {
+      defaultProps: {
+        size: "small",
+      },
+    },
     MuiTextField: {
       defaultProps: {
         size: "small",
