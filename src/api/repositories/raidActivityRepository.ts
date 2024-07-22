@@ -1,7 +1,18 @@
 import { prisma } from "@/api/repositories/prisma";
-import { SortingState } from "@tanstack/react-table";
+import {
+  AgFilterModel,
+  agFilterModelToPrismaWhere,
+} from "@/api/shared/agGridUtils/filter";
+import {
+  AgSortModel,
+  agSortModelToPrismaOrderBy,
+} from "@/api/shared/agGridUtils/sort";
 
 export const raidActivityRepository = {
+  getCount: async () => {
+    return prisma.raidActivity.count();
+  },
+
   upsertTypeByName: async ({
     name,
     defaultPayout,
@@ -58,19 +69,30 @@ export const raidActivityRepository = {
     });
   },
 
-  getMany: async ({ sorting }: { sorting: SortingState }) => {
+  getMany: async ({
+    startRow,
+    endRow,
+    filterModel,
+    sortModel,
+  }: {
+    startRow: number;
+    endRow: number;
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
     return prisma.raidActivity.findMany({
-      orderBy: sorting.map((s) => {
-        return {
-          [s.id]: s.desc ? "desc" : "asc",
-        };
-      }),
+      orderBy: agSortModelToPrismaOrderBy(sortModel) || {
+        createdAt: "desc",
+      },
+      where: agFilterModelToPrismaWhere(filterModel),
       include: {
         _count: {
           select: { attendees: true, drops: true },
         },
         type: true,
       },
+      skip: startRow,
+      take: endRow - startRow,
     });
   },
 };

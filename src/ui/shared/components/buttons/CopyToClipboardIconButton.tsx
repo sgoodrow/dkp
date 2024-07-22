@@ -16,7 +16,7 @@ export type CopyToClipboardIconButtonProps = {
   ["data-monitoring-id"]: MonitoringId;
   value: string | undefined;
   label: string;
-  color: IconButtonProps["color"];
+  color?: IconButtonProps["color"];
   tooltipPlacement?: TooltipProps["placement"];
 };
 

@@ -130,7 +130,9 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
           </Stack>
         </Stack>
       </Drawer>
-      <Box ml={width}>{children}</Box>
+      <Box ml={width} display="flex" flexGrow={1}>
+        {children}
+      </Box>
     </>
   );
 };

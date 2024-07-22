@@ -1,22 +1,29 @@
 import { raidActivityController } from "@/api/controllers/raidActivityController";
+import { agFilterModelSchema } from "@/api/shared/agGridUtils/filter";
+import { agSortModelSchema } from "@/api/shared/agGridUtils/sort";
 import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
 export const raidActivityApiRoutes = createRoutes({
+  getCount: protectedProcedure.query(async () => {
+    return raidActivityController.getCount();
+  }),
+
   getMany: protectedProcedure
     .input(
       z.object({
-        sorting: z.array(
-          z.object({
-            id: z.string(),
-            desc: z.boolean(),
-          }),
-        ),
+        startRow: z.number().nonnegative().int(),
+        endRow: z.number().nonnegative().int(),
+        filterModel: agFilterModelSchema,
+        sortModel: agSortModelSchema,
       }),
     )
     .query(async ({ input }) => {
-      return await raidActivityController.getMany({
-        sorting: input.sorting,
+      return raidActivityController.getMany({
+        startRow: input.startRow,
+        endRow: input.endRow,
+        filterModel: input.filterModel,
+        sortModel: input.sortModel,
       });
     }),
 });

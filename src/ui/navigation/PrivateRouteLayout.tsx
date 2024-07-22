@@ -12,6 +12,8 @@ export const PrivateRouteLayout: FCWithChildren<{}> = ({ children }) => {
         maxWidth="xl"
         sx={{
           pt: 3,
+          display: "flex",
+          flexGrow: 1,
         }}
       >
         {children}

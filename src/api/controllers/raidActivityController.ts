@@ -1,7 +1,11 @@
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
-import { SortingState } from "@tanstack/react-table";
+import { AgFilterModel, AgSortModel } from "@/api/shared/agGridUtils";
 
 export const raidActivityController = {
+  getCount: async () => {
+    return raidActivityRepository.getCount();
+  },
+
   upsertTypeByName: async ({
     name,
     defaultPayout,
@@ -42,9 +46,22 @@ export const raidActivityController = {
     });
   },
 
-  getMany: async ({ sorting }: { sorting: SortingState }) => {
+  getMany: async ({
+    startRow,
+    endRow,
+    filterModel,
+    sortModel,
+  }: {
+    startRow: number;
+    endRow: number;
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
     return raidActivityRepository.getMany({
-      sorting,
+      startRow,
+      endRow,
+      filterModel,
+      sortModel,
     });
   },
 };
