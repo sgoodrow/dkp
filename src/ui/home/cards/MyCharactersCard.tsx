@@ -12,7 +12,7 @@ export const MyCharactersCard: FC<{}> = ({}) => {
       labelId="my-characters-grid-card"
       titleBar={<CreateCharacterDialogButton />}
     >
-      <Stack spacing={2}>
+      <Stack spacing={2} height="400px">
         <MyCharactersTable />
         <Divider />
         <Typography color="text.secondary" variant="body2">

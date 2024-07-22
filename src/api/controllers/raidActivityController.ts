@@ -1,11 +1,8 @@
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
-import { AgFilterModel, AgSortModel } from "@/api/shared/agGridUtils";
+import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
+import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 
 export const raidActivityController = {
-  getCount: async () => {
-    return raidActivityRepository.getCount();
-  },
-
   upsertTypeByName: async ({
     name,
     defaultPayout,
@@ -57,11 +54,17 @@ export const raidActivityController = {
     filterModel?: AgFilterModel;
     sortModel?: AgSortModel;
   }) => {
-    return raidActivityRepository.getMany({
-      startRow,
-      endRow,
-      filterModel,
-      sortModel,
-    });
+    return {
+      totalRowCount: await raidActivityRepository.getCount({
+        filterModel,
+        sortModel,
+      }),
+      rows: await raidActivityRepository.getMany({
+        startRow,
+        endRow,
+        filterModel,
+        sortModel,
+      }),
+    };
   },
 };

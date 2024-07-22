@@ -9,10 +9,6 @@ import {
 } from "@/api/shared/agGridUtils/sort";
 
 export const raidActivityRepository = {
-  getCount: async () => {
-    return prisma.raidActivity.count();
-  },
-
   upsertTypeByName: async ({
     name,
     defaultPayout,
@@ -66,6 +62,19 @@ export const raidActivityRepository = {
           updatedById,
         };
       }),
+    });
+  },
+
+  getCount: async ({
+    filterModel,
+    sortModel,
+  }: {
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
+    return prisma.raidActivity.count({
+      where: agFilterModelToPrismaWhere(filterModel),
+      orderBy: agSortModelToPrismaOrderBy(sortModel),
     });
   },
 

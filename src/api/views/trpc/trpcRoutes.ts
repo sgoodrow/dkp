@@ -12,7 +12,7 @@ import {
   createRoutes,
 } from "@/api/views/trpc/trpcBuilder";
 import { characterApiRoutes } from "@/api/views/apiRoutes/characterApiRoutes";
-import { raidActivityApiRoutes } from "@/api/views/apiRoutes/raidApiRoutes";
+import { raidActivityApiRoutes } from "@/api/views/apiRoutes/raidActivityApiRoutes";
 
 export const trpcRoutes = createRoutes({
   health: healthApiRoutes,

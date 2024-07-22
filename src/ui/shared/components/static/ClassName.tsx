@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, Typography, useTheme } from "@mui/material";
+import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
+import { useTheme } from "@mui/material";
 import { FC } from "react";
 
 export const ClassName: FC<{
@@ -10,12 +11,10 @@ export const ClassName: FC<{
 }> = ({ className, colorHexDark, colorHexLight }) => {
   const theme = useTheme();
   return (
-    <Box display="flex" height={1} alignItems="center">
-      <Typography
-        color={theme.palette.mode === "dark" ? colorHexDark : colorHexLight}
-      >
-        {className}
-      </Typography>
-    </Box>
+    <OverflowTooltipTypography
+      color={theme.palette.mode === "dark" ? colorHexDark : colorHexLight}
+    >
+      {className}
+    </OverflowTooltipTypography>
   );
 };

@@ -63,7 +63,7 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
     onSuccess: () => {
       reset();
       setOpen(false);
-      utils.character.getByUserId.invalidate();
+      utils.character.getManyByUserId.invalidate();
     },
   });
 

@@ -5,10 +5,6 @@ import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
 export const raidActivityApiRoutes = createRoutes({
-  getCount: protectedProcedure.query(async () => {
-    return raidActivityController.getCount();
-  }),
-
   getMany: protectedProcedure
     .input(
       z.object({

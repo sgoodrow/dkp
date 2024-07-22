@@ -1,4 +1,6 @@
 import { characterController } from "@/api/controllers/characterController";
+import { agFilterModelSchema } from "@/api/shared/agGridUtils/filter";
+import { agSortModelSchema } from "@/api/shared/agGridUtils/sort";
 import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
@@ -45,11 +47,24 @@ export const characterApiRoutes = createRoutes({
       });
     }),
 
-  getByUserId: protectedProcedure.query(async ({ ctx }) => {
-    return await characterController.getByUserId({
-      userId: ctx.userId,
-    });
-  }),
+  getManyByUserId: protectedProcedure
+    .input(
+      z.object({
+        startRow: z.number().nonnegative().int(),
+        endRow: z.number().nonnegative().int(),
+        filterModel: agFilterModelSchema,
+        sortModel: agSortModelSchema,
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      return await characterController.getManyByUserId({
+        userId: ctx.userId,
+        startRow: input.startRow,
+        endRow: input.endRow,
+        filterModel: input.filterModel,
+        sortModel: input.sortModel,
+      });
+    }),
 
   getClasses: protectedProcedure
     .input(

@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { FC } from "react";
-import { ICellRendererParams, IDatasource } from "ag-grid-community";
+import { ICellRendererParams } from "ag-grid-community";
 import { CopyToClipboardIconButton } from "@/ui/shared/components/buttons/CopyToClipboardIconButton";
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { uiRoutes } from "@/app/uiRoutes";
@@ -17,53 +17,20 @@ import { NumberCell } from "@/ui/shared/components/table/NumberCell";
 import { DateCell } from "@/ui/shared/components/table/DateCell";
 import { InfiniteTable } from "@/ui/shared/components/table/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
-import { isEmpty } from "lodash";
 import { SiteLink } from "@/ui/shared/components/links/SiteLink";
 import { Cell } from "@/ui/shared/components/table/Cell";
 
 export const RaidsTable: FC<{}> = ({}) => {
-  const { data: rowCount } = trpc.raidActivity.getCount.useQuery();
   const utils = trpc.useUtils();
-
-  const datasource: IDatasource = {
-    getRows: async (params) => {
-      const {
-        startRow,
-        endRow,
-        filterModel,
-        sortModel,
-        successCallback,
-        failCallback,
-      } = params;
-      if (startRow === undefined || endRow === undefined) {
-        throw new Error("startRow and endRow must be defined");
-      }
-      try {
-        const rows = await utils.raidActivity.getMany.fetch({
-          startRow,
-          endRow,
-          filterModel: isEmpty(filterModel) ? undefined : filterModel,
-          sortModel,
-        });
-        successCallback(rows, rowCount);
-      } catch (err) {
-        failCallback();
-        throw err;
-      }
-    },
-  };
 
   return (
     <>
       <Stack direction="row" spacing={1} alignItems="baseline">
         <Typography variant="h1">Raids</Typography>
         <Divider sx={{ flexGrow: 1, alignSelf: "center", pt: 1 }} />
-        <Typography variant="h1">
-          {rowCount === undefined ? <Skeleton width="100px" /> : rowCount}
-        </Typography>
       </Stack>
       <InfiniteTable
-        datasource={rowCount === undefined ? undefined : datasource}
+        getRows={utils.raidActivity.getMany.fetch}
         columnDefs={[
           {
             headerName: "",
