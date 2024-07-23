@@ -1,16 +1,17 @@
 import { raidActivityController } from "@/api/controllers/raidActivityController";
-import { range } from "lodash";
+import { random, range } from "lodash";
+import { createLogger } from "prisma/dataMigrations/util/log";
 import {
-  logWorkflowComplete,
-  logWorkflowMessage,
-  logWorkflowStarted,
-  processBatch,
-} from "prisma/dataMigrations/util";
+  createRandomPurchases,
+  getRandomAdjustments,
+  getRandomAttendees,
+  getRandomRaidActivity,
+} from "prisma/dataMigrations/util/random";
 
-const workflowName = "Ingesting raid activities";
+const logger = createLogger("Ingesting raid activitities");
 
 export const ingestRaidActivities = async ({ userId }: { userId: string }) => {
-  logWorkflowStarted(workflowName);
+  logger.info("Started workflow.");
 
   const raidActivityTypes = await Promise.all(
     [
@@ -20,7 +21,7 @@ export const ingestRaidActivities = async ({ userId }: { userId: string }) => {
       { name: "Plane of Growth", defaultPayout: 1 },
       { name: "Cazic Thule", defaultPayout: 3 },
     ].map(async ({ name, defaultPayout }) =>
-      raidActivityController.upsertTypeByName({
+      raidActivityController().upsertTypeByName({
         createdById: userId,
         updatedById: userId,
         name,
@@ -29,42 +30,26 @@ export const ingestRaidActivities = async ({ userId }: { userId: string }) => {
     ),
   );
 
-  const activities = range(1000).map(() => {
-    const randomType =
-      raidActivityTypes[Math.floor(Math.random() * raidActivityTypes.length)];
-
-    const randomDateInLast5Years = new Date(
-      new Date().getTime() - Math.random() * 1000 * 60 * 60 * 24 * 365 * 5,
-    );
-
-    const randomNote = range(100)
-      .map(() => Math.random().toString(36)[2])
-      .join("");
-
-    return {
-      payout: randomType.defaultPayout,
-      typeId: randomType.id,
-      createdAt: randomDateInLast5Years,
-      note: randomNote,
-    };
-  });
-
-  await processBatch(
-    activities,
-    async (batch) => {
-      await raidActivityController.createMany({
-        activities: batch,
+  range(100)
+    .map(() => getRandomRaidActivity({ raidActivityTypes }))
+    .map(async (activity) => {
+      const { id } = await raidActivityController().create({
+        activity,
+        adjustments: getRandomAdjustments({
+          count: random(1, 5),
+        }),
+        attendees: getRandomAttendees({
+          count: random(10, 20),
+        }),
+        purchases: createRandomPurchases({
+          count: random(1, 5),
+        }),
         createdById: userId,
         updatedById: userId,
       });
-    },
-    (batchNumber, totalBatches) => {
-      logWorkflowMessage(
-        workflowName,
-        `Ingested batch ${batchNumber} of ${totalBatches}`,
-      );
-    },
-  );
 
-  logWorkflowComplete(workflowName);
+      logger.info(`Created activity ${id}`);
+    });
+
+  logger.info("Finished workflow.");
 };

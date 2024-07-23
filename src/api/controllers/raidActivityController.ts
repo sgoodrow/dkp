@@ -1,8 +1,84 @@
+import { walletController } from "@/api/controllers/walletController";
+import {
+  prisma,
+  PrismaTransactionClient,
+} from "@/api/repositories/shared/client";
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 
-export const raidActivityController = {
+export const raidActivityController = (p?: PrismaTransactionClient) => ({
+  create: async ({
+    createdById,
+    updatedById,
+    activity,
+    attendees,
+    adjustments,
+    purchases,
+  }: {
+    createdById: string;
+    updatedById: string;
+    activity: {
+      typeId: number;
+      payout?: number;
+      note?: string;
+    };
+    attendees: {
+      characterName: string;
+      pilotCharacterName?: string;
+    }[];
+    adjustments: {
+      characterName: string;
+      pilotCharacterName?: string;
+      amount: number;
+      reason: string;
+    }[];
+    purchases: {
+      characterName: string;
+      pilotCharacterName?: string;
+      amount: number;
+      itemName: string;
+    }[];
+  }) => {
+    const payout = await raidActivityController(p).getTypePayout({
+      typeId: activity.typeId,
+      payout: activity.payout,
+    });
+
+    return prisma.$transaction(async (p) => {
+      const raidActivity = await raidActivityRepository(p).create({
+        typeId: activity.typeId,
+        note: activity.note,
+        createdById,
+        updatedById,
+      });
+
+      await Promise.all([
+        walletController(p).createManyAttendants({
+          attendees,
+          payout,
+          raidActivityId: raidActivity.id,
+          createdById,
+          updatedById,
+        }),
+        walletController(p).createManyAdjustments({
+          adjustments,
+          raidActivityId: raidActivity.id,
+          createdById,
+          updatedById,
+        }),
+        walletController(p).createManyPurchases({
+          purchases: purchases,
+          raidActivityId: raidActivity.id,
+          createdById,
+          updatedById,
+        }),
+      ]);
+
+      return raidActivity;
+    });
+  },
+
   upsertTypeByName: async ({
     name,
     defaultPayout,
@@ -14,7 +90,7 @@ export const raidActivityController = {
     createdById: string;
     updatedById: string;
   }) => {
-    return raidActivityRepository.upsertTypeByName({
+    return raidActivityRepository(p).upsertTypeByName({
       name,
       defaultPayout,
       createdById,
@@ -22,25 +98,20 @@ export const raidActivityController = {
     });
   },
 
-  createMany: async ({
-    activities,
-    createdById,
-    updatedById,
+  getTypePayout: async ({
+    typeId,
+    payout,
   }: {
-    activities: {
-      typeId: number;
-      payout: number;
-      createdAt?: Date;
-      note?: string;
-    }[];
-    createdById: string;
-    updatedById: string;
+    typeId: number;
+    payout?: number;
   }) => {
-    return raidActivityRepository.createMany({
-      activities,
-      createdById,
-      updatedById,
+    if (payout !== undefined) {
+      return payout;
+    }
+    const raidActivityType = await raidActivityRepository(p).getTypeById({
+      typeId,
     });
+    return raidActivityType.defaultPayout;
   },
 
   getMany: async ({
@@ -55,11 +126,11 @@ export const raidActivityController = {
     sortModel?: AgSortModel;
   }) => {
     return {
-      totalRowCount: await raidActivityRepository.getCount({
+      totalRowCount: await raidActivityRepository(p).getCount({
         filterModel,
         sortModel,
       }),
-      rows: await raidActivityRepository.getMany({
+      rows: await raidActivityRepository(p).getMany({
         startRow,
         endRow,
         filterModel,
@@ -67,4 +138,4 @@ export const raidActivityController = {
       }),
     };
   },
-};
+});

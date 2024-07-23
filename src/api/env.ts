@@ -23,8 +23,8 @@ const envSchema = z.object({
   // DB
   POSTGRES_URL: z.string(),
   POSTGRES_PRISMA_URL: z.string(),
-  POSTGRES_URL_NO_SSL: z.string().optional(),
-  POSTGRES_URL_NON_POOLING: z.string().optional(),
+  POSTGRES_URL_NO_SSL: z.string(),
+  POSTGRES_URL_NON_POOLING: z.string(),
   POSTGRES_USER: z.string(),
   POSTGRES_HOST: z.string(),
   POSTGRES_PASSWORD: z.string(),
@@ -32,7 +32,6 @@ const envSchema = z.object({
 
   // Development
   DEV_USER_EMAIL: z.string().optional(),
-  DEV_OPENAI_API_KEY: z.string().optional(),
 });
 
 export const ENV = envSchema.parse({

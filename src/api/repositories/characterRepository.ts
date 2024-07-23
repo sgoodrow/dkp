@@ -1,4 +1,7 @@
-import { prisma } from "@/api/repositories/prisma";
+import {
+  prisma,
+  PrismaTransactionClient,
+} from "@/api/repositories/shared/client";
 import {
   AgFilterModel,
   agFilterModelToPrismaWhere,
@@ -8,7 +11,7 @@ import {
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
 
-export const characterRepository = {
+export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   createMany: async ({
     characters,
   }: {
@@ -19,7 +22,7 @@ export const characterRepository = {
       defaultPilotId?: string;
     }[];
   }) => {
-    return prisma.character.createMany({
+    return p.character.createMany({
       data: characters.map((c) => {
         return {
           name: c.name,
@@ -42,7 +45,7 @@ export const characterRepository = {
     colorHexDark: string;
     allowedRaces: string[];
   }) => {
-    return prisma.characterClass.create({
+    return p.characterClass.create({
       data: {
         name,
         colorHexLight,
@@ -63,7 +66,7 @@ export const characterRepository = {
   },
 
   createRace: async ({ name }: { name: string }) => {
-    return prisma.characterRace.create({
+    return p.characterRace.create({
       data: {
         name,
       },
@@ -71,7 +74,7 @@ export const characterRepository = {
   },
 
   isNameAvailable: async ({ name }: { name: string }) => {
-    const numCharactersWithName = await prisma.character.count({
+    const numCharactersWithName = await p.character.count({
       where: {
         name,
       },
@@ -86,7 +89,7 @@ export const characterRepository = {
     raceId: number;
     classId: number;
   }) => {
-    const combination = await prisma.raceClassCombination.findFirst({
+    const combination = await p.raceClassCombination.findFirst({
       where: {
         raceId,
         classId,
@@ -104,7 +107,7 @@ export const characterRepository = {
     filterModel?: AgFilterModel;
     sortModel?: AgSortModel;
   }) => {
-    return prisma.character.count({
+    return p.character.count({
       where: {
         ...agFilterModelToPrismaWhere(filterModel),
         defaultPilotId: userId,
@@ -126,7 +129,7 @@ export const characterRepository = {
     filterModel?: AgFilterModel;
     sortModel?: AgSortModel;
   }) => {
-    return prisma.character.findMany({
+    return p.character.findMany({
       where: {
         ...agFilterModelToPrismaWhere(filterModel),
         defaultPilotId: userId,
@@ -154,7 +157,7 @@ export const characterRepository = {
   },
 
   getClasses: async ({ raceId }: { raceId?: number }) => {
-    return prisma.characterClass.findMany({
+    return p.characterClass.findMany({
       where: {
         raceClassCombinations: {
           some: {
@@ -166,7 +169,7 @@ export const characterRepository = {
   },
 
   getClassByName: async ({ name }: { name: string }) => {
-    return prisma.characterClass.findUniqueOrThrow({
+    return p.characterClass.findUniqueOrThrow({
       where: {
         name,
       },
@@ -174,7 +177,7 @@ export const characterRepository = {
   },
 
   getRaces: async ({ classId }: { classId?: number }) => {
-    return prisma.characterRace.findMany({
+    return p.characterRace.findMany({
       where: {
         raceClassCombinations: {
           some: {
@@ -186,15 +189,32 @@ export const characterRepository = {
   },
 
   getRaceByName: async ({ name }: { name: string }) => {
-    return prisma.characterRace.findUniqueOrThrow({
+    return p.characterRace.findUniqueOrThrow({
       where: {
         name,
       },
     });
   },
 
-  searchByName: async ({ search, take }: { search: string; take: number }) => {
-    return prisma.character.findMany({
+  getByNameMatch: async ({ search }: { search: string }) => {
+    return p.character.findFirst({
+      where: {
+        name: {
+          equals: search,
+          mode: "insensitive",
+        },
+      },
+    });
+  },
+
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
+    return p.character.findMany({
       where: {
         name: {
           contains: search,
@@ -207,4 +227,4 @@ export const characterRepository = {
       take,
     });
   },
-};
+});

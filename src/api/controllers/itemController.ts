@@ -1,16 +1,21 @@
 import { itemRepository } from "@/api/repositories/itemRepository";
+import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 
 type CreateItem = {
   name: string;
   wikiSlug: string;
 };
 
-export const itemController = {
+export const itemController = (p?: PrismaTransactionClient) => ({
   createMany: async ({ items }: { items: CreateItem[] }) => {
-    return itemRepository.createMany({ items });
+    return itemRepository(p).createMany({ items });
   },
 
   create: async (item: CreateItem) => {
-    return itemController.createMany({ items: [item] });
+    return itemController(p).createMany({ items: [item] });
   },
-};
+
+  getByNameMatch: async ({ search }: { search: string }) => {
+    return itemRepository(p).getByNameMatch({ search });
+  },
+});

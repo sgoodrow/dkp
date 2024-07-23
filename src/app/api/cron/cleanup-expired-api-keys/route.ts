@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  await apiKeyController.deleteExpired();
+  await apiKeyController().deleteExpired();
 
   return Response.json({ success: true });
 }

@@ -1,5 +1,6 @@
 import { ENV } from "@/api/env";
 import { apiKeyRepository } from "@/api/repositories/apiKeyRepository";
+import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { app } from "@/shared/constants/app";
 import { SCOPE, Scope } from "@/shared/constants/scopes";
 import { TRPCError } from "@trpc/server";
@@ -10,17 +11,17 @@ const JWT_ALGORITHM = "HS256";
 const JWT_SECRET = ENV.JWT_SECRET;
 const AUTHORIZATION_HEADER_JWT_REGEXP = /^Bearer\s+(\S+\.\S+\.\S+)$/;
 
-export const apiKeyController = {
+export const apiKeyController = (p?: PrismaTransactionClient) => ({
   count: async ({ userId }: { userId: string }) => {
-    return apiKeyRepository.count({ userId });
+    return apiKeyRepository(p).count({ userId });
   },
 
   get: async ({ apiKeyId }: { apiKeyId: number }) => {
-    return apiKeyRepository.get({ apiKeyId });
+    return apiKeyRepository(p).get({ apiKeyId });
   },
 
   getAll: async ({ userId }: { userId: string }) => {
-    return apiKeyRepository.getAll({ userId });
+    return apiKeyRepository(p).getAll({ userId });
   },
 
   create: async ({
@@ -49,7 +50,7 @@ export const apiKeyController = {
         algorithm: JWT_ALGORITHM,
       },
     );
-    await apiKeyRepository.create({
+    await apiKeyRepository(p).create({
       name,
       userId,
       apiKey,
@@ -60,11 +61,11 @@ export const apiKeyController = {
   },
 
   deleteExpired: async () => {
-    return apiKeyRepository.deleteExpired();
+    return apiKeyRepository(p).deleteExpired();
   },
 
   delete: async ({ apiKeyId }: { apiKeyId: number }) => {
-    return apiKeyRepository.delete({ apiKeyId });
+    return apiKeyRepository(p).delete({ apiKeyId });
   },
 
   authorize: async ({
@@ -105,6 +106,6 @@ export const apiKeyController = {
         message: `API key does not have the required scope: ${SCOPE[scope]}.`,
       });
     }
-    return apiKeyRepository.getApiKeyUser({ apiKey });
+    return apiKeyRepository(p).getApiKeyUser({ apiKey });
   },
-};
+});

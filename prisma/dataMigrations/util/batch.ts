@@ -13,18 +13,3 @@ export const processBatch = async <T, R>(
     onBatchComplete?.(batchIndex + 1, totalBatches);
   }
 };
-
-export const logWorkflowStarted = (workflowName: string) => {
-  logWorkflowMessage(workflowName, "Started.");
-};
-
-export const logWorkflowMessage = (
-  workflowName: string,
-  progressMessage: string,
-) => {
-  console.log(`${workflowName}: ${progressMessage}`);
-};
-
-export const logWorkflowComplete = (workflowName: string) => {
-  logWorkflowMessage(workflowName, "Complete.");
-};

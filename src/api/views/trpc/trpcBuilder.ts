@@ -45,7 +45,7 @@ export const protectedProcedure = t.procedure.use(
 
     // Check if the user is using an API key with the appropriate scope
     if (meta?.scope) {
-      const { id } = await apiKeyController.authorize({
+      const { id } = await apiKeyController().authorize({
         authHeader: ctx.authHeader,
         scope: meta.scope,
       });
@@ -68,7 +68,7 @@ export const protectedProcedure = t.procedure.use(
 );
 
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  const isAdmin = await userController.isAdmin({
+  const isAdmin = await userController().isAdmin({
     userId: ctx.userId,
   });
 
@@ -82,14 +82,14 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   return next();
 });
 
-export const protectedApiKeyProcedure = protectedProcedure
+export const protectedApiKeyProcedure = adminProcedure
   .input(
     z.object({
       apiKeyId: z.number().positive().int(),
     }),
   )
   .use(async ({ input, ctx, next }) => {
-    const apiKey = await apiKeyController.get({
+    const apiKey = await apiKeyController().get({
       apiKeyId: input.apiKeyId,
     });
     if (apiKey.userId !== ctx.userId) {

@@ -9,13 +9,12 @@ model Character {
     isBot Boolean @default(false)
 
     // Relationships
-    defaultPilotId         String?
-    defaultPilot           User?                   @relation(fields: [defaultPilotId], references: [id])
-    classId                Int
-    class                  CharacterClass          @relation(fields: [classId], references: [id])
-    raceId                 Int
-    race                   CharacterRace           @relation(fields: [raceId], references: [id])
-    raidActivityAttendance RaidActivityAttendant[]
+    defaultPilotId String?
+    defaultPilot   User?          @relation(fields: [defaultPilotId], references: [id])
+    classId        Int
+    class          CharacterClass @relation(fields: [classId], references: [id])
+    raceId         Int
+    race           CharacterRace  @relation(fields: [raceId], references: [id])
 
     // Indexes
     @@index([defaultPilotId])

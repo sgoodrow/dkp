@@ -1,12 +1,8 @@
 import { z } from "zod";
 import data from "prisma/data/eq/items.json";
 import { itemController } from "@/api/controllers/itemController";
-import {
-  logWorkflowComplete,
-  logWorkflowMessage,
-  logWorkflowStarted,
-  processBatch,
-} from "prisma/dataMigrations/util";
+import { processBatch } from "prisma/dataMigrations/util/batch";
+import { createLogger } from "prisma/dataMigrations/util/log";
 
 const schema = z.array(
   z.object({
@@ -15,23 +11,20 @@ const schema = z.array(
   }),
 );
 
-const items = schema.parse(data);
+export const items = schema.parse(data);
 
-const workflowName = "Ingesting items";
+const logger = createLogger("Ingesting items");
 
 export const ingestItems = async () => {
-  logWorkflowStarted(workflowName);
+  logger.info("Started workflow.");
 
   await processBatch(
     items,
-    (batch) => itemController.createMany({ items: batch }),
+    (batch) => itemController().createMany({ items: batch }),
     (batchNumber, totalBatches) => {
-      logWorkflowMessage(
-        workflowName,
-        `Ingested batch ${batchNumber} of ${totalBatches}`,
-      );
+      logger.info(`Ingested batch ${batchNumber} of ${totalBatches}`);
     },
   );
 
-  logWorkflowComplete(workflowName);
+  logger.info("Finished workflow.");
 };

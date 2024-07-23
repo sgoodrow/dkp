@@ -1,4 +1,7 @@
-import { prisma } from "@/api/repositories/prisma";
+import {
+  prisma,
+  PrismaTransactionClient,
+} from "@/api/repositories/shared/client";
 import { Scope } from "@/shared/constants/scopes";
 import { createHash } from "crypto";
 
@@ -6,9 +9,9 @@ const getHashedApiKey = (apiKey: string) => {
   return createHash("sha256").update(apiKey).digest("hex");
 };
 
-export const apiKeyRepository = {
+export const apiKeyRepository = (p: PrismaTransactionClient = prisma) => ({
   count: async ({ userId }: { userId: string }) => {
-    return prisma.apiKey.count({
+    return p.apiKey.count({
       where: {
         userId,
       },
@@ -16,7 +19,7 @@ export const apiKeyRepository = {
   },
 
   get: async ({ apiKeyId }: { apiKeyId: number }) => {
-    return prisma.apiKey.findUniqueOrThrow({
+    return p.apiKey.findUniqueOrThrow({
       where: {
         id: apiKeyId,
       },
@@ -24,7 +27,7 @@ export const apiKeyRepository = {
   },
 
   getAll: async ({ userId }: { userId: string }) => {
-    return prisma.apiKey.findMany({
+    return p.apiKey.findMany({
       where: {
         userId,
       },
@@ -44,7 +47,7 @@ export const apiKeyRepository = {
     expiresAt: Date;
     scopes: Scope[];
   }) => {
-    return prisma.apiKey.create({
+    return p.apiKey.create({
       data: {
         name,
         userId,
@@ -56,7 +59,7 @@ export const apiKeyRepository = {
   },
 
   deleteExpired: async () => {
-    return prisma.apiKey.deleteMany({
+    return p.apiKey.deleteMany({
       where: {
         expires: {
           lt: new Date(),
@@ -66,7 +69,7 @@ export const apiKeyRepository = {
   },
 
   delete: async ({ apiKeyId }: { apiKeyId: number }) => {
-    return prisma.apiKey.delete({
+    return p.apiKey.delete({
       where: {
         id: apiKeyId,
       },
@@ -75,7 +78,7 @@ export const apiKeyRepository = {
 
   getApiKeyUser: async ({ apiKey }: { apiKey: string }) => {
     const hashedApiKey = getHashedApiKey(apiKey);
-    return prisma.apiKey
+    return p.apiKey
       .findUniqueOrThrow({
         where: {
           hashedApiKey,
@@ -86,4 +89,4 @@ export const apiKeyRepository = {
       })
       .then(({ user }) => user);
   },
-};
+});

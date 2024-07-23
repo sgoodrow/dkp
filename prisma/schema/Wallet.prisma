@@ -4,15 +4,16 @@ model Wallet {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    // Properties
-    balance Float @default(0)
-    earned  Float @default(0)
-    spent   Float @default(0)
-
     // Relationships
     userId       String              @unique
     user         User                @relation(fields: [userId], references: [id])
     transactions WalletTransaction[]
+}
+
+enum WalletTransactionType {
+    ATTENDANCE
+    PURCHASE
+    ADJUSTMENT
 }
 
 model WalletTransaction {
@@ -22,12 +23,18 @@ model WalletTransaction {
     updatedAt DateTime @updatedAt
 
     // Properties
-    amount Float
-    reason String?
+    type               WalletTransactionType
+    amount             Float
+    characterName      String
+    reason             String?
+    pilotCharacterName String?
+    itemName           String?
+    archived           Boolean               @default(false)
+    archivedAt         DateTime?
 
     // Relationships
-    walletId       Int
-    wallet         Wallet        @relation(fields: [walletId], references: [id])
+    walletId       Int?
+    wallet         Wallet?       @relation(fields: [walletId], references: [id])
     itemId         Int?
     item           Item?         @relation(fields: [itemId], references: [id])
     raidActivityId Int?

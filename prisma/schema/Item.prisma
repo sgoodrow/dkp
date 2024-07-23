@@ -7,6 +7,5 @@ model Item {
     wikiSlug String
 
     // Relationships
-    purchases      WalletTransaction[]
-    raidActivities RaidActivity[]
+    purchases WalletTransaction[]
 }

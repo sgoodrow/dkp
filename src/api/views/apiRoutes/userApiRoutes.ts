@@ -4,15 +4,15 @@ import { z } from "zod";
 
 export const userApiRoutes = createRoutes({
   isAdmin: protectedProcedure.query(async ({ ctx }) => {
-    return userController.isAdmin({ userId: ctx.userId });
+    return userController().isAdmin({ userId: ctx.userId });
   }),
 
   get: protectedProcedure.query(async ({ ctx }) => {
-    return userController.get({ userId: ctx.userId });
+    return userController().get({ userId: ctx.userId });
   }),
 
   getStatus: protectedProcedure.query(async ({ ctx }) => {
-    return userController.getStatus({
+    return userController().getStatus({
       userId: ctx.userId,
     });
   }),
@@ -25,7 +25,7 @@ export const userApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await userController.searchByName({
+      return await userController().searchByName({
         search: input.search,
         take: input.take,
       });

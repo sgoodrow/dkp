@@ -39,9 +39,9 @@ export type TrpcRouteOutputs = inferRouterOutputs<TrpcRoutes>;
 
 const createCaller = createCallerFactory(trpcRoutes);
 
-export type NextTrpcOptions<Params = any> = {
+export type NextTrpcOptions<Params = any, Body = any> = {
   trpc: ReturnType<typeof createCaller>;
-  body: any;
+  body: Body;
   params: Params;
 };
 

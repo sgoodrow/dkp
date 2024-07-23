@@ -1,4 +1,7 @@
-import { prisma } from "@/api/repositories/prisma";
+import {
+  prisma,
+  PrismaTransactionClient,
+} from "@/api/repositories/shared/client";
 import {
   AgFilterModel,
   agFilterModelToPrismaWhere,
@@ -7,8 +10,11 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
+import { WalletTransactionType } from "@prisma/client";
 
-export const raidActivityRepository = {
+export const raidActivityRepository = (
+  p: PrismaTransactionClient = prisma,
+) => ({
   upsertTypeByName: async ({
     name,
     defaultPayout,
@@ -20,7 +26,7 @@ export const raidActivityRepository = {
     createdById: string;
     updatedById: string;
   }) => {
-    return prisma.raidActivityType.upsert({
+    return p.raidActivityType.upsert({
       where: {
         name,
       },
@@ -37,6 +43,27 @@ export const raidActivityRepository = {
     });
   },
 
+  create: async ({
+    typeId,
+    note,
+    createdById,
+    updatedById,
+  }: {
+    typeId: number;
+    note?: string;
+    createdById: string;
+    updatedById: string;
+  }) => {
+    return p.raidActivity.create({
+      data: {
+        typeId,
+        note,
+        createdById,
+        updatedById,
+      },
+    });
+  },
+
   createMany: async ({
     activities,
     createdById,
@@ -44,19 +71,17 @@ export const raidActivityRepository = {
   }: {
     activities: {
       typeId: number;
-      payout: number;
       createdAt?: Date;
       note?: string;
     }[];
     createdById: string;
     updatedById: string;
   }) => {
-    return prisma.raidActivity.createMany({
+    return p.raidActivity.createMany({
       data: activities.map((a) => {
         return {
           typeId: a.typeId,
           note: a.note || null,
-          payout: a.payout,
           createdAt: a.createdAt,
           createdById,
           updatedById,
@@ -72,9 +97,17 @@ export const raidActivityRepository = {
     filterModel?: AgFilterModel;
     sortModel?: AgSortModel;
   }) => {
-    return prisma.raidActivity.count({
+    return p.raidActivity.count({
       where: agFilterModelToPrismaWhere(filterModel),
       orderBy: agSortModelToPrismaOrderBy(sortModel),
+    });
+  },
+
+  getTypeById: async ({ typeId }: { typeId: number }) => {
+    return p.raidActivityType.findUniqueOrThrow({
+      where: {
+        id: typeId,
+      },
     });
   },
 
@@ -89,14 +122,20 @@ export const raidActivityRepository = {
     filterModel?: AgFilterModel;
     sortModel?: AgSortModel;
   }) => {
-    return prisma.raidActivity.findMany({
+    return p.raidActivity.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
         createdAt: "desc",
       },
       where: agFilterModelToPrismaWhere(filterModel),
       include: {
         _count: {
-          select: { attendees: true, drops: true },
+          select: {
+            transactions: {
+              where: {
+                type: WalletTransactionType.ATTENDANCE,
+              },
+            },
+          },
         },
         type: true,
       },
@@ -104,4 +143,4 @@ export const raidActivityRepository = {
       take: endRow - startRow,
     });
   },
-};
+});

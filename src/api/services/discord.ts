@@ -2,11 +2,13 @@ import { APIGuildMember } from "discord-api-types/v10";
 import { ENV } from "@/api/env";
 import { guild } from "@/shared/constants/guild";
 
+const BASE_URL = "https://discord.com/api/v10";
+
 const authenticatedFetch = async <T>(
   relativeUrl: string,
   options: RequestInit = {},
 ) => {
-  const response = await fetch(`https://discord.com/api/v10${relativeUrl}`, {
+  const response = await fetch(BASE_URL + relativeUrl, {
     ...options,
     headers: {
       ...options.headers,

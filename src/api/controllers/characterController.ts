@@ -1,4 +1,5 @@
 import { characterRepository } from "@/api/repositories/characterRepository";
+import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { startCase } from "lodash";
@@ -14,9 +15,9 @@ type CreateCharacter = {
   defaultPilotId?: string;
 };
 
-export const characterController = {
+export const characterController = (p?: PrismaTransactionClient) => ({
   createMany: async ({ characters }: { characters: CreateCharacter[] }) => {
-    return characterRepository.createMany({
+    return characterRepository(p).createMany({
       characters: characters.map((c) => {
         return {
           ...c,
@@ -27,7 +28,7 @@ export const characterController = {
   },
 
   create: async (character: CreateCharacter) => {
-    return characterController.createMany({
+    return characterController(p).createMany({
       characters: [
         {
           ...character,
@@ -48,7 +49,7 @@ export const characterController = {
     colorHexDark: string;
     allowedRaces: string[];
   }) => {
-    return characterRepository.createClass({
+    return characterRepository(p).createClass({
       name: normalizeName(name),
       colorHexLight,
       colorHexDark,
@@ -57,13 +58,15 @@ export const characterController = {
   },
 
   createRace: async ({ name }: { name: string }) => {
-    return characterRepository.createRace({
+    return characterRepository(p).createRace({
       name: normalizeName(name),
     });
   },
 
   isNameAvailable: async ({ name }: { name: string }) => {
-    return characterRepository.isNameAvailable({ name: normalizeName(name) });
+    return characterRepository(p).isNameAvailable({
+      name: normalizeName(name),
+    });
   },
 
   isAllowedRaceClassCombination: async ({
@@ -73,14 +76,42 @@ export const characterController = {
     raceId: number;
     classId: number;
   }) => {
-    return characterRepository.isAllowedRaceClassCombination({
+    return characterRepository(p).isAllowedRaceClassCombination({
       raceId,
       classId,
     });
   },
 
   countByUserId: async ({ userId }: { userId: string }) => {
-    return characterRepository.countByUserId({ userId });
+    return characterRepository(p).countByUserId({ userId });
+  },
+
+  getPilotIdFromNames: async ({
+    characterName,
+    pilotCharacterName,
+  }: {
+    characterName: string;
+    pilotCharacterName?: string;
+  }) => {
+    const pilotCharacter = pilotCharacterName
+      ? await characterController(p).getByNameMatch({
+          search: pilotCharacterName,
+        })
+      : null;
+
+    if (pilotCharacter?.defaultPilotId) {
+      return pilotCharacter.defaultPilotId;
+    }
+
+    const character = await characterController(p).getByNameMatch({
+      search: characterName,
+    });
+
+    if (character?.defaultPilotId) {
+      return character.defaultPilotId;
+    }
+
+    return null;
   },
 
   getManyByUserId: async ({
@@ -97,12 +128,12 @@ export const characterController = {
     sortModel?: AgSortModel;
   }) => {
     return {
-      totalRowCount: await characterRepository.countByUserId({
+      totalRowCount: await characterRepository(p).countByUserId({
         userId,
         filterModel,
         sortModel,
       }),
-      rows: await characterRepository.getManyByUserId({
+      rows: await characterRepository(p).getManyByUserId({
         userId,
         startRow,
         endRow,
@@ -113,24 +144,34 @@ export const characterController = {
   },
 
   getClasses: async ({ raceId }: { raceId?: number }) => {
-    return characterRepository.getClasses({ raceId });
+    return characterRepository(p).getClasses({ raceId });
   },
 
   getClassIdByName: async ({ name }: { name: string }) => {
-    const cls = await characterRepository.getClassByName({ name });
+    const cls = await characterRepository(p).getClassByName({ name });
     return cls.id;
   },
 
   getRaceIdByName: async ({ name }: { name: string }) => {
-    const race = await characterRepository.getRaceByName({ name });
+    const race = await characterRepository(p).getRaceByName({ name });
     return race.id;
   },
 
   getRaces: async ({ classId }: { classId?: number }) => {
-    return characterRepository.getRaces({ classId });
+    return characterRepository(p).getRaces({ classId });
   },
 
-  searchByName: async ({ search, take }: { search: string; take: number }) => {
-    return characterRepository.searchByName({ search, take });
+  getByNameMatch: async ({ search }: { search: string }) => {
+    return characterRepository(p).getByNameMatch({ search });
   },
-};
+
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
+    return characterRepository(p).getByNameIncludes({ search, take });
+  },
+});

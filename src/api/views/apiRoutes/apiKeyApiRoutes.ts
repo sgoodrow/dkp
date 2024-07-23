@@ -1,8 +1,8 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
 import {
+  adminProcedure,
   createRoutes,
   protectedApiKeyProcedure,
-  protectedProcedure,
 } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
@@ -10,13 +10,13 @@ import { YEARS } from "@/shared/constants/time";
 import { SCOPE } from "@/shared/constants/scopes";
 
 export const apiKeyApiRoutes = createRoutes({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    return apiKeyController.getAll({
+  getAll: adminProcedure.query(async ({ ctx }) => {
+    return apiKeyController().getAll({
       userId: ctx.userId,
     });
   }),
 
-  create: protectedProcedure
+  create: adminProcedure
     .input(
       z.object({
         name: z.string(),
@@ -28,7 +28,7 @@ export const apiKeyApiRoutes = createRoutes({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      return apiKeyController.create({
+      return apiKeyController().create({
         name: input.name,
         userId: ctx.userId,
         expiresAt: input.expiresAt,
@@ -37,7 +37,7 @@ export const apiKeyApiRoutes = createRoutes({
     }),
 
   delete: protectedApiKeyProcedure.mutation(async ({ input }) => {
-    return apiKeyController.delete({
+    return apiKeyController().delete({
       apiKeyId: input.apiKeyId,
     });
   }),

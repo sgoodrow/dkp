@@ -1,7 +1,7 @@
 import { keysAreSameAsValuesCheck } from "@/ui/shared/utils/keysAreSameAsValuesCheck";
 
 export const SCOPE = keysAreSameAsValuesCheck({
-  assign_character: "assign_character",
+  create_raid_activity: "create_raid_activity",
 });
 
 export type Scope = keyof typeof SCOPE;

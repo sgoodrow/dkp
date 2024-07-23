@@ -1,13 +1,10 @@
-import { prisma } from "@/api/repositories/prisma";
-import {
-  logWorkflowComplete,
-  logWorkflowStarted,
-} from "prisma/dataMigrations/util";
+import { prisma } from "@/api/repositories/shared/client";
+import { createLogger } from "prisma/dataMigrations/util/log";
 
-const workflowName = "Clearing core tables";
+const logger = createLogger("Clearing core tables");
 
 export const clearCoreTables = async () => {
-  logWorkflowStarted(workflowName);
+  logger.info("Started workflow.");
 
   const allTables = await prisma.$queryRaw<{ table_name: string }[]>`
           SELECT table_name
@@ -37,5 +34,5 @@ export const clearCoreTables = async () => {
 
   await prisma.$disconnect();
 
-  logWorkflowComplete(workflowName);
+  logger.info("Finished workflow.");
 };

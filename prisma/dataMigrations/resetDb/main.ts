@@ -1,23 +1,16 @@
 import { ENV } from "@/api/env";
 import { initDbDataMigration } from "prisma/dataMigrations/initDb/main";
 import { clearCoreTables } from "prisma/dataMigrations/resetDb/clearCoreTables";
-import {
-  logWorkflowComplete,
-  logWorkflowMessage,
-  logWorkflowStarted,
-} from "prisma/dataMigrations/util";
+import { createLogger } from "prisma/dataMigrations/util/log";
 
-const workflowName = "Reset DB data migration";
+const logger = createLogger("Reset DB data migration");
 
 export const resetDbDataMigration = async () => {
-  logWorkflowStarted(workflowName);
-  logWorkflowMessage(
-    workflowName,
-    `Targeting ${ENV.POSTGRES_DATABASE} database`,
-  );
+  logger.info("Started workflow.");
+  logger.info(`Targeting ${ENV.POSTGRES_DATABASE} database`);
 
   await clearCoreTables();
   await initDbDataMigration();
 
-  logWorkflowComplete(workflowName);
+  logger.info("Finished workflow.");
 };

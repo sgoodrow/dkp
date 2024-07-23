@@ -15,7 +15,7 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      return await characterController.create({
+      return characterController().create({
         name: input.name,
         raceId: input.raceId,
         classId: input.classId,
@@ -30,7 +30,7 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await characterController.isNameAvailable({ name: input.name });
+      return characterController().isNameAvailable({ name: input.name });
     }),
 
   isAllowedRaceClassCombination: protectedProcedure
@@ -41,7 +41,7 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await characterController.isAllowedRaceClassCombination({
+      return characterController().isAllowedRaceClassCombination({
         raceId: input.raceId,
         classId: input.classId,
       });
@@ -57,7 +57,7 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input, ctx }) => {
-      return await characterController.getManyByUserId({
+      return characterController().getManyByUserId({
         userId: ctx.userId,
         startRow: input.startRow,
         endRow: input.endRow,
@@ -73,7 +73,7 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await characterController.getClasses({ raceId: input.raceId });
+      return characterController().getClasses({ raceId: input.raceId });
     }),
 
   getRaces: protectedProcedure
@@ -83,12 +83,12 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await characterController.getRaces({
+      return characterController().getRaces({
         classId: input.classId,
       });
     }),
 
-  searchByName: protectedProcedure
+  getByNameIncludes: protectedProcedure
     .input(
       z.object({
         search: z.string(),
@@ -96,7 +96,7 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await characterController.searchByName({
+      return characterController().getByNameIncludes({
         search: input.search,
         take: input.take,
       });

@@ -1,6 +1,9 @@
-import { prisma } from "@/api/repositories/prisma";
+import {
+  prisma,
+  PrismaTransactionClient,
+} from "@/api/repositories/shared/client";
 
-export const userRepository = {
+export const userRepository = (p: PrismaTransactionClient = prisma) => ({
   getProviderUserId: async ({
     userId,
     provider,
@@ -8,7 +11,7 @@ export const userRepository = {
     userId: string;
     provider: string;
   }) => {
-    const user = await prisma.user.findUniqueOrThrow({
+    const user = await p.user.findUniqueOrThrow({
       where: {
         id: userId,
         AND: {
@@ -31,19 +34,19 @@ export const userRepository = {
   },
 
   get: async ({ userId }: { userId: string }) => {
-    return prisma.user.findUniqueOrThrow({
+    return p.user.findUniqueOrThrow({
       where: { id: userId },
     });
   },
 
   getByEmail: async ({ email }: { email: string }) => {
-    return prisma.user.findUnique({
+    return p.user.findUnique({
       where: { email },
     });
   },
 
   searchByName: async ({ search, take }: { search: string; take: number }) => {
-    return prisma.user.findMany({
+    return p.user.findMany({
       where: {
         name: {
           contains: search,
@@ -56,4 +59,4 @@ export const userRepository = {
       take,
     });
   },
-};
+});

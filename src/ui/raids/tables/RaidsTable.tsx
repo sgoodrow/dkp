@@ -87,33 +87,16 @@ export const RaidsTable: FC<{}> = ({}) => {
               </Cell>
             ),
           },
+          // Prisma doesn't support multiple relation counts, so we only
+          // include the attendees count here (i.e. we don't include the purchase count yet)
+          // See: https://github.com/prisma/prisma/issues/15423
           {
             headerName: "Attendees",
-            field: "_count.attendees",
-            width: 120,
+            field: "_count.transactions",
+            width: 130,
             // Prisma doesn't support filtering on relation counts
             // See: https://github.com/prisma/prisma/issues/8935
             // filter: "agNumberColumnFilter",
-            cellRenderer: (props: ICellRendererParams) => (
-              <NumberCell value={props.value} />
-            ),
-          },
-          {
-            headerName: "Drops",
-            field: "_count.drops",
-            width: 100,
-            // Prisma doesn't support filtering on relation counts
-            // See: https://github.com/prisma/prisma/issues/8935
-            // filter: "agNumberColumnFilter",
-            cellRenderer: (props: ICellRendererParams) => (
-              <NumberCell value={props.value} />
-            ),
-          },
-          {
-            headerName: "Payout",
-            field: "payout",
-            width: 100,
-            filter: "agNumberColumnFilter",
             cellRenderer: (props: ICellRendererParams) => (
               <NumberCell value={props.value} />
             ),
