@@ -7,16 +7,16 @@ import { BackButton } from "@/ui/navigation/buttons/BackButton";
 import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
 import { SignOutButton } from "@/ui/navigation/buttons/SignOutButton";
 import { ThemeModeButton } from "@/ui/navigation/buttons/ThemeModeButton";
-import { UserButton } from "@/ui/navigation/buttons/UserButton";
 import { WelcomeDialogButton } from "@/ui/navigation/buttons/WelcomeDialogButton";
 import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 import { GoogleDriveDocumentsIcon } from "@/ui/shared/components/icons/GoogleDriveDocumentsIcon";
+import { ProfileIcon } from "@/ui/shared/components/icons/ProfileIcon";
 import {
   MonitoringId,
   monitoringIds,
 } from "@/ui/shared/constants/monitoringIds";
 import { SvgIconComponent } from "@mui/icons-material";
-import { Box, Divider, Drawer, Paper, Stack } from "@mui/material";
+import { Box, Divider, Drawer, Paper, Skeleton, Stack } from "@mui/material";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -26,10 +26,14 @@ type SidebarItem = {
   icon: SvgIconComponent;
   dataMonitoringId: MonitoringId;
   adminOnly?: boolean;
+  badgeCount?: number;
+  badgeTooltip?: string;
 };
 
 const MOBILE_WIDTH = "56px";
 const DESKTOP_WIDTH = "200px";
+
+const PROFILE_IMAGE_SIZE = 24;
 
 export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
   isMobile,
@@ -37,6 +41,12 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
 }) => {
   const pathname = usePathname();
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
+  const { data: dkp } = trpc.wallet.getUserDkp.useQuery();
+  const { data: pendingTransactionsCount } =
+    trpc.wallet.countPendingTransactions.useQuery(undefined, {
+      enabled: isAdmin,
+    });
+  const { data: user } = trpc.user.get.useQuery();
   const [prevPageHref, setPrevPageHref] = useState<string>(
     uiRoutes.home.href(),
   );
@@ -47,10 +57,14 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
 
   const items: SidebarItem[] = onAdminPage
     ? [
-        { ...uiRoutes.admin, adminOnly: true },
-        { ...uiRoutes.raidTypes, adminOnly: true },
-        { ...uiRoutes.unassignedCharacters, adminOnly: true },
-        { ...uiRoutes.apiKeys, adminOnly: true },
+        uiRoutes.admin,
+        uiRoutes.raidTypes,
+        {
+          ...uiRoutes.transactions,
+          badgeCount: pendingTransactionsCount,
+          badgeTooltip: "Number of pending transactions",
+        },
+        uiRoutes.apiKeys,
       ]
     : [
         uiRoutes.home,
@@ -59,7 +73,11 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
         uiRoutes.items,
         uiRoutes.adjustments,
         uiRoutes.leaderboard,
-        { ...uiRoutes.admin, adminOnly: true },
+        {
+          ...uiRoutes.admin,
+          badgeCount: pendingTransactionsCount,
+          badgeTooltip: "Number of pending transactions",
+        },
       ];
 
   useEffect(() => {
@@ -86,10 +104,29 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
                 hideLabel={isMobile}
               />
             ) : (
-              <UserButton hideLabel={isMobile} />
+              <SideBarButton
+                dataMonitoringId={uiRoutes.player.dataMonitoringId}
+                href={uiRoutes.player.href({ playerId: user?.id || "" })}
+                name={user?.name || <Skeleton />}
+                icon={<ProfileIcon size={PROFILE_IMAGE_SIZE} />}
+                hideLabel={isMobile}
+                badge={{
+                  count: dkp?.current,
+                  tooltip: "Current DKP",
+                  showZero: true,
+                }}
+              />
             )}
             {items.map(
-              ({ href, name, icon: Icon, dataMonitoringId, adminOnly }) => {
+              ({
+                href,
+                name,
+                icon: Icon,
+                dataMonitoringId,
+                adminOnly,
+                badgeCount,
+                badgeTooltip,
+              }) => {
                 if (adminOnly && !isAdmin) {
                   return null;
                 }
@@ -101,6 +138,11 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
                     name={name}
                     icon={<Icon />}
                     hideLabel={isMobile}
+                    badge={{
+                      count: badgeCount,
+                      tooltip: badgeTooltip,
+                      showZero: false,
+                    }}
                   />
                 );
               },

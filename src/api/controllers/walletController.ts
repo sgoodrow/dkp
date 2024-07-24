@@ -83,6 +83,10 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     });
   },
 
+  countPendingTransactions: async () => {
+    return walletRepository(p).countPendingTransactions();
+  },
+
   getByUserId: async ({ userId }: { userId: string }) => {
     return walletRepository(p).getByUserId({ userId });
   },

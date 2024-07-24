@@ -13,6 +13,7 @@ import {
 } from "@/api/views/trpc/trpcBuilder";
 import { characterApiRoutes } from "@/api/views/apiRoutes/characterApiRoutes";
 import { raidActivityApiRoutes } from "@/api/views/apiRoutes/raidActivityApiRoutes";
+import { walletApiRoutes } from "@/api/views/apiRoutes/walletApiRoutes";
 
 export const trpcRoutes = createRoutes({
   health: healthApiRoutes,
@@ -20,6 +21,7 @@ export const trpcRoutes = createRoutes({
   apiKey: apiKeyApiRoutes,
   character: characterApiRoutes,
   raidActivity: raidActivityApiRoutes,
+  wallet: walletApiRoutes,
 });
 
 export const createSSRHelper = () =>

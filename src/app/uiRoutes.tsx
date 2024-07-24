@@ -77,6 +77,7 @@ export const uiRoutes = {
     name: "Admin",
     icon: AdminPanelSettings,
     dataMonitoringId: monitoringIds.GOTO_ADMIN,
+    adminOnly: true,
   },
   // Sub-pages
   player: {
@@ -113,17 +114,20 @@ export const uiRoutes = {
     name: "Raid Types",
     dataMonitoringId: monitoringIds.GOTO_RAID_TYPES,
     icon: EventRepeat,
+    adminOnly: true,
   },
-  unassignedCharacters: {
-    href: () => `${uiRoutes.admin.href()}/unassigned-characters` as const,
-    name: "Unassigned Characters",
-    dataMonitoringId: monitoringIds.GOTO_UNASSIGNED_CHARACTERS,
+  transactions: {
+    href: () => `${uiRoutes.admin.href()}/transactions` as const,
+    name: "Transactions",
+    dataMonitoringId: monitoringIds.GOTO_TRANSACTIONS,
     icon: AssignmentInd,
+    adminOnly: true,
   },
   apiKeys: {
     href: () => `${uiRoutes.admin.href()}/api-keys` as const,
     name: "API Keys",
     dataMonitoringId: monitoringIds.GOTO_API_KEYS,
     icon: Key,
+    adminOnly: true,
   },
 } as const;

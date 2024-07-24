@@ -125,6 +125,17 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  countPendingTransactions: async () => {
+    return p.walletTransaction.count({
+      where: {
+        OR: [
+          { walletId: null },
+          { AND: [{ itemName: { not: null } }, { itemId: null }] },
+        ],
+      },
+    });
+  },
+
   getByUserId: async ({ userId }: { userId: string }) => {
     return p.wallet.upsert({
       update: {
@@ -150,18 +161,18 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       },
     });
 
-    const spentDkp = Math.abs(
+    const spent = Math.abs(
       t.find(({ type }) => type === "PURCHASE")?._sum.amount ?? 0,
     );
 
-    const earnedDkp =
+    const earned =
       (t.find(({ type }) => type === "ATTENDANCE")?._sum.amount ?? 0) +
       (t.find(({ type }) => type === "ADJUSTMENT")?._sum.amount ?? 0);
 
     return {
-      currentDkp: earnedDkp - spentDkp,
-      spentDkp,
-      earnedDkp,
+      current: earned - spent,
+      spentDkp: spent,
+      earnedDkp: earned,
     };
   },
 });

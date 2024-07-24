@@ -1,5 +1,4 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
-import { walletController } from "@/api/controllers/walletController";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { userRepository } from "@/api/repositories/userRepository";
 import { discordService } from "@/api/services/discord";
@@ -18,11 +17,7 @@ export const userController = (p?: PrismaTransactionClient) => ({
   },
 
   get: async ({ userId }: { userId: string }) => {
-    const user = await userRepository(p).get({ userId });
-
-    const dkp = await walletController(p).getUserDkp({ userId });
-
-    return { ...user, ...dkp };
+    return userRepository(p).get({ userId });
   },
 
   getStatus: async ({ userId }: { userId: string }) => {
