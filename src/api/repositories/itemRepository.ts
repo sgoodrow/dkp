@@ -29,4 +29,22 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
       },
     });
   },
+
+  getItemMap: async ({ itemNames }: { itemNames: string[] }) => {
+    const items = await p.item.findMany({
+      where: {
+        name: {
+          in: itemNames,
+          mode: "insensitive",
+        },
+      },
+    });
+    return items.reduce(
+      (acc, item) => {
+        acc[item.name] = item.id;
+        return acc;
+      },
+      {} as { [key: string]: number },
+    );
+  },
 });

@@ -9,7 +9,8 @@ export const createLogger = (workflowName: string) =>
     format: format.combine(
       format.timestamp(),
       format.printf(
-        ({ level, message }) => `${level}: ${workflowName} - ${message}`,
+        ({ level, message, timestamp }) =>
+          `${timestamp} ${level}: ${workflowName} - ${message}`,
       ),
     ),
     transports: [new transports.Console()],

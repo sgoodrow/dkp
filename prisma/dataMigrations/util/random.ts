@@ -102,7 +102,7 @@ export const getRandomAttendees = ({ count }: { count: number }) => {
   }));
 };
 
-export const createRandomPurchases = ({ count }: { count: number }) => {
+export const getRandomPurchases = ({ count }: { count: number }) => {
   return range(count).map(() => ({
     amount: random(1, 5),
     itemName: getRandomItemName(),

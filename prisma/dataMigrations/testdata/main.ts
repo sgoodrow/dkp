@@ -9,7 +9,7 @@ if (!email) {
   throw new Error("Cannot seed the database. Set DEV_USER_EMAIL.");
 }
 
-const logger = createLogger("Test data data migration");
+const logger = createLogger("Ingested test data");
 
 export const testDataDataMigration = async () => {
   logger.info("Started workflow.");

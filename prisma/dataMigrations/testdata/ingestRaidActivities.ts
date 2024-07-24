@@ -2,13 +2,15 @@ import { raidActivityController } from "@/api/controllers/raidActivityController
 import { random, range } from "lodash";
 import { createLogger } from "prisma/dataMigrations/util/log";
 import {
-  createRandomPurchases,
+  getRandomPurchases,
   getRandomAdjustments,
   getRandomAttendees,
   getRandomRaidActivity,
 } from "prisma/dataMigrations/util/random";
 
-const logger = createLogger("Ingesting raid activitities");
+const logger = createLogger("Ingesting raid activities");
+
+const NUM_ACTIVITIES = 10;
 
 export const ingestRaidActivities = async ({ userId }: { userId: string }) => {
   logger.info("Started workflow.");
@@ -30,26 +32,23 @@ export const ingestRaidActivities = async ({ userId }: { userId: string }) => {
     ),
   );
 
-  range(100)
-    .map(() => getRandomRaidActivity({ raidActivityTypes }))
-    .map(async (activity) => {
-      const { id } = await raidActivityController().create({
-        activity,
-        adjustments: getRandomAdjustments({
-          count: random(1, 5),
-        }),
-        attendees: getRandomAttendees({
-          count: random(10, 20),
-        }),
-        purchases: createRandomPurchases({
-          count: random(1, 5),
-        }),
-        createdById: userId,
-        updatedById: userId,
-      });
-
-      logger.info(`Created activity ${id}`);
+  range(NUM_ACTIVITIES).forEach(async () => {
+    const { id } = await raidActivityController().create({
+      activity: getRandomRaidActivity({ raidActivityTypes }),
+      adjustments: getRandomAdjustments({
+        count: random(3, 5),
+      }),
+      attendees: getRandomAttendees({
+        count: random(40, 115),
+      }),
+      purchases: getRandomPurchases({
+        count: random(5, 20),
+      }),
+      createdById: userId,
+      updatedById: userId,
     });
+    logger.info(`Created raid activity ${id}.`);
+  });
 
   logger.info("Finished workflow.");
 };

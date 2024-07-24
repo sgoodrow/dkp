@@ -227,4 +227,39 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
       take,
     });
   },
+
+  getCharacterNameWalletIdMap: async ({
+    characterNames,
+  }: {
+    characterNames: string[];
+  }) => {
+    const characters = await p.character.findMany({
+      where: {
+        name: {
+          in: characterNames,
+          mode: "insensitive",
+        },
+      },
+      select: {
+        name: true,
+        defaultPilot: {
+          select: {
+            email: true,
+            wallet: {
+              select: {
+                id: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return characters.reduce(
+      (acc, c) => {
+        acc[c.name] = c.defaultPilot?.wallet?.id;
+        return acc;
+      },
+      {} as Record<string, number | undefined>,
+    );
+  },
 });

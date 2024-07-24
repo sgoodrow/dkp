@@ -3,17 +3,24 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/client";
 import { WalletTransactionType } from "@prisma/client";
-import { sum, sumBy } from "lodash";
 
 export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
+  create: async ({ userId }: { userId: string }) => {
+    return p.wallet.create({
+      data: {
+        userId,
+      },
+    });
+  },
+
   createManyAttendants: async ({
-    attendeesWithIds,
+    attendees,
     payout,
     raidActivityId,
     createdById,
     updatedById,
   }: {
-    attendeesWithIds: {
+    attendees: {
       characterName: string;
       pilotCharacterName?: string;
       walletId: number | null;
@@ -24,7 +31,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     updatedById: string;
   }) => {
     return p.walletTransaction.createMany({
-      data: attendeesWithIds.map(
+      data: attendees.map(
         ({ characterName, pilotCharacterName, walletId }) => ({
           type: WalletTransactionType.ATTENDANCE,
           amount: payout,
@@ -41,12 +48,12 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   createManyAdjustments: async ({
-    adjustmentsWithIds: adjustmentsWithWalletId,
+    adjustments,
     raidActivityId,
     createdById,
     updatedById,
   }: {
-    adjustmentsWithIds: {
+    adjustments: {
       amount: number;
       reason: string;
       characterName: string;
@@ -58,7 +65,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     updatedById: string;
   }) => {
     return p.walletTransaction.createMany({
-      data: adjustmentsWithWalletId.map(
+      data: adjustments.map(
         ({ amount, reason, characterName, pilotCharacterName, walletId }) => ({
           type: WalletTransactionType.ADJUSTMENT,
           amount,
@@ -76,12 +83,12 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   createManyPurchases: async ({
-    purchasesWithIds,
+    purchases,
     raidActivityId,
     createdById,
     updatedById,
   }: {
-    purchasesWithIds: {
+    purchases: {
       amount: number;
       characterName: string;
       pilotCharacterName?: string;
@@ -94,7 +101,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     updatedById: string;
   }) => {
     return p.walletTransaction.createMany({
-      data: purchasesWithIds.map(
+      data: purchases.map(
         ({
           amount,
           characterName,

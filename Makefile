@@ -10,13 +10,13 @@ help:
 	@echo " * local-setup              install the local server dependencies"
 	@echo " * local-run                run local server"
 	@echo " * local-db-reset-total     reset all tables of the local database"
-	@echo " * local-db-reset           reset the core tables of the local database and ingest test data"
 	@echo " * local-pre-commit         run pre-commit hooks"
 	@echo
 	@echo "--- Data Migrations ---"
 	@echo " * db-init                  initialize a database"
-	@echo " * db-reset                 reset the core tables of a database"
-	@echo " * db-testdata              seed the core tables of a database with test data"
+	@echo " * db-reset                 reset the non-user tables of a database"
+	@echo " * db-testdata              seed a database with test data"
+	@echo " * db-reset-testdata        reset the non-user tables of a database and seed with test data"
 	@echo
 	@echo "--- Utilities ---"
 	@echo " * db-migrate               migrate the local database"
@@ -75,12 +75,7 @@ local-db-reset-total:
 	@docker volume rm dkp_postgres_data
 	@docker-compose up -d
 	@make db-migrate
-	@make db-reset
-
-local-db-reset:
-	@make db-migrate
-	@make db-reset
-	@make db-testdata
+	@make db-init
 
 local-pre-commit:
 	@yarn run concurrently --group --kill-others-on-fail --prefix command --prefix-colors auto \
@@ -99,6 +94,10 @@ db-reset:
 
 db-testdata:
 	@yarn run dotenv tsx ./prisma/dataMigrations/testdata/run.ts
+
+db-reset-testdata:
+	@make db-reset
+	@make db-testdata
 
 # --- Utilities ---
 

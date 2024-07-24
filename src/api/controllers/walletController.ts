@@ -1,9 +1,11 @@
-import { characterController } from "@/api/controllers/characterController";
-import { itemController } from "@/api/controllers/itemController";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { walletRepository } from "@/api/repositories/walletRepository";
 
 export const walletController = (p?: PrismaTransactionClient) => ({
+  create: async ({ userId }: { userId: string }) => {
+    return walletRepository(p).create({ userId });
+  },
+
   createManyAttendants: async ({
     attendees,
     payout,
@@ -14,35 +16,15 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     attendees: {
       characterName: string;
       pilotCharacterName?: string;
+      walletId: number | null;
     }[];
     payout: number;
     raidActivityId: number;
     createdById: string;
     updatedById: string;
   }) => {
-    const attendeesWithIds = await Promise.all(
-      attendees.map(async ({ characterName, pilotCharacterName }) => {
-        const userId = await characterController(p).getPilotIdFromNames({
-          characterName,
-          pilotCharacterName,
-        });
-
-        const wallet = userId
-          ? await walletController(p).getByUserId({
-              userId,
-            })
-          : null;
-
-        return {
-          characterName,
-          pilotCharacterName,
-          walletId: wallet?.id || null,
-        };
-      }),
-    );
-
     return walletRepository(p).createManyAttendants({
-      attendeesWithIds,
+      attendees,
       payout,
       raidActivityId,
       createdById,
@@ -57,42 +39,18 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     updatedById,
   }: {
     adjustments: {
-      characterName: string;
-      pilotCharacterName?: string;
       amount: number;
       reason: string;
+      characterName: string;
+      pilotCharacterName?: string;
+      walletId: number | null;
     }[];
     raidActivityId?: number;
     createdById: string;
     updatedById: string;
   }) => {
-    const adjustmentsWithIds = await Promise.all(
-      adjustments.map(
-        async ({ amount, reason, characterName, pilotCharacterName }) => {
-          const userId = await characterController(p).getPilotIdFromNames({
-            characterName,
-            pilotCharacterName,
-          });
-
-          const wallet = userId
-            ? await walletController(p).getByUserId({
-                userId,
-              })
-            : null;
-
-          return {
-            amount,
-            reason,
-            characterName,
-            pilotCharacterName,
-            walletId: wallet?.id || null,
-          };
-        },
-      ),
-    );
-
     return walletRepository(p).createManyAdjustments({
-      adjustmentsWithIds,
+      adjustments,
       raidActivityId,
       createdById,
       updatedById,
@@ -106,47 +64,19 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     updatedById,
   }: {
     purchases: {
-      characterName: string;
-      pilotCharacterName?: string;
       amount: number;
+      characterName: string;
       itemName: string;
+      pilotCharacterName?: string;
+      walletId: number | null;
+      itemId: number | null;
     }[];
     raidActivityId?: number;
     createdById: string;
     updatedById: string;
   }) => {
-    const purchasesWithIds = await Promise.all(
-      purchases.map(
-        async ({ characterName, pilotCharacterName, amount, itemName }) => {
-          const userId = await characterController(p).getPilotIdFromNames({
-            characterName,
-            pilotCharacterName,
-          });
-
-          const wallet = userId
-            ? await walletController(p).getByUserId({
-                userId,
-              })
-            : null;
-
-          const item = await itemController(p).getByNameMatch({
-            search: itemName,
-          });
-
-          return {
-            amount: -Math.abs(amount),
-            characterName,
-            pilotCharacterName,
-            itemName,
-            walletId: wallet?.id || null,
-            itemId: item?.id || null,
-          };
-        },
-      ),
-    );
-
     return walletRepository(p).createManyPurchases({
-      purchasesWithIds,
+      purchases,
       raidActivityId,
       createdById,
       updatedById,

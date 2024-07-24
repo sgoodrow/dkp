@@ -46,11 +46,13 @@ export const raidActivityRepository = (
   create: async ({
     typeId,
     note,
+    createdAt,
     createdById,
     updatedById,
   }: {
     typeId: number;
     note?: string;
+    createdAt?: Date;
     createdById: string;
     updatedById: string;
   }) => {
@@ -58,6 +60,7 @@ export const raidActivityRepository = (
       data: {
         typeId,
         note,
+        createdAt,
         createdById,
         updatedById,
       },

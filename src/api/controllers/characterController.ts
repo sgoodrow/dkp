@@ -174,4 +174,14 @@ export const characterController = (p?: PrismaTransactionClient) => ({
   }) => {
     return characterRepository(p).getByNameIncludes({ search, take });
   },
+
+  getCharacterNameWalletIdMap: async ({
+    characterNames,
+  }: {
+    characterNames: string[];
+  }) => {
+    return characterRepository(p).getCharacterNameWalletIdMap({
+      characterNames,
+    });
+  },
 });

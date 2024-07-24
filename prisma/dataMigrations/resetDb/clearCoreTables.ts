@@ -23,6 +23,7 @@ export const clearCoreTables = async () => {
           "Session",
           "VerificationToken",
           "Authenticator",
+          "Wallet",
         ].includes(n),
     );
 

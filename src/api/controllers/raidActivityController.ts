@@ -6,6 +6,28 @@ import {
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
+import { flatMap, uniq } from "lodash";
+import { itemController } from "@/api/controllers/itemController";
+import { characterController } from "@/api/controllers/characterController";
+
+const getCharacterNames = (
+  list: {
+    characterName: string;
+    pilotCharacterName?: string;
+  }[],
+) =>
+  list.map(({ characterName, pilotCharacterName }) =>
+    pilotCharacterName !== undefined
+      ? [pilotCharacterName, characterName]
+      : [characterName],
+  );
+
+const getField = (o: Record<string, number | undefined>, field?: string) => {
+  if (field === undefined) {
+    return null;
+  }
+  return o[field] || null;
+};
 
 export const raidActivityController = (p?: PrismaTransactionClient) => ({
   create: async ({
@@ -20,6 +42,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     updatedById: string;
     activity: {
       typeId: number;
+      createdAt?: Date;
       payout?: number;
       note?: string;
     };
@@ -45,35 +68,66 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       payout: activity.payout,
     });
 
+    const walletIds = await characterController(p).getCharacterNameWalletIdMap({
+      characterNames: uniq(
+        flatMap([
+          ...getCharacterNames(attendees),
+          ...getCharacterNames(adjustments),
+          ...getCharacterNames(purchases),
+        ]),
+      ),
+    });
+
+    const itemIds = await itemController(p).getItemMap({
+      itemNames: purchases.map((p) => p.itemName),
+    });
+
     return prisma.$transaction(async (p) => {
       const raidActivity = await raidActivityRepository(p).create({
         typeId: activity.typeId,
         note: activity.note,
+        createdAt: activity.createdAt,
         createdById,
         updatedById,
       });
 
-      await Promise.all([
-        walletController(p).createManyAttendants({
-          attendees,
-          payout,
-          raidActivityId: raidActivity.id,
-          createdById,
-          updatedById,
-        }),
-        walletController(p).createManyAdjustments({
-          adjustments,
-          raidActivityId: raidActivity.id,
-          createdById,
-          updatedById,
-        }),
-        walletController(p).createManyPurchases({
-          purchases: purchases,
-          raidActivityId: raidActivity.id,
-          createdById,
-          updatedById,
-        }),
-      ]);
+      await walletController(p).createManyAttendants({
+        attendees: attendees.map((a) => ({
+          ...a,
+          walletId:
+            getField(walletIds, a.pilotCharacterName) ||
+            getField(walletIds, a.characterName),
+        })),
+        payout,
+        raidActivityId: raidActivity.id,
+        createdById,
+        updatedById,
+      });
+
+      await walletController(p).createManyAdjustments({
+        adjustments: adjustments.map((a) => ({
+          ...a,
+          walletId:
+            getField(walletIds, a.pilotCharacterName) ||
+            getField(walletIds, a.characterName),
+        })),
+        raidActivityId: raidActivity.id,
+        createdById,
+        updatedById,
+      });
+
+      await walletController(p).createManyPurchases({
+        purchases: purchases.map((p) => ({
+          ...p,
+          walletId:
+            getField(walletIds, p.pilotCharacterName) ||
+            getField(walletIds, p.characterName),
+          itemId: getField(itemIds, p.itemName),
+        })),
+        raidActivityId: raidActivity.id,
+        createdById,
+        updatedById,
+      });
 
       return raidActivity;
     });
