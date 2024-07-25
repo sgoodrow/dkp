@@ -15,12 +15,13 @@ model User {
   apiKeys                  ApiKey[]
   characters               Character[]
   wallet                   Wallet?
-  createdTransactions      WalletTransaction[] @relation("WalletTransactionCreator")
-  createdRaidActivities    RaidActivity[]      @relation("RaidActivityCreator")
-  createdRaidActivityTypes RaidActivityType[]  @relation("RaidActivityTypeCreator")
-  updatedTransactions      WalletTransaction[] @relation("WalletTransactionLatestUpdater")
-  updatedRaidActivities    RaidActivity[]      @relation("RaidActivityLatestUpdater")
-  updatedRaidActivityTypes RaidActivityType[]  @relation("RaidActivityTypeLatestUpdater")
+  createdTransactions      WalletTransaction[]  @relation("WalletTransactionCreator")
+  createdRaidActivities    RaidActivity[]       @relation("RaidActivityCreator")
+  createdRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeCreator")
+  updatedTransactions      WalletTransaction[]  @relation("WalletTransactionLatestUpdater")
+  updatedRaidActivities    RaidActivity[]       @relation("RaidActivityLatestUpdater")
+  updatedRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeLatestUpdater")
+  discordMetadata          UserDiscordMetadata?
 }
 
 model Account {
@@ -100,4 +101,18 @@ model Authenticator {
 
   // Constraints
   @@id([userId, credentialID])
+}
+
+model UserDiscordMetadata {
+  // Common
+  id Int @id @default(autoincrement())
+
+  // Properties
+  memberId    String   @unique
+  displayName String
+  roleIds     String[]
+
+  // Relationships
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id])
 }

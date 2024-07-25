@@ -70,9 +70,10 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
         uiRoutes.home,
         uiRoutes.players,
         uiRoutes.raids,
-        uiRoutes.items,
+        uiRoutes.purchases,
         uiRoutes.adjustments,
         uiRoutes.leaderboard,
+        uiRoutes.items,
         {
           ...uiRoutes.admin,
           badgeCount: pendingTransactionsCount,

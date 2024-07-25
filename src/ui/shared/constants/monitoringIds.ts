@@ -20,6 +20,8 @@ export const monitoringIds = keysAreSameAsValuesCheck({
 
   GOTO_RAID: "GOTO_RAID",
 
+  GOTO_PURCHASES: "GOTO_PURCHASES",
+
   GOTO_ITEMS: "GOTO_ITEMS",
 
   GOTO_ITEM: "GOTO_ITEM",

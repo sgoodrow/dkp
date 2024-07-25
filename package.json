@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.2.0",
+    "@discordjs/core": "^1.2.0",
+    "@discordjs/rest": "^2.3.0",
     "@emotion/react": "^11.12.0",
     "@emotion/styled": "^11.12.0",
     "@mui/icons-material": "^5.16.4",
@@ -34,7 +36,6 @@
     "ag-grid-react": "^32.0.2",
     "csstype": "^3",
     "dayjs": "^1.11.11",
-    "discord.js": "^14.15.3",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "memoizee": "^0.4.17",

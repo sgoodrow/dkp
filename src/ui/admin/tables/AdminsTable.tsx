@@ -1,6 +1,6 @@
 "use client";
 
-import { IconButton } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import { FC } from "react";
 import { ICellRendererParams } from "ag-grid-community";
 import { CopyToClipboardIconButton } from "@/ui/shared/components/buttons/CopyToClipboardIconButton";
@@ -15,8 +15,9 @@ import { SiteLink } from "@/ui/shared/components/links/SiteLink";
 import { Cell } from "@/ui/shared/components/table/Cell";
 
 export const AdminsTable: FC<{}> = ({}) => {
-  const utils = trpc.useUtils();
-  return null;
+  // const utils = trpc.useUtils();
+  const { data } = trpc.user.getAdmins.useQuery();
+  return <Typography> {JSON.stringify(data)}</Typography>;
   // <InfiniteTable
   //   getRows={utils.user.getAdmins.fetch}
   //   columnDefs={[

@@ -6,10 +6,12 @@ import { ReactNode } from "react";
 const HEADER_HEIGHT = "32px";
 
 export const HeaderLayout: FCWithChildren<{
-  title: string;
-  subtitle: string;
+  uiRoute: {
+    name: string;
+    description: string;
+  };
   actions?: ReactNode;
-}> = ({ title, subtitle, actions, children }) => {
+}> = ({ uiRoute, actions, children }) => {
   return (
     <Stack spacing={3} flexGrow={1}>
       <Stack>
@@ -19,11 +21,11 @@ export const HeaderLayout: FCWithChildren<{
           alignItems="baseline"
           height={HEADER_HEIGHT}
         >
-          <Typography variant="h2">{title}</Typography>
+          <Typography variant="h2">{uiRoute.name}</Typography>
           <Divider sx={{ flexGrow: 1, alignSelf: "center", pt: 1 }} />
           {actions}
         </Stack>
-        <Typography variant="subtitle2">{subtitle}</Typography>
+        <Typography variant="subtitle2">{uiRoute.description}</Typography>
       </Stack>
       {children}
       <Box pt={1} />
