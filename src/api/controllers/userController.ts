@@ -2,16 +2,44 @@ import { apiKeyController } from "@/api/controllers/apiKeyController";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { userRepository } from "@/api/repositories/userRepository";
 import { discordService } from "@/api/services/discordService";
+import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
+import { AgSortModel } from "@/api/shared/agGridUtils/sort";
+import { AgTable } from "@/api/shared/agGridUtils/table";
 import { difference } from "lodash";
+
+const getDisplayName = ({
+  user,
+}: {
+  user: {
+    name: string | null;
+    discordMetadata: {
+      displayName: string;
+    } | null;
+  };
+}) => {
+  if (user.discordMetadata) {
+    return user.discordMetadata.displayName;
+  }
+  return user.name || "Unknown";
+};
 
 export const userController = (p?: PrismaTransactionClient) => ({
   isAdmin: async ({ userId }: { userId: string }) => {
-    const admins = await userRepository(p).getAdmins();
-    return admins.map((a) => a.id).includes(userId);
+    const isAdmin = await userRepository(p).isAdmin({ userId });
+    return !!isAdmin;
   },
 
-  getAdmins: async () => {
-    return userRepository(p).getAdmins();
+  getManyAdmins: async (agTable: AgTable) => {
+    const rows = await userRepository(p).getManyAdmins(agTable);
+    return {
+      totalRowCount: await userRepository(p).countAdmins(agTable),
+      rows: rows.map((user) => ({
+        ...user,
+        displayName: getDisplayName({
+          user,
+        }),
+      })),
+    };
   },
 
   getManyByProviderAccountIds: async ({
@@ -32,7 +60,11 @@ export const userController = (p?: PrismaTransactionClient) => ({
   },
 
   get: async ({ userId }: { userId: string }) => {
-    return userRepository(p).get({ userId });
+    const user = await userRepository(p).get({ userId });
+    return {
+      ...user,
+      displayName: getDisplayName({ user }),
+    };
   },
 
   getStatus: async ({ userId }: { userId: string }) => {

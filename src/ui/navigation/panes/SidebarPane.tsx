@@ -108,7 +108,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
               <SideBarButton
                 dataMonitoringId={uiRoutes.player.dataMonitoringId}
                 href={uiRoutes.player.href({ playerId: user?.id || "" })}
-                name={user?.name || <Skeleton />}
+                name={user?.displayName || <Skeleton />}
                 icon={<ProfileIcon size={PROFILE_IMAGE_SIZE} />}
                 hideLabel={isMobile}
                 badge={{

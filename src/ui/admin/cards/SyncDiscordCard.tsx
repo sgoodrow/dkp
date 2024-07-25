@@ -10,10 +10,10 @@ import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 export const SyncDiscordCard: FC<{}> = ({}) => {
   const { mutate, isPending } = trpc.user.syncDiscordMetadata.useMutation({
     onSuccess: () => {
-      enqueueSnackbar("Members synced successfully", { variant: "success" });
+      enqueueSnackbar("Discord metadata synced.", { variant: "success" });
     },
-    onError: (err) => {
-      enqueueSnackbar(`Error syncing members: ${err.message}`, {
+    onError: () => {
+      enqueueSnackbar("Error syncing Discord metadata.", {
         variant: "error",
       });
     },
@@ -23,7 +23,7 @@ export const SyncDiscordCard: FC<{}> = ({}) => {
     <LabeledCard
       title="Sync Discord"
       labelId="sync-discord-label"
-      titleInfo="Discord member metadata is synced nightly, but you can manually sync it here."
+      titleInfo="Discord  metadata is synced nightly, but you can manually sync it here."
       titleAvatar={<DiscordIcon />}
     >
       <Stack direction="row" spacing={1}>

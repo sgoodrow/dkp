@@ -9,6 +9,7 @@ import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { flatMap, uniq } from "lodash";
 import { itemController } from "@/api/controllers/itemController";
 import { characterController } from "@/api/controllers/characterController";
+import { AgTable } from "@/api/shared/agGridUtils/table";
 
 const getCharacterNames = (
   list: {
@@ -168,28 +169,12 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     return raidActivityType.defaultPayout;
   },
 
-  getMany: async ({
-    startRow,
-    endRow,
-    filterModel,
-    sortModel,
-  }: {
-    startRow: number;
-    endRow: number;
-    filterModel?: AgFilterModel;
-    sortModel?: AgSortModel;
-  }) => {
+  getMany: async (agTable: AgTable) => {
     return {
-      totalRowCount: await raidActivityRepository(p).getCount({
-        filterModel,
-        sortModel,
+      totalRowCount: await raidActivityRepository(p).count({
+        ...agTable,
       }),
-      rows: await raidActivityRepository(p).getMany({
-        startRow,
-        endRow,
-        filterModel,
-        sortModel,
-      }),
+      rows: await raidActivityRepository(p).getMany(agTable),
     };
   },
 });

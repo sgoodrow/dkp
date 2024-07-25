@@ -2,18 +2,67 @@ import {
   prisma,
   PrismaTransactionClient,
 } from "@/api/repositories/shared/client";
+import {
+  AgFilterModel,
+  agFilterModelToPrismaWhere,
+} from "@/api/shared/agGridUtils/filter";
+import {
+  AgSortModel,
+  agSortModelToPrismaOrderBy,
+} from "@/api/shared/agGridUtils/sort";
 import { guild } from "@/shared/constants/guild";
 
 export const userRepository = (p: PrismaTransactionClient = prisma) => ({
-  getAdmins: async () => {
+  isAdmin: ({ userId }: { userId: string }) => {
+    return p.userDiscordMetadata.findFirst({
+      where: {
+        AND: {
+          roleIds: {
+            has: guild.discordAdminRoleId,
+          },
+          userId,
+        },
+      },
+    });
+  },
+
+  countAdmins: async ({
+    filterModel,
+    sortModel,
+  }: {
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
+    return p.user.count({
+      where: {
+        ...agFilterModelToPrismaWhere(filterModel),
+        discordMetadata: {
+          roleIds: {
+            has: guild.discordAdminRoleId,
+          },
+        },
+      },
+      orderBy: agSortModelToPrismaOrderBy(sortModel),
+    });
+  },
+
+  getManyAdmins: async ({
+    filterModel,
+    sortModel,
+  }: {
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
     return p.user.findMany({
       where: {
+        ...agFilterModelToPrismaWhere(filterModel),
         discordMetadata: {
           roleIds: {
             hasSome: [guild.discordAdminRoleId],
           },
         },
       },
+      orderBy: agSortModelToPrismaOrderBy(sortModel),
       include: {
         discordMetadata: true,
       },
@@ -81,6 +130,9 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
   get: async ({ userId }: { userId: string }) => {
     return p.user.findUniqueOrThrow({
       where: { id: userId },
+      include: {
+        discordMetadata: true,
+      },
     });
   },
 

@@ -1,4 +1,5 @@
 import { userController } from "@/api/controllers/userController";
+import { agTableSchema } from "@/api/shared/agGridUtils/table";
 import {
   adminProcedure,
   createRoutes,
@@ -11,9 +12,11 @@ export const userApiRoutes = createRoutes({
     return userController().isAdmin({ userId: ctx.userId });
   }),
 
-  getAdmins: protectedProcedure.query(async ({ ctx }) => {
-    return userController().getAdmins();
-  }),
+  getAdmins: protectedProcedure
+    .input(agTableSchema)
+    .query(async ({ input }) => {
+      return userController().getManyAdmins(input);
+    }),
 
   get: protectedProcedure.query(async ({ ctx }) => {
     return userController().get({ userId: ctx.userId });
