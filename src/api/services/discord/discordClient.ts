@@ -1,13 +1,8 @@
 import { APIGuildMember } from "discord-api-types/v10";
 import { ENV } from "@/api/env";
 import { guild } from "@/shared/constants/guild";
-import memoize from "memoizee";
-import { MINUTES } from "@/shared/constants/time";
 
 const BASE_URL = "https://discord.com/api/v10";
-
-const CACHE_DURATION = 5 * MINUTES;
-const CACHE_SIZE = 1000;
 
 const authenticatedFetch = async <T>(
   relativeUrl: string,
@@ -28,14 +23,21 @@ const authenticatedFetch = async <T>(
   return response.json() as T;
 };
 
-export const discordService = {
-  getMemberRoleIds: memoize(
-    async ({ memberId }: { memberId: string }) => {
-      const member = await authenticatedFetch<APIGuildMember>(
-        `/guilds/${guild.discordServerId}/members/${memberId}`,
-      );
-      return member.roles;
-    },
-    { maxAge: CACHE_DURATION, promise: true, max: CACHE_SIZE },
-  ),
+export const discordClient = {
+  getMembers: async ({ limit, after }: { limit?: number; after?: string }) => {
+    const url = new URL(`/guilds/${guild.discordServerId}/members`, BASE_URL);
+    if (limit !== undefined) {
+      url.searchParams.set("limit", limit.toString());
+    }
+    if (after !== undefined) {
+      url.searchParams.set("after", after);
+    }
+    return authenticatedFetch<APIGuildMember[]>(url.toString());
+  },
+
+  getMember: async ({ memberId }: { memberId: string }) => {
+    return authenticatedFetch<APIGuildMember>(
+      `/guilds/${guild.discordServerId}/members/${memberId}`,
+    );
+  },
 };

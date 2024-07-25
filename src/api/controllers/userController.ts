@@ -1,8 +1,7 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { userRepository } from "@/api/repositories/userRepository";
-import { discordService } from "@/api/services/discord";
-import { guild } from "@/shared/constants/guild";
+import { discordService } from "@/api/services/discord/discordService";
 
 export const userController = (p?: PrismaTransactionClient) => ({
   isAdmin: async ({ userId }: { userId: string }) => {
@@ -10,10 +9,13 @@ export const userController = (p?: PrismaTransactionClient) => ({
       userId,
       provider: "discord",
     });
-    const roleIds = await discordService.getMemberRoleIds({
+    return discordService.getIsAdmin({
       memberId: discordUserId,
     });
-    return roleIds.includes(guild.discordAdminRoleId);
+  },
+
+  getAdmins: async () => {
+    return discordService.getAdmins();
   },
 
   get: async ({ userId }: { userId: string }) => {

@@ -7,6 +7,10 @@ export const userApiRoutes = createRoutes({
     return userController().isAdmin({ userId: ctx.userId });
   }),
 
+  getAdmins: protectedProcedure.query(async ({ ctx }) => {
+    return userController().getAdmins();
+  }),
+
   get: protectedProcedure.query(async ({ ctx }) => {
     return userController().get({ userId: ctx.userId });
   }),
