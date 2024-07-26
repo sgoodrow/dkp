@@ -1,6 +1,7 @@
 import { raidActivityController } from "@/api/controllers/raidActivityController";
 import { agFilterModelSchema } from "@/api/shared/agGridUtils/filter";
 import { agSortModelSchema } from "@/api/shared/agGridUtils/sort";
+import { agTableSchema } from "@/api/shared/agGridUtils/table";
 import {
   adminProcedure,
   createRoutes,
@@ -55,21 +56,8 @@ export const raidActivityApiRoutes = createRoutes({
       });
     }),
 
-  getMany: protectedProcedure
-    .input(
-      z.object({
-        startRow: z.number().nonnegative().int(),
-        endRow: z.number().nonnegative().int(),
-        filterModel: agFilterModelSchema,
-        sortModel: agSortModelSchema,
-      }),
-    )
-    .query(async ({ input }) => {
-      return raidActivityController().getMany({
-        startRow: input.startRow,
-        endRow: input.endRow,
-        filterModel: input.filterModel,
-        sortModel: input.sortModel,
-      });
-    }),
+  // TODO: Maybe make this (ag table) its own type of procedure
+  getMany: protectedProcedure.input(agTableSchema).query(async ({ input }) => {
+    return raidActivityController().getMany(input);
+  }),
 });

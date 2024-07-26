@@ -93,7 +93,7 @@ export const raidActivityRepository = (
     });
   },
 
-  getCount: async ({
+  count: async ({
     filterModel,
     sortModel,
   }: {

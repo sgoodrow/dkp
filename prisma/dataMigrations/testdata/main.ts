@@ -1,6 +1,7 @@
 import { userController } from "@/api/controllers/userController";
 import { ENV } from "@/api/env";
 import { ingestCharacters } from "prisma/dataMigrations/testdata/ingestCharacters";
+import { ingestDiscordMetadata } from "prisma/dataMigrations/testdata/ingestDiscordMetadata";
 import { ingestRaidActivities } from "prisma/dataMigrations/testdata/ingestRaidActivities";
 import { createLogger } from "prisma/dataMigrations/util/log";
 
@@ -24,6 +25,7 @@ export const testDataDataMigration = async () => {
 
   const userId = user.id;
 
+  await ingestDiscordMetadata({ userId });
   await ingestCharacters({ userId });
   await ingestRaidActivities({ userId });
 

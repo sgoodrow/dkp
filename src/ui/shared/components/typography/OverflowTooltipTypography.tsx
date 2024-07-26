@@ -7,14 +7,16 @@ import {
 } from "@mui/material";
 import { useRef, useState } from "react";
 
-type Props = Omit<TypographyProps, "ref" | "noWrap" | "children"> & {
+type Props = Omit<TypographyProps, "ref" | "noWrap" | "title" | "children"> & {
   children: string | React.ReactNode;
   placement?: TooltipProps["placement"];
+  tooltip?: TooltipProps["title"];
 };
 
 export const OverflowTooltipTypography: React.FC<Props> = ({
   children,
   placement,
+  tooltip,
   ...typographyProps
 }) => {
   const [isOverflowed, setIsOverflowed] = useState(false);
@@ -27,18 +29,22 @@ export const OverflowTooltipTypography: React.FC<Props> = ({
     setIsOverflowed(hover && ref.current.scrollWidth > ref.current.clientWidth);
   };
 
-  const title = typeof children === "string" ? children : undefined;
-
   return (
     <Tooltip
       onMouseEnter={() => handleHover(true)}
       onMouseLeave={() => handleHover(false)}
-      disableHoverListener={!isOverflowed}
-      title={title}
-      open={isOverflowed}
+      disableHoverListener={!isOverflowed && !tooltip}
+      title={typeof children === "string" && isOverflowed ? children : tooltip}
+      open={tooltip === undefined ? isOverflowed : undefined}
       placement={placement}
     >
-      <Typography ref={ref} {...typographyProps} aria-label={undefined} noWrap>
+      <Typography
+        ref={ref}
+        {...typographyProps}
+        aria-label={undefined}
+        noWrap
+        title={""}
+      >
         {children}
       </Typography>
     </Tooltip>

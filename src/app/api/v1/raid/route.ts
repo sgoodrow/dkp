@@ -8,7 +8,6 @@ const handler = ({
   trpc,
   body,
 }: NextTrpcOptions<{}, TrpcRouteInputs["raidActivity"]["create"]>) => {
-  console.log(body);
   return trpc.raidActivity.create(body);
 };
 
