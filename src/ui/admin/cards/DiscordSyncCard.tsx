@@ -16,7 +16,7 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
   const { mutate, isPending } = trpc.discord.sync.useMutation({
     onSuccess: () => {
       enqueueSnackbar("Discord metadata synced.", { variant: "success" });
-      utils.discord.getLatestSyncEvent.invalidate();
+      utils.discord.invalidate();
     },
     onError: () => {
       enqueueSnackbar("Error syncing Discord metadata.", {

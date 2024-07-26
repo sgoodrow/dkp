@@ -22,7 +22,9 @@ export const HeaderLayout: FCWithChildren<{
           height={HEADER_HEIGHT}
         >
           <Typography variant="h2">{uiRoute.name}</Typography>
-          <Divider sx={{ flexGrow: 1, alignSelf: "center", pt: 1 }} />
+          {actions && (
+            <Divider sx={{ flexGrow: 1, alignSelf: "center", pt: 1 }} />
+          )}
           {actions}
         </Stack>
         <Typography variant="subtitle2">{uiRoute.description}</Typography>
