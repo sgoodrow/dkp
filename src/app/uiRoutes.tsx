@@ -99,8 +99,8 @@ export const uiRoutes = {
   },
   // Sub-pages
   player: {
-    href: ({ playerId }: { playerId: string }) =>
-      `${uiRoutes.players.href()}/${playerId}` as const,
+    href: ({ userId }: { userId: string }) =>
+      `${uiRoutes.players.href()}/${userId}` as const,
     name: (name: string) => `Player - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_PLAYER,
   },
@@ -112,7 +112,7 @@ export const uiRoutes = {
       playerId: string;
       characterId: number;
     }) =>
-      `${uiRoutes.player.href({ playerId })}/character/${characterId}` as const,
+      `${uiRoutes.player.href({ userId: playerId })}/character/${characterId}` as const,
     name: (name: string) => `Character - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_CHARACTER,
   },

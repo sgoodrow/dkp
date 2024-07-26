@@ -20,7 +20,7 @@ export const SignInWithProviderButton: FC<{
       variant="contained"
       onClick={() => signIn(providerName, { redirectTo: uiRoutes.home.href() })}
     >
-      Sign in with {providerTitle}
+      Sign in
     </Button>
   );
 };

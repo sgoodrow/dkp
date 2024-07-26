@@ -11,6 +11,7 @@ import { WelcomeDialogButton } from "@/ui/navigation/buttons/WelcomeDialogButton
 import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 import { GoogleDriveDocumentsIcon } from "@/ui/shared/components/icons/GoogleDriveDocumentsIcon";
 import { ProfileIcon } from "@/ui/shared/components/icons/ProfileIcon";
+import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import {
   MonitoringId,
   monitoringIds,
@@ -107,8 +108,8 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
             ) : (
               <SideBarButton
                 dataMonitoringId={uiRoutes.player.dataMonitoringId}
-                href={uiRoutes.player.href({ playerId: user?.id || "" })}
-                name={user?.displayName || <Skeleton />}
+                href={uiRoutes.player.href({ userId: user?.id || "" })}
+                name={<PlayerLink user={user} />}
                 icon={<ProfileIcon size={PROFILE_IMAGE_SIZE} />}
                 hideLabel={isMobile}
                 badge={{

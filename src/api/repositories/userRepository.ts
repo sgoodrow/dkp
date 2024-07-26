@@ -14,7 +14,7 @@ import { guild } from "@/shared/constants/guild";
 
 export const userRepository = (p: PrismaTransactionClient = prisma) => ({
   isAdmin: ({ userId }: { userId: string }) => {
-    return p.userDiscordMetadata.findFirst({
+    return p.discordUserMetadata.findFirst({
       where: {
         AND: {
           roleIds: {
@@ -65,6 +65,20 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
       orderBy: agSortModelToPrismaOrderBy(sortModel),
       include: {
         discordMetadata: true,
+        _count: {
+          select: {
+            clearedTransactions: true,
+          },
+        },
+        clearedTransactions: {
+          orderBy: {
+            updatedAt: "desc",
+          },
+          take: 1,
+          select: {
+            updatedAt: true,
+          },
+        },
       },
     });
   },
@@ -142,14 +156,6 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  getAllDiscordMetadata: async () => {
-    return p.userDiscordMetadata.findMany({
-      select: {
-        memberId: true,
-      },
-    });
-  },
-
   searchByName: async ({ search, take }: { search: string; take: number }) => {
     return p.user.findMany({
       where: {
@@ -162,40 +168,6 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
         name: "asc",
       },
       take,
-    });
-  },
-
-  deleteDiscordMetadataByMemberIds: async ({
-    memberIds,
-  }: {
-    memberIds: string[];
-  }) => {
-    return p.userDiscordMetadata.deleteMany({
-      where: {
-        memberId: {
-          in: memberIds,
-        },
-      },
-    });
-  },
-
-  upsertDiscordMetadata: async ({
-    metadata,
-  }: {
-    metadata: {
-      userId: string | null;
-      memberId: string;
-      displayName: string;
-      roleIds: string[];
-    }[];
-  }) => {
-    return prisma.$transaction(async (p) => {
-      await userRepository(p).deleteDiscordMetadataByMemberIds({
-        memberIds: metadata.map((r) => r.memberId),
-      });
-      await p.userDiscordMetadata.createMany({
-        data: metadata,
-      });
     });
   },
 });

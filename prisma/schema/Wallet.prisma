@@ -23,24 +23,27 @@ model WalletTransaction {
     updatedAt DateTime @updatedAt
 
     // Properties
-    type               WalletTransactionType
-    amount             Float
-    characterName      String
-    reason             String?
-    pilotCharacterName String?
-    itemName           String?
-    archived           Boolean               @default(false)
-    archivedAt         DateTime?
+    requiredIntervention Boolean               @default(false)
+    type                 WalletTransactionType
+    amount               Float
+    characterName        String
+    reason               String?
+    pilotCharacterName   String?
+    itemName             String?
+    archived             Boolean               @default(false)
+    archivedAt           DateTime?
 
     // Relationships
-    walletId       Int?
-    wallet         Wallet?       @relation(fields: [walletId], references: [id])
-    itemId         Int?
-    item           Item?         @relation(fields: [itemId], references: [id])
-    raidActivityId Int?
-    raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
-    createdById    String
-    createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
-    updatedById    String
-    updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
+    walletId        Int?
+    wallet          Wallet?       @relation(fields: [walletId], references: [id])
+    itemId          Int?
+    item            Item?         @relation(fields: [itemId], references: [id])
+    raidActivityId  Int?
+    raidActivity    RaidActivity? @relation(fields: [raidActivityId], references: [id])
+    createdById     String
+    createdByUser   User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
+    updatedById     String
+    updatedByUser   User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
+    clearedByUserId String?
+    clearedByUser   User?         @relation("WalletTransactionClearedBy", fields: [clearedByUserId], references: [id])
 }

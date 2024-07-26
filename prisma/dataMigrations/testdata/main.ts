@@ -25,7 +25,7 @@ export const testDataDataMigration = async () => {
 
   const userId = user.id;
 
-  await ingestDiscordMetadata();
+  await ingestDiscordMetadata({ userId });
   await ingestCharacters({ userId });
   await ingestRaidActivities({ userId });
 

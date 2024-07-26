@@ -1,10 +1,6 @@
 import { userController } from "@/api/controllers/userController";
 import { agTableSchema } from "@/api/shared/agGridUtils/table";
-import {
-  adminProcedure,
-  createRoutes,
-  protectedProcedure,
-} from "@/api/views/trpc/trpcBuilder";
+import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
 export const userApiRoutes = createRoutes({
@@ -40,13 +36,5 @@ export const userApiRoutes = createRoutes({
         search: input.search,
         take: input.take,
       });
-    }),
-
-  syncDiscordMetadata: adminProcedure
-    .meta({
-      scope: "sync_discord_members",
-    })
-    .mutation(async () => {
-      return userController().syncDiscordMetadata();
     }),
 });

@@ -2,12 +2,10 @@
 
 import { FC } from "react";
 import { ICellRendererParams } from "ag-grid-community";
-import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
-import { uiRoutes } from "@/app/uiRoutes";
 import { InfiniteTable } from "@/ui/shared/components/table/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
-import { SiteLink } from "@/ui/shared/components/links/SiteLink";
 import { Cell } from "@/ui/shared/components/table/Cell";
+import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 
 export const AdminsTable: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
@@ -22,13 +20,25 @@ export const AdminsTable: FC<{}> = ({}) => {
           filter: "agTextColumnFilter",
           cellRenderer: (props: ICellRendererParams) => (
             <Cell isLoading={props.data === undefined}>
-              <SiteLink
-                data-monitoring-id={monitoringIds.GOTO_RAID}
-                label={props.value}
-                href={uiRoutes.raid.href(props.data?.id)}
+              <PlayerLink
+                user={{
+                  id: props.data?.id,
+                  displayName: props.data?.displayName,
+                  discordMetadata: props.data?.discordMetadata,
+                }}
               />
             </Cell>
           ),
+        },
+        {
+          headerName: "Cleared Transactions",
+          field: "_count.clearedTransactions",
+        },
+        {
+          headerName: "Last Active",
+          valueGetter: (params) => {
+            return params.data?.clearedTransactions?.[0]?.updatedAt || "Never";
+          },
         },
       ]}
     />
