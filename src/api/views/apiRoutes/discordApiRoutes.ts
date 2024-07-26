@@ -36,4 +36,14 @@ export const discordApiRoutes = createRoutes({
     .query(async ({ input }) => {
       return discordController().getBestRole({ roleIds: input.roleIds });
     }),
+
+  getRole: protectedProcedure
+    .input(
+      z.object({
+        roleId: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return discordController().getRole({ roleId: input.roleId });
+    }),
 });

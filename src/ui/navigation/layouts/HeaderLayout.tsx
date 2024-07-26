@@ -27,7 +27,7 @@ export const HeaderLayout: FCWithChildren<{
         </Stack>
         <Typography variant="subtitle2">{uiRoute.description}</Typography>
       </Stack>
-      {children}
+      <Box>{children}</Box>
       <Box pt={1} />
     </Stack>
   );

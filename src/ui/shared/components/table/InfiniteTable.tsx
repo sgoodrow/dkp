@@ -74,6 +74,7 @@ export const InfiniteTable = <TData,>({
           },
         }}
         defaultColDef={{
+          sortable: false,
           filterParams: {
             closeOnApply: true,
             maxNumConditions: 1,

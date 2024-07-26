@@ -5,6 +5,7 @@ import { OverflowTooltipTypography } from "@/ui/shared/components/typography/Ove
 import {
   Box,
   CardHeaderProps,
+  Divider,
   Paper,
   Stack,
   TooltipProps,
@@ -29,7 +30,7 @@ export const LabeledCard: FCWithChildren<{
       {title && (
         <Stack direction="row" spacing={1} alignItems="center">
           {titleAvatar}
-          <OverflowTooltipTypography id={labelId} variant="h5">
+          <OverflowTooltipTypography id={labelId} variant="h4">
             {title}
           </OverflowTooltipTypography>
           {titleInfo && <InfoIcon title={titleInfo} />}
@@ -37,6 +38,7 @@ export const LabeledCard: FCWithChildren<{
           {titleBar}
         </Stack>
       )}
+      <Divider />
       {children}
     </Stack>
   );

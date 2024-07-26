@@ -2,14 +2,16 @@
 
 import { FC } from "react";
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
-import { Box, Button, Paper, Skeleton, Stack, Typography } from "@mui/material";
+import { Button, Skeleton, Stack, Typography } from "@mui/material";
 import { trpc } from "@/api/views/trpc/trpc";
 import { enqueueSnackbar } from "notistack";
-import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
-import dayjs from "dayjs";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
+import { Sync } from "@mui/icons-material";
+import dayjs from "dayjs";
+import { DiscordRoleTypography } from "@/ui/shared/components/typography/DiscordRoleTypography";
+import { guild } from "@/shared/constants/guild";
 
-export const SyncDiscordCard: FC<{}> = ({}) => {
+export const DiscordSyncCard: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
   const { mutate, isPending } = trpc.discord.sync.useMutation({
     onSuccess: () => {
@@ -23,29 +25,23 @@ export const SyncDiscordCard: FC<{}> = ({}) => {
     },
   });
 
-  const { data: discordSummary } = trpc.discord.getSummary.useQuery();
-
   const { data: latestSyncEvent } = trpc.discord.getLatestSyncEvent.useQuery();
 
   return (
     <LabeledCard
       title="Sync Discord"
-      labelId="sync-discord-label"
+      labelId="discord-sync-label"
       titleInfo="Discord metadata is synced nightly, but admins can manually sync anytime."
-      titleAvatar={<DiscordIcon />}
+      titleAvatar={<Sync />}
     >
-      <Stack direction="row" spacing={1}>
-        <StatCard label="Members" value={discordSummary?.memberCount} />
-        <StatCard label="Roles" value={discordSummary?.roleCount} />
-        <StatCard label="Admins" value={discordSummary?.adminCount} />
-      </Stack>
       <Typography>
         Force a refresh of the application&apos;s Discord metadata.
         <br />
         <br />
         This is useful if a change has been made in Discord that you want to be
-        reflected here immediately, such as the removal of the admin role from a
-        player.
+        reflected here immediately, such as the removal of the{" "}
+        <DiscordRoleTypography roleId={guild.discordAdminRoleId} /> role from a
+        member.
       </Typography>
       <Stack direction="row" spacing={1}>
         <Button
@@ -81,19 +77,5 @@ export const SyncDiscordCard: FC<{}> = ({}) => {
         )}
       </Stack>
     </LabeledCard>
-  );
-};
-
-const StatCard: FC<{ label: string; value?: string | number }> = ({
-  label,
-  value,
-}) => {
-  return (
-    <Box component={Paper} elevation={2} p={1} flexGrow={1}>
-      <Typography gutterBottom variant="body2" color="text.secondary">
-        {label}
-      </Typography>
-      <Typography variant="h4">{value || <Skeleton />}</Typography>
-    </Box>
   );
 };

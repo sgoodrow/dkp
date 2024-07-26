@@ -1,5 +1,3 @@
-"use client";
-
 import { FC } from "react";
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
 import { AdminsTable } from "@/ui/admin/tables/AdminsTable";
@@ -8,13 +6,16 @@ import { Box } from "@mui/material";
 import { cardWithTableHeight } from "@/ui/shared/constants/sizes";
 
 export const AdminsCard: FC<{}> = ({}) => {
-  const adminRoleName = "DKP Deputy";
-
   return (
     <LabeledCard
-      title="Admins List"
+      title="Admins"
       labelId="admins-list-label"
-      titleInfo={`Admins are users who have the @${adminRoleName} role in the configured Discord server.`}
+      titleInfo={
+        <>
+          This table only shows players who have the admin role and have logged
+          into the application at least once.
+        </>
+      }
       titleAvatar={<People />}
     >
       <Box display="flex" height={cardWithTableHeight}>

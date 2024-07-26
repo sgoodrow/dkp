@@ -48,6 +48,14 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  getRole: async ({ roleId }: { roleId: string }) => {
+    return p.discordRole.findUniqueOrThrow({
+      where: {
+        roleId,
+      },
+    });
+  },
+
   getAllUserMetadata: async () => {
     return p.discordUserMetadata.findMany({
       select: {

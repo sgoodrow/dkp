@@ -16,8 +16,8 @@ export const AdminsTable: FC<{}> = ({}) => {
         {
           headerName: "Name",
           field: "displayName",
+          minWidth: 100,
           flex: 1,
-          filter: "agTextColumnFilter",
           cellRenderer: (props: ICellRendererParams) => (
             <Cell isLoading={props.data === undefined}>
               <PlayerLink
@@ -33,12 +33,16 @@ export const AdminsTable: FC<{}> = ({}) => {
         {
           headerName: "Cleared Transactions",
           field: "_count.clearedTransactions",
+          flex: 1,
+          minWidth: 100,
         },
         {
           headerName: "Last Active",
           valueGetter: (params) => {
             return params.data?.clearedTransactions?.[0]?.updatedAt || "Never";
           },
+          flex: 1,
+          minWidth: 100,
         },
       ]}
     />

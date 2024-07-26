@@ -54,6 +54,10 @@ export const discordController = (p?: PrismaTransactionClient) => ({
     };
   },
 
+  getRole: async ({ roleId }: { roleId: string }) => {
+    return discordRepository(p).getRole({ roleId });
+  },
+
   getLatestSyncEvent: async () => {
     const event = await discordRepository(p).getLatestSyncEvent();
     return event
