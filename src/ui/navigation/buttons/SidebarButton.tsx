@@ -42,7 +42,7 @@ export const SideBarButton: FC<{
   const pathname = usePathname();
   const theme = useTheme();
   const isExternal = href?.startsWith("http");
-  const isSelected = !!selected || (!!href && pathname.startsWith(href));
+  const isSelected = !!selected || (!!href && pathname === href);
 
   return (
     <>

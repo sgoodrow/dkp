@@ -35,7 +35,6 @@ export const DiscordMetadataCard: FC<{}> = ({}) => {
           <Unstable_Grid2 xs={6}>
             <StatCard label="Roles" value={discordSummary?.roleCount} />
           </Unstable_Grid2>
-
           <Unstable_Grid2 xs={6}>
             <StatCard
               label="Members with admin role"

@@ -11,6 +11,7 @@ import {
   Key,
   People,
   ShoppingCart,
+  SmartToy,
 } from "@mui/icons-material";
 
 export const uiRoutes = {
@@ -147,6 +148,14 @@ export const uiRoutes = {
     description: "View and manage API keys.",
     dataMonitoringId: monitoringIds.GOTO_API_KEYS,
     icon: Key,
+    adminOnly: true,
+  },
+  bots: {
+    href: () => `${uiRoutes.admin.href()}/bots` as const,
+    name: "Bots",
+    description: "View and manage bots.",
+    dataMonitoringId: monitoringIds.GOTO_BOTS,
+    icon: SmartToy,
     adminOnly: true,
   },
 } as const;

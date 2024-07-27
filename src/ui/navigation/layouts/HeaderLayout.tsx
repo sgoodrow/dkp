@@ -14,7 +14,7 @@ export const HeaderLayout: FCWithChildren<{
 }> = ({ uiRoute, actions, children }) => {
   return (
     <Stack spacing={3} flexGrow={1}>
-      <Stack>
+      <Box>
         <Stack
           direction="row"
           spacing={1}
@@ -28,8 +28,8 @@ export const HeaderLayout: FCWithChildren<{
           {actions}
         </Stack>
         <Typography variant="subtitle2">{uiRoute.description}</Typography>
-      </Stack>
-      <Box>{children}</Box>
+      </Box>
+      {children}
       <Box pt={1} />
     </Stack>
   );

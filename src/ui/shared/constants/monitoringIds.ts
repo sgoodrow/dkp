@@ -42,6 +42,8 @@ export const monitoringIds = keysAreSameAsValuesCheck({
 
   GOTO_API_KEYS: "GOTO_API_KEYS",
 
+  GOTO_BOTS: "GOTO_BOTS",
+
   // External app navigation
   GOTO_DISCORD: "GOTO_DISCORD",
 

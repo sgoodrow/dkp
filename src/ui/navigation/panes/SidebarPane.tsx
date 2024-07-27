@@ -65,6 +65,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
           badgeCount: pendingTransactionsCount,
           badgeTooltip: "Number of pending transactions",
         },
+        uiRoutes.bots,
         uiRoutes.apiKeys,
       ]
     : [
