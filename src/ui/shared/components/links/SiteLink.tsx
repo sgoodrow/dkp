@@ -1,6 +1,6 @@
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 import { OpenInNew } from "@mui/icons-material";
-import { Link } from "@mui/material";
+import { Link, TooltipProps } from "@mui/material";
 import { Property } from "csstype";
 import { FC, ReactNode } from "react";
 
@@ -12,6 +12,7 @@ export const SiteLink: FC<{
   inheritSize?: boolean;
   inheritColor?: boolean;
   color?: Property.Color;
+  placement?: TooltipProps["placement"];
 }> = ({
   "data-monitoring-id": dataMonitoringId,
   href,
@@ -20,6 +21,7 @@ export const SiteLink: FC<{
   inheritSize,
   inheritColor,
   color,
+  placement,
 }) => {
   const isExternal = href?.startsWith("http");
   const typography = (
@@ -28,6 +30,7 @@ export const SiteLink: FC<{
       component="span"
       fontSize={inheritSize ? "inherit" : undefined}
       fontWeight={inheritColor ? "bold" : undefined}
+      placement={placement}
     >
       {label}
     </OverflowTooltipTypography>

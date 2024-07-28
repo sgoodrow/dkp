@@ -10,6 +10,7 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
+import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { WalletTransactionType } from "@prisma/client";
 
 export const raidActivityRepository = (
@@ -114,17 +115,7 @@ export const raidActivityRepository = (
     });
   },
 
-  getMany: async ({
-    startRow,
-    endRow,
-    filterModel,
-    sortModel,
-  }: {
-    startRow: number;
-    endRow: number;
-    filterModel?: AgFilterModel;
-    sortModel?: AgSortModel;
-  }) => {
+  getMany: async ({ startRow, endRow, filterModel, sortModel }: AgGrid) => {
     return p.raidActivity.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
         createdAt: "desc",

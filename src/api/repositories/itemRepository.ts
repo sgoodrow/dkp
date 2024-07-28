@@ -30,6 +30,27 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
+    return p.item.findMany({
+      where: {
+        name: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take,
+    });
+  },
+
   getItemMap: async ({ itemNames }: { itemNames: string[] }) => {
     const items = await p.item.findMany({
       where: {

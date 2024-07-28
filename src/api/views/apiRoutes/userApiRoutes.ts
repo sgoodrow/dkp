@@ -1,6 +1,9 @@
 import { userController } from "@/api/controllers/userController";
-import { agTableSchema } from "@/api/shared/agGridUtils/table";
-import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
+import {
+  agFetchProcedure,
+  createRoutes,
+  protectedProcedure,
+} from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
 export const userApiRoutes = createRoutes({
@@ -8,11 +11,9 @@ export const userApiRoutes = createRoutes({
     return userController().isAdmin({ userId: ctx.userId });
   }),
 
-  getAdmins: protectedProcedure
-    .input(agTableSchema)
-    .query(async ({ input }) => {
-      return userController().getManyAdmins(input);
-    }),
+  getAdmins: agFetchProcedure.query(async ({ input }) => {
+    return userController().getManyAdmins(input);
+  }),
 
   get: protectedProcedure.query(async ({ ctx }) => {
     return userController().get({ userId: ctx.userId });

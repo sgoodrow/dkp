@@ -1,17 +1,33 @@
 import { walletController } from "@/api/controllers/walletController";
 import {
   adminProcedure,
+  agFetchProcedure,
   createRoutes,
   protectedProcedure,
 } from "@/api/views/trpc/trpcBuilder";
+import { z } from "zod";
 
 export const walletApiRoutes = createRoutes({
-  countPendingTransactions: adminProcedure
+  archiveTransaction: adminProcedure
     .meta({
-      scope: "count_pending_transactions",
+      scope: "archive_transaction",
+    })
+    .input(
+      z.object({
+        transactionId: z.number().nonnegative().int(),
+        archived: z.boolean().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return walletController().archiveTransaction(input);
+    }),
+
+  countUnclearedTransactions: adminProcedure
+    .meta({
+      scope: "count_uncleared_transactions",
     })
     .query(async ({}) => {
-      return walletController().countPendingTransactions();
+      return walletController().countUnclearedTransactions();
     }),
 
   getUserDkp: protectedProcedure.query(async ({ ctx }) => {
@@ -19,4 +35,15 @@ export const walletApiRoutes = createRoutes({
       userId: ctx.userId,
     });
   }),
+
+  getManyTransactions: agFetchProcedure
+    .input(
+      z.object({
+        showArchived: z.boolean(),
+        showCleared: z.boolean(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return walletController().getManyTransactions(input);
+    }),
 });

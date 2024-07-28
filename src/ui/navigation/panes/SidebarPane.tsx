@@ -43,8 +43,8 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
   const pathname = usePathname();
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
   const { data: dkp } = trpc.wallet.getUserDkp.useQuery();
-  const { data: pendingTransactionsCount } =
-    trpc.wallet.countPendingTransactions.useQuery(undefined, {
+  const { data: unclearedTransactionsCount } =
+    trpc.wallet.countUnclearedTransactions.useQuery(undefined, {
       enabled: isAdmin,
     });
   const { data: user } = trpc.user.get.useQuery();
@@ -62,8 +62,8 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
         uiRoutes.raidTypes,
         {
           ...uiRoutes.transactions,
-          badgeCount: pendingTransactionsCount,
-          badgeTooltip: "Number of pending transactions",
+          badgeCount: unclearedTransactionsCount,
+          badgeTooltip: "Number of uncleared transactions",
         },
         uiRoutes.bots,
         uiRoutes.apiKeys,
@@ -78,8 +78,8 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
         uiRoutes.items,
         {
           ...uiRoutes.admin,
-          badgeCount: pendingTransactionsCount,
-          badgeTooltip: "Number of pending transactions",
+          badgeCount: unclearedTransactionsCount,
+          badgeTooltip: "Number of uncleared transactions",
         },
       ];
 

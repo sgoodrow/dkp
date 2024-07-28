@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useId } from "react";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
+import { MaintainerLink } from "@/ui/shared/components/links/MaintainerLink";
 
 export const ErrorPane: React.FC<{
   error?: Error;
@@ -46,7 +47,7 @@ export const ErrorPane: React.FC<{
       <Box role="region" aria-labelledby={alertTitleId}>
         <Typography>
           You can press reload to try again. If the issue persists, please
-          contact me at TODO.
+          contact me at <MaintainerLink />.
         </Typography>
       </Box>
     </Alert>

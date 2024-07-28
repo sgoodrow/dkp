@@ -123,7 +123,8 @@ export const uiRoutes = {
     dataMonitoringId: monitoringIds.GOTO_RAID,
   },
   item: {
-    href: (itemId: number) => `${uiRoutes.items.href()}/${itemId}` as const,
+    href: ({ itemId }: { itemId: number }) =>
+      `${uiRoutes.items.href()}/${itemId}` as const,
     name: (name: string) => `Item - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_ITEM,
   },
@@ -138,6 +139,8 @@ export const uiRoutes = {
   transactions: {
     href: () => `${uiRoutes.admin.href()}/transactions` as const,
     name: "Transactions",
+    description:
+      "Process uncleared transactions by associating them with a player or item.",
     dataMonitoringId: monitoringIds.GOTO_TRANSACTIONS,
     icon: AssignmentInd,
     adminOnly: true,

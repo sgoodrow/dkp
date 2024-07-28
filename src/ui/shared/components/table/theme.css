@@ -15,3 +15,15 @@
 .ag-theme-alpine-dark .ag-header {
   background-image: var(--mui-overlays-5);
 }
+
+.ag-cell-focus,
+.ag-cell-no-focus {
+  border: none !important;
+  margin-left: 1px;
+  padding-right: 3px;
+}
+
+.no-border.ag-cell:focus {
+  border: none !important;
+  outline: none;
+}
