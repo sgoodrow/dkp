@@ -18,7 +18,7 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
       where: {
         AND: {
           roleIds: {
-            has: guild.discordAdminRoleId,
+            hasSome: [guild.discordAdminRoleId],
           },
           userId,
         },
