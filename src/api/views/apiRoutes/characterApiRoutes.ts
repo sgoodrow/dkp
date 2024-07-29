@@ -101,4 +101,16 @@ export const characterApiRoutes = createRoutes({
         take: input.take,
       });
     }),
+
+  getByNameMatch: protectedProcedure
+    .input(
+      z.object({
+        search: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return characterController().getByNameMatch({
+        search: input.search,
+      });
+    }),
 });

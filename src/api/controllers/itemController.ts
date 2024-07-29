@@ -19,6 +19,16 @@ export const itemController = (p?: PrismaTransactionClient) => ({
     return itemRepository(p).getByNameMatch({ search });
   },
 
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
+    return itemRepository(p).getByNameIncludes({ search, take });
+  },
+
   getItemMap: async ({ itemNames }: { itemNames: string[] }) => {
     return itemRepository(p).getItemMap({
       itemNames,

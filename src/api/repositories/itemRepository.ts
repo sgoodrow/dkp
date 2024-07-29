@@ -3,6 +3,8 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/client";
 
+const normalizeItemName = (name: string) => name.toLowerCase();
+
 export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
   createMany: async ({
     items,
@@ -19,14 +21,41 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  getById: async ({ itemId }: { itemId: number }) => {
+    return p.item.findUniqueOrThrow({
+      where: {
+        id: itemId,
+      },
+    });
+  },
+
   getByNameMatch: async ({ search }: { search: string }) => {
     return p.item.findFirst({
       where: {
         name: {
-          contains: search,
-          mode: "insensitive",
+          contains: normalizeItemName(search),
         },
       },
+    });
+  },
+
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
+    return p.item.findMany({
+      where: {
+        name: {
+          contains: normalizeItemName(search),
+        },
+      },
+      orderBy: {
+        name: "asc",
+      },
+      take,
     });
   },
 
@@ -34,8 +63,7 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     const items = await p.item.findMany({
       where: {
         name: {
-          in: itemNames,
-          mode: "insensitive",
+          in: itemNames.map((i) => normalizeItemName(i)),
         },
       },
     });

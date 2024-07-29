@@ -4,9 +4,8 @@ import { trpc } from "@/api/views/trpc/trpc";
 import { uiRoutes } from "@/app/uiRoutes";
 import { SiteLink } from "@/ui/shared/components/links/SiteLink";
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
-import { Skeleton, Stack, Typography } from "@mui/material";
+import { Skeleton } from "@mui/material";
 import { FC } from "react";
-import a from "indefinite";
 
 export const PlayerLink: FC<{
   user?: {

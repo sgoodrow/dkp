@@ -1,6 +1,9 @@
 import { userController } from "@/api/controllers/userController";
-import { agTableSchema } from "@/api/shared/agGridUtils/table";
-import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
+import {
+  agFetchProcedure,
+  createRoutes,
+  protectedProcedure,
+} from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
 export const userApiRoutes = createRoutes({
@@ -8,11 +11,9 @@ export const userApiRoutes = createRoutes({
     return userController().isAdmin({ userId: ctx.userId });
   }),
 
-  getAdmins: protectedProcedure
-    .input(agTableSchema)
-    .query(async ({ input }) => {
-      return userController().getManyAdmins(input);
-    }),
+  getAdmins: agFetchProcedure.query(async ({ input }) => {
+    return userController().getManyAdmins(input);
+  }),
 
   get: protectedProcedure.query(async ({ ctx }) => {
     return userController().get({ userId: ctx.userId });
@@ -24,7 +25,17 @@ export const userApiRoutes = createRoutes({
     });
   }),
 
-  searchByName: protectedProcedure
+  getByWalletId: protectedProcedure
+    .input(
+      z.object({
+        walletId: z.number(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return userController().getByWalletId(input);
+    }),
+
+  getByNameIncludes: protectedProcedure
     .input(
       z.object({
         search: z.string(),
@@ -32,7 +43,7 @@ export const userApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await userController().searchByName({
+      return userController().getByNameIncludes({
         search: input.search,
         take: input.take,
       });

@@ -156,13 +156,57 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  searchByName: async ({ search, take }: { search: string; take: number }) => {
+  getByWalletId: async ({ walletId }: { walletId: number }) => {
+    return p.user.findFirstOrThrow({
+      where: {
+        wallet: {
+          id: walletId,
+        },
+      },
+      include: {
+        discordMetadata: true,
+      },
+    });
+  },
+
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
     return p.user.findMany({
       where: {
-        name: {
-          contains: search,
-          mode: "insensitive",
-        },
+        OR: [
+          {
+            discordMetadata: {
+              displayName: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+          {
+            name: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            characters: {
+              some: {
+                name: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        discordMetadata: true,
       },
       orderBy: {
         name: "asc",

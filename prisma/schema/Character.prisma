@@ -5,8 +5,7 @@ model Character {
     updatedAt DateTime @updatedAt
 
     // Properties
-    name  String  @unique
-    isBot Boolean @default(false)
+    name String @unique
 
     // Relationships
     defaultPilotId String?

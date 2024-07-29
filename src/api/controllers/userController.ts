@@ -1,7 +1,7 @@
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { apiKeyController } from "@/api/controllers/apiKeyController";
 import { userRepository } from "@/api/repositories/userRepository";
-import { AgTable } from "@/api/shared/agGridUtils/table";
+import { AgGrid } from "@/api/shared/agGridUtils/table";
 
 export const userController = (p?: PrismaTransactionClient) => ({
   addDisplayName: <
@@ -27,7 +27,7 @@ export const userController = (p?: PrismaTransactionClient) => ({
     return !!isAdmin;
   },
 
-  getManyAdmins: async (agTable: AgTable) => {
+  getManyAdmins: async (agTable: AgGrid) => {
     const rows = await userRepository(p).getManyAdmins(agTable);
     return {
       totalRowCount: await userRepository(p).countAdmins(agTable),
@@ -80,7 +80,19 @@ export const userController = (p?: PrismaTransactionClient) => ({
     return userRepository(p).getByEmail({ email });
   },
 
-  searchByName: async ({ search, take }: { search: string; take: number }) => {
-    return userRepository(p).searchByName({ search, take });
+  getByWalletId: async ({ walletId }: { walletId: number }) => {
+    const user = await userRepository(p).getByWalletId({ walletId });
+    return userController(p).addDisplayName({ user });
+  },
+
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
+    const users = await userRepository(p).getByNameIncludes({ search, take });
+    return users.map((user) => userController(p).addDisplayName({ user }));
   },
 });

@@ -30,8 +30,8 @@ model WalletTransaction {
     reason               String?
     pilotCharacterName   String?
     itemName             String?
-    archived             Boolean               @default(false)
-    archivedAt           DateTime?
+    rejected             Boolean               @default(false)
+    rejectedAt           DateTime?
 
     // Relationships
     walletId        Int?

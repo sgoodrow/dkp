@@ -1,11 +1,8 @@
 import { raidActivityController } from "@/api/controllers/raidActivityController";
-import { agFilterModelSchema } from "@/api/shared/agGridUtils/filter";
-import { agSortModelSchema } from "@/api/shared/agGridUtils/sort";
-import { agTableSchema } from "@/api/shared/agGridUtils/table";
 import {
   adminProcedure,
+  agFetchProcedure,
   createRoutes,
-  protectedProcedure,
 } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
@@ -56,8 +53,7 @@ export const raidActivityApiRoutes = createRoutes({
       });
     }),
 
-  // TODO: Maybe make this (ag table) its own type of procedure
-  getMany: protectedProcedure.input(agTableSchema).query(async ({ input }) => {
+  getMany: agFetchProcedure.query(async ({ input }) => {
     return raidActivityController().getMany(input);
   }),
 });

@@ -1,48 +1,56 @@
 import { z } from "zod";
 import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
 
-const filter = z.date();
-const filterTo = z.date();
+const dateFrom = z.string();
+const dateTo = z.string();
 const filterType = z.literal("date");
 
 const equals = z.object({
   type: z.literal("equals"),
-  filter,
+  dateFrom,
+  dateTo: z.null(),
   filterType,
 });
 
 const notEqual = z.object({
   type: z.literal("notEqual"),
-  filter,
+  dateFrom,
+  dateTo: z.null(),
   filterType,
 });
 
 const greaterThan = z.object({
   type: z.literal("greaterThan"),
-  filter,
+  dateFrom,
+  dateTo: z.null(),
   filterType,
 });
 
 const lessThan = z.object({
   type: z.literal("lessThan"),
-  filter,
+  dateFrom,
+  dateTo: z.null(),
   filterType,
 });
 
 const inRange = z.object({
   type: z.literal("inRange"),
-  filter,
-  filterTo,
+  dateFrom,
+  dateTo,
   filterType,
 });
 
 const blank = z.object({
   type: z.literal("blank"),
+  dateFrom: z.null(),
+  dateTo: z.null(),
   filterType,
 });
 
 const notBlank = z.object({
   type: z.literal("notBlank"),
+  dateFrom: z.null(),
+  dateTo: z.null(),
   filterType,
 });
 
@@ -62,19 +70,22 @@ export const getDateFilter = (filter: z.infer<typeof dateFilterSchema>) => {
   const { type } = filter;
   switch (type) {
     case "equals":
-      return { equals: filter };
+      return { equals: new Date(filter.dateFrom) };
     case "notEqual":
-      return { not: filter };
+      return { not: new Date(filter.dateFrom) };
     case "greaterThan":
-      return { gt: filter };
+      return { gt: new Date(filter.dateFrom) };
     case "lessThan":
-      return { lt: filter };
+      return { lt: new Date(filter.dateFrom) };
     case "inRange":
-      return { gte: filter, lte: filterTo };
+      return {
+        gte: new Date(filter.dateFrom),
+        lte: new Date(filter.dateTo),
+      };
     case "blank":
-      return { equals: null };
+      return { equals: undefined };
     case "notBlank":
-      return { not: null };
+      return { not: undefined };
     default:
       return exhaustiveSwitchCheck(type);
   }

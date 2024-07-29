@@ -1,5 +1,6 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
 import { userController } from "@/api/controllers/userController";
+import { agGridSchema } from "@/api/shared/agGridUtils/table";
 import { auth } from "@/auth";
 import { Scope } from "@/shared/constants/scopes";
 import { TRPCError, initTRPC } from "@trpc/server";
@@ -66,6 +67,8 @@ export const protectedProcedure = t.procedure.use(
     });
   },
 );
+
+export const agFetchProcedure = protectedProcedure.input(agGridSchema);
 
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   const isAdmin = await userController().isAdmin({
