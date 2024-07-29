@@ -238,13 +238,19 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     const t = await prisma.walletTransaction.groupBy({
       by: ["type"],
       where: {
-        AND: [
+        OR: [
           {
-            walletId,
+            AND: {
+              type: {
+                not: WalletTransactionType.PURCHASE,
+              },
+              walletId,
+            },
           },
           {
             AND: {
               type: WalletTransactionType.PURCHASE,
+              walletId,
               itemId: {
                 not: null,
               },
