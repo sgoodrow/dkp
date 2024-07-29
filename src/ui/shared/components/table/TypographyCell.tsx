@@ -4,7 +4,8 @@ import { TypographyProps } from "@mui/material";
 
 export const TypographyCell: FCWithChildren<{
   color?: TypographyProps["color"];
-}> = ({ children, color }) => {
+  variant?: TypographyProps["variant"];
+}> = ({ children, color, variant }) => {
   return (
     <CellLayout>
       <OverflowTooltipTypography
@@ -12,6 +13,7 @@ export const TypographyCell: FCWithChildren<{
         alignContent="center"
         color={color}
         placement="left"
+        variant={variant}
       >
         {children}
       </OverflowTooltipTypography>

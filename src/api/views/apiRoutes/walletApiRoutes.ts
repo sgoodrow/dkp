@@ -8,18 +8,46 @@ import {
 import { z } from "zod";
 
 export const walletApiRoutes = createRoutes({
-  archiveTransaction: adminProcedure
+  assignTransactionItem: adminProcedure
     .meta({
-      scope: "archive_transaction",
+      scope: "assign_transaction_item",
     })
     .input(
       z.object({
         transactionId: z.number().nonnegative().int(),
-        archived: z.boolean().optional(),
+        itemId: z.number(),
       }),
     )
     .mutation(async ({ input }) => {
-      return walletController().archiveTransaction(input);
+      return walletController().assignTransactionItem(input);
+    }),
+
+  assignTransactionPilot: adminProcedure
+    .meta({
+      scope: "assign_transaction_pilot",
+    })
+    .input(
+      z.object({
+        transactionId: z.number().nonnegative().int(),
+        pilotId: z.string(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return walletController().assignTransactionPilot(input);
+    }),
+
+  rejectTransaction: adminProcedure
+    .meta({
+      scope: "reject_transaction",
+    })
+    .input(
+      z.object({
+        transactionId: z.number().nonnegative().int(),
+        rejected: z.boolean().optional(),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return walletController().rejectTransaction(input);
     }),
 
   countUnclearedTransactions: adminProcedure
@@ -39,7 +67,7 @@ export const walletApiRoutes = createRoutes({
   getManyTransactions: agFetchProcedure
     .input(
       z.object({
-        showArchived: z.boolean(),
+        showRejected: z.boolean(),
         showCleared: z.boolean(),
       }),
     )

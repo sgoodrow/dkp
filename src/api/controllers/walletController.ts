@@ -1,19 +1,51 @@
 import { userController } from "@/api/controllers/userController";
+import { itemRepository } from "@/api/repositories/itemRepository";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { walletRepository } from "@/api/repositories/walletRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 
 export const walletController = (p?: PrismaTransactionClient) => ({
-  archiveTransaction: async ({
+  assignTransactionItem: async ({
     transactionId,
-    archived = false,
+    itemId,
   }: {
     transactionId: number;
-    archived?: boolean;
+    itemId: number;
   }) => {
-    return walletRepository(p).archiveTransaction({
+    const item = await itemRepository(p).getById({ itemId });
+    return walletRepository(p).assignTransactionItem({
       transactionId,
-      archived,
+      itemId,
+      itemName: item.name,
+    });
+  },
+
+  assignTransactionPilot: async ({
+    transactionId,
+    pilotId,
+  }: {
+    transactionId: number;
+    pilotId: string;
+  }) => {
+    const wallet = await walletRepository(p).getByUserId({
+      userId: pilotId,
+    });
+    return walletRepository(p).assignTransactionPilot({
+      transactionId,
+      walletId: wallet.id,
+    });
+  },
+
+  rejectTransaction: async ({
+    transactionId,
+    rejected = false,
+  }: {
+    transactionId: number;
+    rejected?: boolean;
+  }) => {
+    return walletRepository(p).rejectTransaction({
+      transactionId,
+      rejected,
     });
   },
 
@@ -116,10 +148,10 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     endRow,
     filterModel,
     sortModel,
-    showArchived,
+    showRejected,
     showCleared,
   }: {
-    showArchived: boolean;
+    showRejected: boolean;
     showCleared: boolean;
   } & AgGrid) => {
     const rows = await walletRepository(p).getManyTransactions({
@@ -127,12 +159,12 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       endRow,
       filterModel,
       sortModel,
-      showArchived,
+      showRejected,
       showCleared,
     });
     return {
       totalRowCount: await walletRepository(p).countTransactions({
-        showArchived,
+        showRejected,
         showCleared,
         filterModel,
       }),

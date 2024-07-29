@@ -34,6 +34,7 @@ export const OverflowTooltipTypography: React.FC<Props> = ({
       onMouseEnter={() => handleHover(true)}
       onMouseLeave={() => handleHover(false)}
       disableHoverListener={!isOverflowed && !tooltip}
+      disableInteractive
       title={typeof children === "string" && isOverflowed ? children : tooltip}
       open={tooltip === undefined ? isOverflowed : undefined}
       placement={placement}

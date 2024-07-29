@@ -80,7 +80,19 @@ export const userController = (p?: PrismaTransactionClient) => ({
     return userRepository(p).getByEmail({ email });
   },
 
-  searchByName: async ({ search, take }: { search: string; take: number }) => {
-    return userRepository(p).searchByName({ search, take });
+  getByWalletId: async ({ walletId }: { walletId: number }) => {
+    const user = await userRepository(p).getByWalletId({ walletId });
+    return userController(p).addDisplayName({ user });
+  },
+
+  getByNameIncludes: async ({
+    search,
+    take,
+  }: {
+    search: string;
+    take: number;
+  }) => {
+    const users = await userRepository(p).getByNameIncludes({ search, take });
+    return users.map((user) => userController(p).addDisplayName({ user }));
   },
 });

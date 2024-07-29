@@ -17,6 +17,7 @@ import { SiteLink } from "@/ui/shared/components/links/SiteLink";
 import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
 import { CellLayout } from "@/ui/shared/components/table/CellLayout";
+import { DateCell } from "@/ui/transactions/tables/DateCell";
 
 type Row = TrpcRouteOutputs["raidActivity"]["getMany"]["rows"][number];
 
@@ -61,9 +62,9 @@ export const RaidsTable: FC<{}> = ({}) => {
       {
         headerName: "Date",
         field: "createdAt",
-        width: 120,
+        width: 150,
         filter: "agDateColumnFilter",
-        cellRenderer: (props) => <DateTypography date={props.value} />,
+        cellRenderer: (props) => <DateCell {...props} />,
       },
       {
         headerName: "Name",
@@ -105,6 +106,7 @@ export const RaidsTable: FC<{}> = ({}) => {
   );
   return (
     <InfiniteTable
+      rowHeight={64}
       getRows={utils.raidActivity.getMany.fetch}
       columnDefs={columnDefs}
     />

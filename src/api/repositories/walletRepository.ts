@@ -10,8 +10,8 @@ import { agSortModelToPrismaOrderBy } from "@/api/shared/agGridUtils/sort";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { WalletTransactionType } from "@prisma/client";
 
-const getShowArchivedTransactionPrismaWhere = (showArchived: boolean) =>
-  showArchived ? {} : { archived: false };
+const getShowRejectedTransactionPrismaWhere = (showRejected: boolean) =>
+  showRejected ? {} : { rejected: false };
 
 const getShowClearedTransactionPrismaWhere = (showCleared: boolean) =>
   // The conditions which make a transaction 'uncleared' depend on if it is a purchase or not.
@@ -33,19 +33,58 @@ const getShowClearedTransactionPrismaWhere = (showCleared: boolean) =>
       };
 
 export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
-  archiveTransaction: async ({
+  assignTransactionItem: async ({
     transactionId,
-    archived,
+    itemId,
+    itemName,
   }: {
     transactionId: number;
-    archived: boolean;
+    itemId: number;
+    itemName: string;
   }) => {
     return p.walletTransaction.update({
       where: {
         id: transactionId,
       },
       data: {
-        archived,
+        itemId,
+        itemName,
+        requiredIntervention: true,
+      },
+    });
+  },
+
+  assignTransactionPilot: async ({
+    transactionId,
+    walletId,
+  }: {
+    transactionId: number;
+    walletId: number;
+  }) => {
+    return p.walletTransaction.update({
+      where: {
+        id: transactionId,
+      },
+      data: {
+        walletId,
+        requiredIntervention: true,
+      },
+    });
+  },
+
+  rejectTransaction: async ({
+    transactionId,
+    rejected,
+  }: {
+    transactionId: number;
+    rejected: boolean;
+  }) => {
+    return p.walletTransaction.update({
+      where: {
+        id: transactionId,
+      },
+      data: {
+        rejected,
       },
     });
   },
@@ -172,7 +211,12 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
 
   countUnclearedTransactions: async () => {
     return p.walletTransaction.count({
-      where: getShowClearedTransactionPrismaWhere(false),
+      where: {
+        AND: [
+          getShowClearedTransactionPrismaWhere(false),
+          getShowRejectedTransactionPrismaWhere(false),
+        ],
+      },
     });
   },
 
@@ -229,11 +273,11 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   countTransactions: async ({
-    showArchived,
+    showRejected,
     showCleared,
     filterModel,
   }: {
-    showArchived: boolean;
+    showRejected: boolean;
     showCleared: boolean;
     filterModel: AgFilterModel;
   }) => {
@@ -241,7 +285,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       where: {
         AND: {
           ...agFilterModelToPrismaWhere(filterModel),
-          ...getShowArchivedTransactionPrismaWhere(showArchived),
+          ...getShowRejectedTransactionPrismaWhere(showRejected),
           ...getShowClearedTransactionPrismaWhere(showCleared),
         },
       },
@@ -253,20 +297,20 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     endRow,
     filterModel,
     sortModel,
-    showArchived,
+    showRejected,
     showCleared,
   }: {
-    showArchived: boolean;
+    showRejected: boolean;
     showCleared: boolean;
   } & AgGrid) => {
     return p.walletTransaction.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
-        createdAt: "desc",
+        id: "desc",
       },
       where: {
         AND: {
           ...agFilterModelToPrismaWhere(filterModel),
-          ...getShowArchivedTransactionPrismaWhere(showArchived),
+          ...getShowRejectedTransactionPrismaWhere(showRejected),
           ...getShowClearedTransactionPrismaWhere(showCleared),
         },
       },

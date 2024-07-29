@@ -16,17 +16,29 @@ import {
   dateFilterSchema,
   getDateFilter,
 } from "@/api/shared/agGridUtils/filterTypes/date";
+import {
+  EnumFilter,
+  enumFilterSchema,
+  getEnumFilter,
+} from "@/api/shared/agGridUtils/filterTypes/enum";
 
 export const agFilterModelSchema = z
   .record(
     z.string(),
-    z.union([numberFilterSchema, textFilterSchema, dateFilterSchema]),
+    z.union([
+      numberFilterSchema,
+      textFilterSchema,
+      dateFilterSchema,
+      enumFilterSchema,
+    ]),
   )
   .optional();
 
 export type AgFilterModel = z.infer<typeof agFilterModelSchema>;
 
-const getPrismaFilter = (filter: NumberFilter | TextFilter | DateFilter) => {
+const getPrismaFilter = (
+  filter: NumberFilter | TextFilter | DateFilter | EnumFilter,
+) => {
   const { filterType } = filter;
   switch (filterType) {
     case "number":
@@ -35,6 +47,8 @@ const getPrismaFilter = (filter: NumberFilter | TextFilter | DateFilter) => {
       return getTextFilter(filter);
     case "date":
       return getDateFilter(filter);
+    case "enum":
+      return getEnumFilter(filter);
     default:
       return exhaustiveSwitchCheck(filterType);
   }

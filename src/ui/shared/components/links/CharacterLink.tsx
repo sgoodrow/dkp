@@ -6,22 +6,26 @@ import { uiRoutes } from "@/app/uiRoutes";
 import { SiteLink } from "@/ui/shared/components/links/SiteLink";
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
-import { Stack } from "@mui/material";
+import { Stack, TypographyProps } from "@mui/material";
 
 export const CharacterLink: FC<{
   characterName: string;
-}> = ({ characterName }) => {
+  variant?: TypographyProps["variant"];
+}> = ({ characterName, variant }) => {
   const { data: character } = trpc.character.getByNameMatch.useQuery({
     search: characterName,
   });
   return character === null ? (
-    <OverflowTooltipTypography color="text.secondary">
+    <OverflowTooltipTypography color="text.secondary" variant={variant}>
       {characterName}
     </OverflowTooltipTypography>
   ) : (
-    <Stack direction="row" spacing={1} alignItems="center">
-      {character?.defaultPilotId === null ? <uiRoutes.bots.icon /> : null}
+    <Stack direction="row" spacing={0.5} alignItems="center">
+      {character?.defaultPilotId === null ? (
+        <uiRoutes.bots.icon fontSize="small" />
+      ) : null}
       <SiteLink
+        variant={variant}
         data-monitoring-id={monitoringIds.GOTO_CHARACTER}
         href={
           character?.defaultPilotId

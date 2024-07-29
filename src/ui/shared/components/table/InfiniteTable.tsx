@@ -4,7 +4,7 @@ import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { isEmpty } from "lodash";
-import { AgGridReact } from "ag-grid-react";
+import { AgGridReact, AgGridReactProps } from "ag-grid-react";
 import {
   ICellRendererParams,
   ICellEditorParams,
@@ -53,10 +53,12 @@ export type Column<TData extends Data> = Omit<
 };
 
 export const InfiniteTable = <TData extends Data>({
+  rowHeight,
   getRows,
   columnDefs,
   onGridReady,
 }: {
+  rowHeight?: AgGridReactProps["rowHeight"];
   getRows: GetRows<TData>;
   columnDefs: Column<TData>[];
   onGridReady?: (api: GridApi<TData>) => void;
@@ -122,6 +124,7 @@ export const InfiniteTable = <TData extends Data>({
   return (
     <Box flexGrow={1} className={getThemeName({ mode })}>
       <AgGridReact
+        rowHeight={rowHeight}
         onGridReady={onGridReadyInternal}
         getRowId={getRowId}
         alwaysShowVerticalScroll

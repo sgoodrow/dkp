@@ -1,13 +1,18 @@
-import { Box } from "@mui/material";
+import { Stack, StackProps } from "@mui/material";
 
-export const CellLayout: FCWithChildren<{}> = ({ children }) => (
-  <Box height="100%" alignContent="center">
+export const CellLayout: FCWithChildren<StackProps> = ({
+  height = "100%",
+  lineHeight = "normal",
+  justifyContent = "center",
+  children,
+  ...rest
+}) => (
+  <Stack
+    height={height}
+    lineHeight={lineHeight}
+    justifyContent={justifyContent}
+    {...rest}
+  >
     {children}
-  </Box>
-);
-
-export const CellEditorLayout: FCWithChildren<{}> = ({ children }) => (
-  <Box height="100%" alignContent="center" ml={2}>
-    {children}
-  </Box>
+  </Stack>
 );

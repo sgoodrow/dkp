@@ -25,7 +25,17 @@ export const userApiRoutes = createRoutes({
     });
   }),
 
-  searchByName: protectedProcedure
+  getByWalletId: protectedProcedure
+    .input(
+      z.object({
+        walletId: z.number(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return userController().getByWalletId(input);
+    }),
+
+  getByNameIncludes: protectedProcedure
     .input(
       z.object({
         search: z.string(),
@@ -33,7 +43,7 @@ export const userApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return await userController().searchByName({
+      return userController().getByNameIncludes({
         search: input.search,
         take: input.take,
       });

@@ -14,6 +14,7 @@ import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { CharacterLink } from "@/ui/shared/components/links/CharacterLink";
 import { ClassName } from "@/ui/shared/components/static/ClassName";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
+import { CellLayout } from "@/ui/shared/components/table/CellLayout";
 
 type Row = TrpcRouteOutputs["character"]["getManyByUserId"]["rows"][number];
 
@@ -52,7 +53,9 @@ export const MyCharactersTable: FC<{}> = ({}) => {
           props.data === undefined ? (
             <LoadingCell />
           ) : (
-            <CharacterLink characterName={props.data.name} />
+            <CellLayout>
+              <CharacterLink characterName={props.data.name} />
+            </CellLayout>
           ),
       },
       {
@@ -64,11 +67,13 @@ export const MyCharactersTable: FC<{}> = ({}) => {
           props.data == undefined ? (
             <LoadingCell />
           ) : (
-            <ClassName
-              className={props.data?.class.name}
-              colorHexDark={props.data?.class.colorHexDark}
-              colorHexLight={props.data?.class.colorHexLight}
-            />
+            <CellLayout>
+              <ClassName
+                className={props.data?.class.name}
+                colorHexDark={props.data?.class.colorHexDark}
+                colorHexLight={props.data?.class.colorHexLight}
+              />
+            </CellLayout>
           ),
       },
       {

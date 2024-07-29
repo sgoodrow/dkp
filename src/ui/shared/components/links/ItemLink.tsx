@@ -6,7 +6,7 @@ import { uiRoutes } from "@/app/uiRoutes";
 import { SiteLink } from "@/ui/shared/components/links/SiteLink";
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
-import { lowerCase, startCase } from "lodash";
+import { startCase } from "lodash";
 
 export const ItemLink: FC<{
   itemName: string;
@@ -29,7 +29,7 @@ export const ItemLink: FC<{
             })
           : ""
       }
-      label={startCase(lowerCase(itemName))}
+      label={startCase(itemName)}
     />
   );
 };

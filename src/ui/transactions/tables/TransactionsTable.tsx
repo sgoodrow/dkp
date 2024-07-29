@@ -1,6 +1,5 @@
 "use client";
 
-import { Checkbox } from "@mui/material";
 import { FC, useCallback, useMemo, useState } from "react";
 import { GridApi } from "ag-grid-community";
 import {
@@ -10,22 +9,25 @@ import {
 } from "@/ui/shared/components/table/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
-import { DateTypography } from "@/ui/shared/components/typography/DateTypography";
-import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
-import { CharacterLink } from "@/ui/shared/components/links/CharacterLink";
 import { CellLayout } from "@/ui/shared/components/table/CellLayout";
-import { TransactionTypeIcon } from "@/ui/transactions/icons/TransactionTypeIcon";
 import { ItemCell } from "@/ui/transactions/tables/ItemCell";
 import { TypographyCell } from "@/ui/shared/components/table/TypographyCell";
+import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
+import { ClearedCell } from "@/ui/transactions/tables/ClearedCell";
+import { RejectedCell } from "@/ui/transactions/tables/RejectedCell";
+import { AmountCell } from "@/ui/transactions/tables/AmountCell";
+import { PilotCell } from "@/ui/transactions/tables/PilotCell";
+import { TypeColumnFilter } from "@/ui/transactions/tables/TypeColumnFilter";
+import { DateCell } from "@/ui/transactions/tables/DateCell";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
 
 export const TransactionsTable: FC<{
-  showArchived: boolean;
+  showRejected: boolean;
   showCleared: boolean;
-}> = ({ showArchived, showCleared }) => {
+}> = ({ showRejected, showCleared }) => {
   const utils = trpc.useUtils();
 
   const [api, setApi] = useState<GridApi<TransactionRow> | null>(null);
@@ -33,151 +35,91 @@ export const TransactionsTable: FC<{
   const getRows: GetRows<TransactionRow> = useCallback(
     (params) =>
       utils.wallet.getManyTransactions.fetch({
-        showArchived,
+        showRejected: showRejected,
         showCleared,
         ...params,
       }),
-    [utils, showArchived, showCleared],
+    [utils, showRejected, showCleared],
   );
 
-  const { mutate: archiveTransaction } =
-    trpc.wallet.archiveTransaction.useMutation({
-      onSuccess: () => {
-        utils.wallet.invalidate();
-        api?.refreshInfiniteCache();
-      },
-    });
-
-  const handleArchiveTransaction = useCallback(
-    ({
-      transactionId,
-      archived,
-    }: {
-      transactionId?: number;
-      archived?: boolean;
-    }) => {
-      if (transactionId === undefined || archived === undefined) {
-        return;
-      }
-      archiveTransaction({
-        transactionId,
-        archived,
-      });
-    },
-    [archiveTransaction],
-  );
-
-  const columnDefs: Column<TransactionRow>[] = useMemo(() => {
-    return [
+  const columnDefs: Column<TransactionRow>[] = useMemo(
+    () => [
       {
-        headerName: "Archived",
-        field: "archived",
+        headerName: "Rejected",
+        field: "rejected",
         width: 100,
         sortable: true,
-        cellRenderer: (props) => (
-          <Checkbox
-            checked={props.data?.archived}
-            onClick={() =>
-              handleArchiveTransaction({
-                transactionId: props.data?.id,
-                archived: !props.data?.archived,
-              })
-            }
+        cellRenderer: (params) => (
+          <RejectedCell
+            {...params}
+            onToggle={() => api?.refreshInfiniteCache()}
           />
         ),
       },
       {
-        headerName: "ID",
-        field: "id",
-        width: 100,
-        sortable: true,
-      },
-      {
         headerName: "Date",
         field: "createdAt",
-        width: 120,
+        width: 150,
         sortable: true,
         filter: "agDateColumnFilter",
-        cellRenderer: (props) =>
-          props.data === undefined ? (
-            <LoadingCell />
-          ) : (
-            <CellLayout>
-              <DateTypography date={props.value} />
-            </CellLayout>
-          ),
+        cellRenderer: (props) => <DateCell {...props} />,
       },
       {
-        headerName: "Type",
+        headerName: "Amount",
         field: "type",
-        width: 80,
+        width: 150,
+        filter: TypeColumnFilter,
+        cellRenderer: (params) => <AmountCell {...params} />,
+      },
+      {
+        headerName: "Context",
+        field: "raidActivity.type.name",
+        flex: 1,
         cellRenderer: (props) =>
           props.data === undefined ? (
             <LoadingCell />
+          ) : props.data.raidActivity === null ? (
+            <TypographyCell color="text.secondary">Unknown</TypographyCell>
           ) : (
             <CellLayout>
-              <TransactionTypeIcon type={props.data.type} />
+              <OverflowTooltipTypography>
+                {props.data.raidActivity.type.name}
+              </OverflowTooltipTypography>
+              <OverflowTooltipTypography variant="body2" color="text.secondary">
+                {props.data.reason}
+              </OverflowTooltipTypography>
             </CellLayout>
           ),
       },
       {
-        headerName: "Value",
-        field: "amount",
-        width: 80,
-      },
-      {
-        headerName: "Character",
+        headerName: "Pilot",
         field: "characterName",
-        cellRenderer: (props) =>
-          // TODO: this should show if the character is "known" or not (link vs not + icon); or a way to fix it if its not.
-          // Probably an inline autocomplete to assign to a player.
-          props.data === undefined ? (
-            <LoadingCell />
-          ) : (
-            <CellLayout>
-              <CharacterLink
-                characterName={
-                  props.data.pilotCharacterName || props.data.characterName
-                }
-              />
-            </CellLayout>
-          ),
+        flex: 1,
+        cellRenderer: (params) => (
+          <PilotCell {...params} onAssign={() => api?.refreshInfiniteCache()} />
+        ),
       },
       {
         headerName: "Item",
         field: "itemName",
-        cellRenderer: (params) => <ItemCell {...params} />,
-      },
-      {
-        headerName: "Pilot",
-        field: "wallet.user.displayName",
-        cellRenderer: (props) => {
-          // TODO: this should show a remediation flow for assigning a pilot.
-          return props.data === undefined ? (
-            <LoadingCell />
-          ) : props.data.wallet === null ? (
-            <TypographyCell color="text.secondary">Unknown</TypographyCell>
-          ) : (
-            <CellLayout>
-              <PlayerLink user={props.data.wallet.user} />
-            </CellLayout>
-          );
-        },
-      },
-      {
-        headerName: "Raid",
-        field: "raidActivity.type.name",
-      },
-      {
-        headerName: "Reason",
-        field: "reason",
         flex: 1,
+        cellRenderer: (params) => (
+          <ItemCell {...params} onAssign={() => api?.refreshInfiniteCache()} />
+        ),
       },
-    ];
-  }, [handleArchiveTransaction]);
+      {
+        headerName: "Cleared",
+        field: "id",
+        width: 100,
+        cellRenderer: (params) => <ClearedCell {...params} />,
+      },
+    ],
+    [api],
+  );
 
   return (
     <InfiniteTable
+      rowHeight={64}
       getRows={getRows}
       columnDefs={columnDefs}
       onGridReady={(api) => setApi(api)}
