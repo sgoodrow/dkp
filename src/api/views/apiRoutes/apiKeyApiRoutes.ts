@@ -5,8 +5,6 @@ import {
   protectedApiKeyProcedure,
 } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
-
-import { YEARS } from "@/shared/constants/time";
 import { SCOPE } from "@/shared/constants/scopes";
 
 export const apiKeyApiRoutes = createRoutes({
@@ -20,10 +18,7 @@ export const apiKeyApiRoutes = createRoutes({
     .input(
       z.object({
         name: z.string(),
-        expiresAt: z
-          .date()
-          .refine((value) => value >= new Date())
-          .refine((value) => value <= new Date(Date.now() + 1 * YEARS)),
+        expiresAt: z.date().refine((value) => value >= new Date()),
         scopes: z.array(z.nativeEnum(SCOPE)),
       }),
     )
