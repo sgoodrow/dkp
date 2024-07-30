@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ENV } from "@/api/env";
 
-const ALLOW_ALL_ORIGINS = ENV.CORS_ALLOW_ALL;
+const ALLOW_ALL_ORIGINS = !!ENV.CORS_ALLOW_ALL;
 
 const getCorsHeaders = (origin: string) => {
   return {
