@@ -1,37 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ENV } from "@/api/env";
 
-const ALLOWED_ORIGINS = [ENV.DISCORD_SERVER_ORIGIN];
-
-const CORS_OPTIONS = {
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+const getCorsHeaders = (origin: string) => {
+  const isAllowedOrigin = origin === ENV.DISCORD_SERVER_ORIGIN;
+  return {
+    "Access-Control-Allow-Origin": isAllowedOrigin ? origin : "",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Credentials": "true",
+  };
 };
 
 export const middleware = (request: NextRequest) => {
-  // Check the origin from the request
   const origin = request.headers.get("origin") ?? "";
-  const isAllowedOrigin = ALLOWED_ORIGINS.includes(origin);
 
   // Handle preflighted requests
-  const isPreflight = request.method === "OPTIONS";
-
-  if (isPreflight) {
-    const preflightHeaders = {
-      ...(isAllowedOrigin && { "Access-Control-Allow-Origin": origin }),
-      ...CORS_OPTIONS,
-    };
-    return NextResponse.json({}, { headers: preflightHeaders });
+  if (request.method === "OPTIONS") {
+    return new NextResponse(null, {
+      status: 204,
+      headers: getCorsHeaders(origin),
+    });
   }
 
-  // Handle simple requests
+  // Handle requests
   const response = NextResponse.next();
-
-  if (isAllowedOrigin) {
-    response.headers.set("Access-Control-Allow-Origin", origin);
-  }
-
-  Object.entries(CORS_OPTIONS).forEach(([key, value]) => {
+  Object.entries(getCorsHeaders(origin)).forEach(([key, value]) => {
     response.headers.set(key, value);
   });
 
