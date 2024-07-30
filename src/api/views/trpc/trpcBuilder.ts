@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import { Scope } from "@/shared/constants/scopes";
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import { createLogger, format, transports } from "winston";
 import { z } from "zod";
 
 const t = initTRPC
@@ -17,6 +18,25 @@ const t = initTRPC
   .create({
     transformer: superjson,
   });
+
+const logger = createLogger({
+  level: "error",
+  format: format.combine(format.timestamp(), format.json()),
+  transports: [new transports.Console()],
+});
+
+t.middleware(async ({ next }) => {
+  try {
+    return await next();
+  } catch (error) {
+    logger.error({
+      message: "Request failed",
+      error: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : "No stack trace",
+    });
+    throw error;
+  }
+});
 
 export const createRoutes = t.router;
 
