@@ -3,12 +3,13 @@ import { z } from "zod";
 const envSchema = z.object({
   // Base
   NODE_ENV: z.enum(["development", "test", "production"]),
+  CORS_ALLOW_ALL: z.boolean(),
+  CORS_ALLOW_ORIGIN: z.string(),
 
   // Vercel
   CRON_SECRET: z.string(),
 
   // Discord API
-  DISCORD_SERVER_ORIGIN: z.string(),
   DISCORD_CLIENT_TOKEN: z.string(),
 
   // AuthJS

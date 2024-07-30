@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ENV } from "@/api/env";
 
+const ALLOW_ALL_ORIGINS = ENV.CORS_ALLOW_ALL;
+
 const getCorsHeaders = (origin: string) => {
-  const isAllowedOrigin = origin === ENV.DISCORD_SERVER_ORIGIN;
   return {
-    "Access-Control-Allow-Origin": isAllowedOrigin ? origin : "",
+    "Access-Control-Allow-Origin": ALLOW_ALL_ORIGINS
+      ? "*"
+      : origin === ENV.CORS_ALLOW_ORIGIN
+        ? origin
+        : "",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Credentials": "true",
