@@ -3,7 +3,6 @@ import { z } from "zod";
 const envSchema = z.object({
   // Base
   NODE_ENV: z.enum(["development", "test", "production"]),
-  CORS_ALLOW_ALL: z.string(),
   CORS_ALLOW_ORIGIN: z.string(),
 
   // Vercel
