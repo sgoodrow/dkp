@@ -52,8 +52,11 @@ export const walletApiRoutes = createRoutes({
         rejected: z.boolean().optional(),
       }),
     )
-    .mutation(async ({ input }) => {
-      return walletController().rejectTransaction(input);
+    .mutation(async ({ input, ctx }) => {
+      return walletController().rejectTransaction({
+        ...input,
+        userId: ctx.userId,
+      });
     }),
 
   countUnclearedTransactions: adminProcedure

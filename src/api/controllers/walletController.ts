@@ -40,13 +40,16 @@ export const walletController = (p?: PrismaTransactionClient) => ({
   },
 
   rejectTransaction: async ({
+    userId,
     transactionId,
     rejected = false,
   }: {
+    userId: string;
     transactionId: number;
     rejected?: boolean;
   }) => {
     return walletRepository(p).rejectTransaction({
+      updatedById: userId,
       transactionId,
       rejected,
     });
