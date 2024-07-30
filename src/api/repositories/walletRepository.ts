@@ -76,9 +76,11 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   rejectTransaction: async ({
+    updatedById,
     transactionId,
     rejected,
   }: {
+    updatedById: string;
     transactionId: number;
     rejected: boolean;
   }) => {
@@ -88,6 +90,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       },
       data: {
         rejected,
+        requiredIntervention: true,
+        updatedById,
       },
     });
   },

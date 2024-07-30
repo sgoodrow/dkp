@@ -19,8 +19,6 @@ const envSchema = z.object({
 
   // Encryption
   JWT_SECRET: z.string(),
-  ENCRYPTION_SECRET_KEY: z.string(),
-  ENCRYPTION_SECRET_IV: z.string(),
 
   // DB
   POSTGRES_URL: z.string(),
