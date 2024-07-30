@@ -8,6 +8,7 @@ const envSchema = z.object({
   CRON_SECRET: z.string(),
 
   // Discord API
+  DISCORD_SERVER_ORIGIN: z.string(),
   DISCORD_CLIENT_TOKEN: z.string(),
 
   // AuthJS
