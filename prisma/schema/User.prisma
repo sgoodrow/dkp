@@ -17,7 +17,6 @@ model User {
   wallet                   Wallet?
   createdTransactions      WalletTransaction[]  @relation("WalletTransactionCreator")
   updatedTransactions      WalletTransaction[]  @relation("WalletTransactionLatestUpdater")
-  clearedTransactions      WalletTransaction[]  @relation("WalletTransactionClearedBy")
   createdRaidActivities    RaidActivity[]       @relation("RaidActivityCreator")
   createdRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeCreator")
   updatedRaidActivities    RaidActivity[]       @relation("RaidActivityLatestUpdater")

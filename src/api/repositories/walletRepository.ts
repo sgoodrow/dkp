@@ -34,13 +34,13 @@ const getShowClearedTransactionPrismaWhere = (showCleared: boolean) =>
 
 export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   assignTransactionItem: async ({
+    updatedById,
     transactionId,
     itemId,
-    itemName,
   }: {
+    updatedById: string;
     transactionId: number;
     itemId: number;
-    itemName: string;
   }) => {
     return p.walletTransaction.update({
       where: {
@@ -48,16 +48,18 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       },
       data: {
         itemId,
-        itemName,
         requiredIntervention: true,
+        updatedById,
       },
     });
   },
 
   assignTransactionPilot: async ({
+    updatedById,
     transactionId,
     walletId,
   }: {
+    updatedById: string;
     transactionId: number;
     walletId: number;
   }) => {
@@ -68,6 +70,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       data: {
         walletId,
         requiredIntervention: true,
+        updatedById,
       },
     });
   },
@@ -322,7 +325,6 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       },
       include: {
         createdByUser: true,
-        clearedByUser: true,
         item: true,
         wallet: {
           include: {

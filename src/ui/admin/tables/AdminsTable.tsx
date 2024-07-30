@@ -9,6 +9,8 @@ import { trpc } from "@/api/views/trpc/trpc";
 import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
+import { DateCell } from "@/ui/transactions/tables/DateCell";
+import { CellLayout } from "@/ui/shared/components/table/CellLayout";
 
 type Row = TrpcRouteOutputs["user"]["getAdmins"]["rows"][number];
 
@@ -25,26 +27,29 @@ export const AdminsTable: FC<{}> = ({}) => {
           props.data === undefined ? (
             <LoadingCell />
           ) : (
-            <PlayerLink
-              user={{
-                id: props.data?.id,
-                displayName: props.data?.displayName,
-                discordMetadata: props.data?.discordMetadata,
-              }}
-            />
+            <CellLayout>
+              <PlayerLink
+                user={{
+                  id: props.data?.id,
+                  displayName: props.data?.displayName,
+                  discordMetadata: props.data?.discordMetadata,
+                }}
+              />
+            </CellLayout>
           ),
       },
       {
-        headerName: "Cleared Transactions",
-        field: "_count.clearedTransactions",
+        headerName: "Updated Transactions",
+        field: "_count.updatedTransactions",
         flex: 1,
         minWidth: 100,
       },
       {
         headerName: "Last Active",
         valueGetter: (params) => {
-          return params.data?.clearedTransactions?.[0]?.updatedAt || "Never";
+          return params.data?.updatedTransactions?.[0]?.updatedAt || "Never";
         },
+        cellRenderer: (props) => <DateCell {...props} />,
         flex: 1,
         minWidth: 100,
       },
@@ -54,6 +59,7 @@ export const AdminsTable: FC<{}> = ({}) => {
 
   return (
     <InfiniteTable
+      rowHeight={64}
       getRows={utils.user.getAdmins.fetch}
       columnDefs={columnDef}
     />

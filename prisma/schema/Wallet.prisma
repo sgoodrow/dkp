@@ -34,16 +34,14 @@ model WalletTransaction {
     rejectedAt           DateTime?
 
     // Relationships
-    walletId        Int?
-    wallet          Wallet?       @relation(fields: [walletId], references: [id])
-    itemId          Int?
-    item            Item?         @relation(fields: [itemId], references: [id])
-    raidActivityId  Int?
-    raidActivity    RaidActivity? @relation(fields: [raidActivityId], references: [id])
-    createdById     String
-    createdByUser   User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
-    updatedById     String
-    updatedByUser   User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
-    clearedByUserId String?
-    clearedByUser   User?         @relation("WalletTransactionClearedBy", fields: [clearedByUserId], references: [id])
+    walletId       Int?
+    wallet         Wallet?       @relation(fields: [walletId], references: [id])
+    itemId         Int?
+    item           Item?         @relation(fields: [itemId], references: [id])
+    raidActivityId Int?
+    raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
+    createdById    String
+    createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
+    updatedById    String
+    updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
 }

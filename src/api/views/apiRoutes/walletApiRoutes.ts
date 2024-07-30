@@ -18,8 +18,11 @@ export const walletApiRoutes = createRoutes({
         itemId: z.number(),
       }),
     )
-    .mutation(async ({ input }) => {
-      return walletController().assignTransactionItem(input);
+    .mutation(async ({ input, ctx }) => {
+      return walletController().assignTransactionItem({
+        ...input,
+        userId: ctx.userId,
+      });
     }),
 
   assignTransactionPilot: adminProcedure
@@ -32,8 +35,11 @@ export const walletApiRoutes = createRoutes({
         pilotId: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
-      return walletController().assignTransactionPilot(input);
+    .mutation(async ({ input, ctx }) => {
+      return walletController().assignTransactionPilot({
+        ...input,
+        userId: ctx.userId,
+      });
     }),
 
   rejectTransaction: adminProcedure

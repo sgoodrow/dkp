@@ -1,29 +1,31 @@
 import { userController } from "@/api/controllers/userController";
-import { itemRepository } from "@/api/repositories/itemRepository";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { walletRepository } from "@/api/repositories/walletRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 
 export const walletController = (p?: PrismaTransactionClient) => ({
   assignTransactionItem: async ({
+    userId,
     transactionId,
     itemId,
   }: {
+    userId: string;
     transactionId: number;
     itemId: number;
   }) => {
-    const item = await itemRepository(p).getById({ itemId });
     return walletRepository(p).assignTransactionItem({
+      updatedById: userId,
       transactionId,
       itemId,
-      itemName: item.name,
     });
   },
 
   assignTransactionPilot: async ({
+    userId,
     transactionId,
     pilotId,
   }: {
+    userId: string;
     transactionId: number;
     pilotId: string;
   }) => {
@@ -31,6 +33,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       userId: pilotId,
     });
     return walletRepository(p).assignTransactionPilot({
+      updatedById: userId,
       transactionId,
       walletId: wallet.id,
     });

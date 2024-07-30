@@ -67,10 +67,14 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
         discordMetadata: true,
         _count: {
           select: {
-            clearedTransactions: true,
+            updatedTransactions: {
+              where: {
+                requiredIntervention: true,
+              },
+            },
           },
         },
-        clearedTransactions: {
+        updatedTransactions: {
           orderBy: {
             updatedAt: "desc",
           },
