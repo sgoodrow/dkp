@@ -4,7 +4,7 @@ import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { app } from "@/shared/constants/app";
 import { SCOPE, Scope } from "@/shared/constants/scopes";
 import { TRPCError } from "@trpc/server";
-import { sign, verify } from "jsonwebtoken";
+import { JwtPayload, sign, verify } from "jsonwebtoken";
 import * as uuid from "uuid";
 
 const JWT_ALGORITHM = "HS256";
@@ -88,12 +88,21 @@ export const apiKeyController = (p?: PrismaTransactionClient) => ({
         message: "Malformed authorization header.",
       });
     }
-    const apiKey = match[1];
-    const decoded = verify(apiKey, JWT_SECRET, {
-      issuer: app.name,
-      audience: app.name,
-      algorithms: [JWT_ALGORITHM],
-    });
+
+    const apiKey = match?.[1];
+    let decoded: string | JwtPayload;
+    try {
+      decoded = verify(apiKey, JWT_SECRET, {
+        issuer: app.name,
+        audience: app.name,
+        algorithms: [JWT_ALGORITHM],
+      });
+    } catch (error) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Invalid API key",
+      });
+    }
     if (typeof decoded === "string") {
       throw new TRPCError({
         code: "FORBIDDEN",
