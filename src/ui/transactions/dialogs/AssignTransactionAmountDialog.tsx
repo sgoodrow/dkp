@@ -2,9 +2,9 @@
 
 import { trpc } from "@/api/views/trpc/trpc";
 import {
-  AssignButton,
-  AssignValueDialog,
-} from "@/ui/shared/components/dialogs/AssignValueDialog";
+  AssignDialogButton,
+  FormDialog,
+} from "@/ui/shared/components/dialogs/FormDialog";
 import { TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { FC } from "react";
@@ -39,7 +39,7 @@ export const AssignTransactionAmountDialog: FC<{
   });
 
   return (
-    <AssignValueDialog
+    <FormDialog
       id="assign-transaction-amount-dialog-title"
       title="Change Transaction Amount"
       onSubmit={handleSubmit}
@@ -86,9 +86,9 @@ export const AssignTransactionAmountDialog: FC<{
         })}
         // eslint-disable-next-line react/no-children-prop
         children={({ canSubmit, isSubmitting }) => (
-          <AssignButton disabled={!canSubmit || isSubmitting} />
+          <AssignDialogButton disabled={!canSubmit || isSubmitting} />
         )}
       />
-    </AssignValueDialog>
+    </FormDialog>
   );
 };

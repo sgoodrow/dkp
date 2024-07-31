@@ -1,47 +1,44 @@
 "use client";
 
-import { trpc } from "@/api/views/trpc/trpc";
 import {
-  AssignDialogButton,
+  CreateDialogButton,
   FormDialog,
 } from "@/ui/shared/components/dialogs/FormDialog";
-import { TextField } from "@mui/material";
-import { useForm } from "@tanstack/react-form";
 import { FC } from "react";
+import { useForm } from "@tanstack/react-form";
+import { trpc } from "@/api/views/trpc/trpc";
+import { TextField } from "@mui/material";
 
-export const AssignRaidActivityTypeNameDialog: FC<{
-  raidActivityTypeId: number;
-  name: string;
-  onAssign: () => void;
-  onClose: () => void;
-}> = ({ raidActivityTypeId, name, onAssign, onClose }) => {
+export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
+  onClose,
+}) => {
   const { Field, Subscribe, handleSubmit, reset } = useForm({
     defaultValues: {
-      name,
+      name: "",
+      defaultPayout: 0,
     },
     onSubmit: async ({ value }) => {
       mutate({
-        id: raidActivityTypeId,
         name: value.name,
+        defaultPayout: value.defaultPayout,
       });
     },
   });
 
   const utils = trpc.useUtils();
 
-  const { mutate } = trpc.raidActivity.updateType.useMutation({
+  const { mutate } = trpc.raidActivity.createType.useMutation({
     onSuccess: () => {
       reset();
       onClose();
       utils.raidActivity.invalidate();
-      onAssign();
     },
   });
 
   return (
     <FormDialog
-      id="assign-raid-activity-type-name-dialog-title"
-      title="Assign Raid Activity Type Name"
+      id="create-raid-activity-type-dialog-title"
+      title="Create Raid Activity Type"
       onSubmit={handleSubmit}
       onClose={onClose}
     >
@@ -62,7 +59,6 @@ export const AssignRaidActivityTypeNameDialog: FC<{
         // eslint-disable-next-line react/no-children-prop
         children={(field) => (
           <TextField
-            placeholder={name}
             required
             label="Name"
             autoFocus
@@ -79,6 +75,38 @@ export const AssignRaidActivityTypeNameDialog: FC<{
           />
         )}
       />
+      <Field
+        name="defaultPayout"
+        validators={{
+          onChange: ({ value }) => {
+            if (value < 0) {
+              return "Default payout must be greater than or equal to 0";
+            }
+            return;
+          },
+        }}
+        // eslint-disable-next-line react/no-children-prop
+        children={(field) => (
+          <TextField
+            required
+            label="Default Payout"
+            fullWidth
+            type="number"
+            inputProps={{
+              step: "any",
+            }}
+            error={
+              field.state.meta.isTouched && field.state.meta.errors.length > 0
+            }
+            onChange={(e) => field.handleChange(Number(e.target.value))}
+            helperText={
+              field.state.meta.isTouched && field.state.meta.errors.length > 0
+                ? field.state.meta.errors.join(",")
+                : "Enter a non-negative default payout for the raid activity type"
+            }
+          />
+        )}
+      />
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
@@ -86,7 +114,7 @@ export const AssignRaidActivityTypeNameDialog: FC<{
         })}
         // eslint-disable-next-line react/no-children-prop
         children={({ canSubmit, isSubmitting }) => (
-          <AssignDialogButton disabled={!canSubmit || isSubmitting} />
+          <CreateDialogButton disabled={!canSubmit || isSubmitting} />
         )}
       />
     </FormDialog>

@@ -2,9 +2,9 @@
 
 import { trpc } from "@/api/views/trpc/trpc";
 import {
-  AssignButton,
-  AssignValueDialog,
-} from "@/ui/shared/components/dialogs/AssignValueDialog";
+  AssignDialogButton,
+  FormDialog,
+} from "@/ui/shared/components/dialogs/FormDialog";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { UserAutocomplete } from "@/ui/transactions/inputs/UserAutocomplete";
 import { DialogContentText } from "@mui/material";
@@ -47,7 +47,7 @@ export const AssignTransactionPilotDialog: FC<{
   });
 
   return (
-    <AssignValueDialog
+    <FormDialog
       id="assign-transaction-pilot-dialog-title"
       title={`${pilot ? "Re-" : ""}Assign Transaction Pilot`}
       onSubmit={handleSubmit}
@@ -81,9 +81,9 @@ export const AssignTransactionPilotDialog: FC<{
         })}
         // eslint-disable-next-line react/no-children-prop
         children={({ canSubmit, isSubmitting }) => (
-          <AssignButton disabled={!canSubmit || isSubmitting} />
+          <AssignDialogButton disabled={!canSubmit || isSubmitting} />
         )}
       />
-    </AssignValueDialog>
+    </FormDialog>
   );
 };

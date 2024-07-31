@@ -54,6 +54,24 @@ export const raidActivityApiRoutes = createRoutes({
       });
     }),
 
+  createType: adminProcedure
+    .meta({
+      scope: "create_raid_activity_type",
+    })
+    .input(
+      z.object({
+        name: z.string(),
+        defaultPayout: z.number().nonnegative(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return raidActivityController().createType({
+        createdById: ctx.userId,
+        updatedById: ctx.userId,
+        ...input,
+      });
+    }),
+
   getMany: agFetchProcedure.query(async ({ input }) => {
     return raidActivityController().getMany(input);
   }),

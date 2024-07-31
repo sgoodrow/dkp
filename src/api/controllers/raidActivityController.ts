@@ -4,8 +4,6 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/client";
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
-import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
-import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { flatMap, uniq } from "lodash";
 import { itemController } from "@/api/controllers/itemController";
 import { characterController } from "@/api/controllers/characterController";
@@ -132,6 +130,25 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       });
 
       return raidActivity;
+    });
+  },
+
+  createType: async ({
+    createdById,
+    updatedById,
+    name,
+    defaultPayout,
+  }: {
+    createdById: string;
+    updatedById: string;
+    name: string;
+    defaultPayout: number;
+  }) => {
+    return raidActivityRepository(p).createType({
+      name,
+      defaultPayout,
+      createdById,
+      updatedById,
     });
   },
 

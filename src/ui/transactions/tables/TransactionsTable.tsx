@@ -96,7 +96,6 @@ export const TransactionsTable: FC<{
             onClose={() => handleCellEditorClosed(props)}
           />
         ),
-        // TODO: add an edit icon to this
         cellRenderer: (props) => (
           <AmountCell
             {...props}

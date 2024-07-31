@@ -2,14 +2,8 @@
 
 import { FC, useState } from "react";
 import { TransactionsTable } from "@/ui/transactions/tables/TransactionsTable";
-import {
-  Box,
-  FormControlLabel,
-  FormHelperText,
-  Paper,
-  Switch,
-  Unstable_Grid2,
-} from "@mui/material";
+import { Unstable_Grid2 } from "@mui/material";
+import { SwitchCard } from "@/ui/shared/components/cards/SwitchCard";
 
 export const TransactionsRoutePage: FC<{}> = () => {
   const [showRejected, setShowRejected] = useState(false);
@@ -23,44 +17,20 @@ export const TransactionsRoutePage: FC<{}> = () => {
     <>
       <Unstable_Grid2 container spacing={1}>
         <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
-          <Box component={Paper} p={1}>
-            <FormControlLabel
-              sx={{
-                ml: -1,
-                width: "100%",
-              }}
-              control={
-                <Switch
-                  value={showRejected}
-                  onChange={(e) => setShowRejected(e.target.checked)}
-                />
-              }
-              label="Show rejected"
-            />
-            <FormHelperText>
-              Rejected transactions do not affect any player&apos;s wallet.
-            </FormHelperText>
-          </Box>
+          <SwitchCard
+            label="Show rejected"
+            description="Rejected transactions do not affect any player's wallet."
+            checked={showRejected}
+            onClick={(newValue) => setShowRejected(newValue)}
+          />
         </Unstable_Grid2>
         <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
-          <Box component={Paper} p={1}>
-            <FormControlLabel
-              sx={{
-                ml: -1,
-                width: "100%",
-              }}
-              control={
-                <Switch
-                  value={showCleared}
-                  onChange={(e) => setShowCleared(e.target.checked)}
-                />
-              }
-              label="Show cleared"
-            />
-            <FormHelperText>
-              Cleared transactions are applied to a player&apos;s wallet.
-            </FormHelperText>
-          </Box>
+          <SwitchCard
+            label="Show cleared"
+            description="Cleared transactions are applied to a player's wallet."
+            checked={showCleared}
+            onClick={(newValue) => setShowCleared(newValue)}
+          />
         </Unstable_Grid2>
       </Unstable_Grid2>
       <TransactionsTable

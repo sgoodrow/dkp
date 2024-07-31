@@ -1,5 +1,3 @@
-"use client";
-
 import { FlagEmoji } from "@/ui/shared/components/flags/FlagEmoji";
 import { Tooltip, TooltipProps, Typography } from "@mui/material";
 import { FC } from "react";

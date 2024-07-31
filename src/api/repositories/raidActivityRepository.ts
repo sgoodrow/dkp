@@ -91,6 +91,27 @@ export const raidActivityRepository = (
     });
   },
 
+  createType: async ({
+    name,
+    defaultPayout,
+    createdById,
+    updatedById,
+  }: {
+    name: string;
+    defaultPayout: number;
+    createdById: string;
+    updatedById: string;
+  }) => {
+    return p.raidActivityType.create({
+      data: {
+        name,
+        defaultPayout,
+        createdById,
+        updatedById,
+      },
+    });
+  },
+
   createMany: async ({
     activities,
     createdById,

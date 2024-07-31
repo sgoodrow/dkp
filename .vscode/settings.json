@@ -16,6 +16,5 @@
   "typescript.referencesCodeLens.enabled": true,
   "typescript.referencesCodeLens.showOnAllFunctions": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
-  "codeium.enableExplainProblem": false,
-  "codeium.enableSearch": true
+  "typescript.suggest.autoImports": true
 }

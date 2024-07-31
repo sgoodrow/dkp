@@ -5,6 +5,7 @@ export const SCOPE = keysAreSameAsValuesCheck({
   count_uncleared_transactions: "count_uncleared_transactions",
   sync_discord_metadata: "sync_discord_metadata",
   update_transaction: "update_transaction",
+  create_raid_activity_type: "create_raid_activity_type",
   update_raid_activity_type: "update_raid_activity_type",
 });
 

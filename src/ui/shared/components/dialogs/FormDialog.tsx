@@ -1,3 +1,4 @@
+import { FC } from "react";
 import {
   Button,
   Dialog,
@@ -5,9 +6,8 @@ import {
   DialogTitle,
   Stack,
 } from "@mui/material";
-import { FC } from "react";
 
-export const AssignValueDialog: FCWithChildren<{
+export const FormDialog: FCWithChildren<{
   id: string;
   title: string;
   onSubmit: () => void;
@@ -43,9 +43,10 @@ export const AssignValueDialog: FCWithChildren<{
   );
 };
 
-export const AssignButton: FC<{
+const FormDialogButton: FC<{
+  label: string;
   disabled: boolean;
-}> = ({ disabled }) => {
+}> = ({ label, disabled }) => {
   return (
     <Button
       variant="contained"
@@ -54,7 +55,19 @@ export const AssignButton: FC<{
       disabled={disabled}
       fullWidth
     >
-      Assign
+      {label}
     </Button>
   );
+};
+
+export const AssignDialogButton: FC<{
+  disabled: boolean;
+}> = ({ disabled }) => {
+  return <FormDialogButton label="Assign" disabled={disabled} />;
+};
+
+export const CreateDialogButton: FC<{
+  disabled: boolean;
+}> = ({ disabled }) => {
+  return <FormDialogButton label="Create" disabled={disabled} />;
 };
