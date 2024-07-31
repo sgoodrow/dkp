@@ -7,7 +7,7 @@ import {
 const handler = ({
   trpc,
   body,
-}: NextTrpcOptions<{}, TrpcRouteInputs["raidActivity"]["create"]>) => {
+}: NextTrpcOptions<null, TrpcRouteInputs["raidActivity"]["create"]>) => {
   return trpc.raidActivity.create(body);
 };
 

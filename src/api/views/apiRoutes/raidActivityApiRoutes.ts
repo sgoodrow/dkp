@@ -69,6 +69,15 @@ export const raidActivityApiRoutes = createRoutes({
       });
     }),
 
+  getTypeByName: protectedProcedure
+    .meta({
+      scope: "get_raid_activity_type_by_name",
+    })
+    .input(z.object({ name: z.string() }))
+    .query(async ({ input }) => {
+      return raidActivityController().getTypeByName({ name: input.name });
+    }),
+
   getMany: agFetchProcedure.query(async ({ input }) => {
     return raidActivityController().getMany(input);
   }),

@@ -180,6 +180,12 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     return raidActivityType.defaultPayout;
   },
 
+  getTypeByName: async ({ name }: { name: string }) => {
+    return raidActivityRepository(p).getTypeByName({
+      name,
+    });
+  },
+
   getMany: async (agTable: AgGrid) => {
     return {
       totalRowCount: await raidActivityRepository(p).count({

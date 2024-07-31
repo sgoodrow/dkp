@@ -6,8 +6,11 @@ import {
 
 const handler = ({
   trpc,
-}: NextTrpcOptions<{}, TrpcRouteInputs["raidActivity"]["getAllTypes"]>) => {
-  return trpc.raidActivity.getAllTypes();
+  params,
+}: NextTrpcOptions<TrpcRouteInputs["raidActivity"]["getTypeByName"], null>) => {
+  return trpc.raidActivity.getTypeByName({
+    name: params.name,
+  });
 };
 
 const trpcHandler = getTrpcHandler(handler);
