@@ -96,7 +96,12 @@ export const TransactionsTable: FC<{
           />
         ),
         // TODO: add an edit icon to this
-        cellRenderer: (props) => <AmountCell {...props} />,
+        cellRenderer: (props) => (
+          <AmountCell
+            {...props}
+            onAssign={() => props.api.refreshInfiniteCache()}
+          />
+        ),
       },
       {
         headerName: "Pilot",

@@ -1,3 +1,5 @@
+"use client";
+
 import { ICellRendererParams } from "ag-grid-community";
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { FC } from "react";
@@ -8,6 +10,7 @@ import { Tooltip, useTheme } from "@mui/material";
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
 import { uiRoutes } from "@/app/uiRoutes";
+import { AssignTransactionAmountIconButton } from "@/ui/transactions/buttons/AssignTransactionAmountIconButton";
 
 const getDetails = (type: WalletTransactionType) => {
   switch (type) {
@@ -31,9 +34,9 @@ const getDetails = (type: WalletTransactionType) => {
   }
 };
 
-export const AmountCell: FC<ICellRendererParams<TransactionRow>> = ({
-  data,
-}) => {
+export const AmountCell: FC<
+  ICellRendererParams<TransactionRow> & { onAssign: () => void }
+> = ({ data, onAssign }) => {
   return data === undefined ? (
     <LoadingCell />
   ) : (
@@ -43,6 +46,11 @@ export const AmountCell: FC<ICellRendererParams<TransactionRow>> = ({
       alignItems="center"
       justifyContent="flex-start"
     >
+      <AssignTransactionAmountIconButton
+        transactionId={data.id}
+        amount={data.amount}
+        onAssign={onAssign}
+      />
       <TransactionAmountTypography amount={data.amount} type={data.type} />
       <TransactionTypeIcon type={data.type} />
     </CellLayout>
