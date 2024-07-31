@@ -25,6 +25,7 @@ import { AssignTransactionRejectedDialog } from "@/ui/transactions/dialogs/Assig
 import { AssignTransactionPilotDialog } from "@/ui/transactions/dialogs/AssignTransactionPilotDialog";
 import { AssignTransactionItemDialog } from "@/ui/transactions/dialogs/AssignTransactionItemDialog";
 import { AssignTransactionAmountDialog } from "@/ui/transactions/dialogs/AssignTransactionAmountDialog";
+import { WalletTransactionType } from "@prisma/client";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
@@ -127,15 +128,19 @@ export const TransactionsTable: FC<{
         headerName: "Item",
         field: "itemName",
         flex: 1,
-        editable: true,
-        cellEditor: (props) => (
-          <AssignTransactionItemDialog
-            transactionId={props.data.id}
-            item={props.data.item}
-            onAssign={() => handleCellEdited(props)}
-            onClose={() => handleCellEditorClosed(props)}
-          />
-        ),
+        editable: (props) =>
+          props.data?.type === WalletTransactionType.PURCHASE,
+        cellEditor: (props) =>
+          props.data.type === WalletTransactionType.PURCHASE ? (
+            <AssignTransactionItemDialog
+              transactionId={props.data.id}
+              item={props.data.item}
+              onAssign={() => handleCellEdited(props)}
+              onClose={() => handleCellEditorClosed(props)}
+            />
+          ) : (
+            <></>
+          ),
         cellRenderer: (props) => (
           <ItemCell
             {...props}
