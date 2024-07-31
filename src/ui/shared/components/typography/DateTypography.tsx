@@ -1,9 +1,15 @@
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
-import { Box } from "@mui/material";
 import dayjs from "dayjs";
 import { FC } from "react";
 
-export const DateTypography: FC<{ date: Date }> = ({ date }) => {
+export const DateTypography: FC<{ date?: Date }> = ({ date }) => {
+  if (date === undefined) {
+    return (
+      <OverflowTooltipTypography color="text.secondary" variant="body2">
+        Never
+      </OverflowTooltipTypography>
+    );
+  }
   const day = dayjs(date);
   return (
     <>

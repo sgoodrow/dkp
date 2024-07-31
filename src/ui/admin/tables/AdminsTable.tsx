@@ -46,9 +46,8 @@ export const AdminsTable: FC<{}> = ({}) => {
       },
       {
         headerName: "Last Active",
-        valueGetter: (params) => {
-          return params.data?.updatedTransactions?.[0]?.updatedAt || "Never";
-        },
+        valueGetter: (params) =>
+          params.data?.updatedTransactions?.[0]?.updatedAt,
         cellRenderer: (props) => <DateCell {...props} />,
         flex: 1,
         minWidth: 100,

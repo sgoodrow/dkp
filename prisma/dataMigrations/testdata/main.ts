@@ -1,14 +1,8 @@
-import { userController } from "@/api/controllers/userController";
 import { ENV } from "@/api/env";
 import { ingestCharacters } from "prisma/dataMigrations/testdata/ingestCharacters";
-import { ingestDiscordMetadata } from "prisma/dataMigrations/testdata/ingestDiscordMetadata";
 import { ingestRaidActivities } from "prisma/dataMigrations/testdata/ingestRaidActivities";
+import { getDevUser } from "prisma/dataMigrations/util/getDevUser";
 import { createLogger } from "prisma/dataMigrations/util/log";
-
-const email = ENV.DEV_USER_EMAIL;
-if (!email) {
-  throw new Error("Cannot seed the database. Set DEV_USER_EMAIL.");
-}
 
 const logger = createLogger("Ingested test data");
 
@@ -16,16 +10,8 @@ export const testDataDataMigration = async () => {
   logger.info("Started workflow.");
   logger.info(`Targeting ${ENV.POSTGRES_DATABASE} database`);
 
-  const user = await userController().getByEmail({ email });
-  if (!user?.id) {
-    throw new Error(
-      `Cannot seed the database. There is no user in the database with the email ${email}. Did you forget to log in?`,
-    );
-  }
+  const { userId } = await getDevUser();
 
-  const userId = user.id;
-
-  await ingestDiscordMetadata({ userId });
   await ingestCharacters({ userId });
   await ingestRaidActivities({ userId });
 
