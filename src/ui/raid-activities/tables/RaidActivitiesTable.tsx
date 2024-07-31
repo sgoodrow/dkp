@@ -8,7 +8,7 @@ import { uiRoutes } from "@/app/uiRoutes";
 import { Edit } from "@mui/icons-material";
 import { NumberCell } from "@/ui/shared/components/table/NumberCell";
 import {
-  ColDef,
+  Column,
   InfiniteTable,
 } from "@/ui/shared/components/table/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
@@ -21,7 +21,7 @@ type Row = TrpcRouteOutputs["raidActivity"]["getMany"]["rows"][number];
 
 export const RaidActivitiesTable: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
-  const columnDefs: ColDef<Row>[] = useMemo(
+  const columnDefs: Column<Row>[] = useMemo(
     () => [
       {
         headerName: "",

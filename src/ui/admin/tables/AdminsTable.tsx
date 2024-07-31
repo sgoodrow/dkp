@@ -2,7 +2,7 @@
 
 import { FC, useMemo } from "react";
 import {
-  ColDef,
+  Column,
   InfiniteTable,
 } from "@/ui/shared/components/table/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
@@ -16,7 +16,7 @@ type Row = TrpcRouteOutputs["user"]["getAdmins"]["rows"][number];
 
 export const AdminsTable: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
-  const columnDef: ColDef<Row>[] = useMemo(
+  const columnDef: Column<Row>[] = useMemo(
     () => [
       {
         headerName: "Name",

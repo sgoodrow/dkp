@@ -14,7 +14,7 @@ export const RejectedCell: FC<
   }
 > = ({ data, onToggle }) => {
   const utils = trpc.useUtils();
-  const { mutate } = trpc.wallet.rejectTransaction.useMutation({
+  const { mutate } = trpc.wallet.updateTransaction.useMutation({
     onSuccess: () => {
       utils.wallet.invalidate();
       onToggle();
@@ -24,18 +24,7 @@ export const RejectedCell: FC<
   return data === undefined ? (
     <LoadingCell />
   ) : (
-    <CellLayout
-      alignItems="center"
-      onKeyDownCapture={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          mutate({
-            transactionId: data.id,
-            rejected: !data.rejected,
-          });
-        }
-      }}
-    >
+    <CellLayout alignItems="center">
       <Tooltip
         disableInteractive
         placement="left"

@@ -48,25 +48,10 @@ export const TransactionsTable: FC<{
   const columnDefs = useMemo<Column<TransactionRow>[]>(
     () => [
       {
-        headerName: "Rejected",
-        field: "rejected",
+        headerName: "Cleared",
+        field: "id",
         width: 100,
-        sortable: true,
-        editable: true,
-        cellEditor: (props) => (
-          <AssignTransactionRejectedDialog
-            transactionId={props.data.id}
-            rejected={props.data.rejected}
-            onAssign={() => handleCellEdited(props)}
-            onClose={() => handleCellEditorClosed(props)}
-          />
-        ),
-        cellRenderer: (props) => (
-          <RejectedCell
-            {...props}
-            onToggle={() => props.api.refreshInfiniteCache()}
-          />
-        ),
+        cellRenderer: (props) => <ClearedCell {...props} />,
       },
       {
         headerName: "Date",
@@ -74,30 +59,12 @@ export const TransactionsTable: FC<{
         width: 150,
         sortable: true,
         filter: "agDateColumnFilter",
-        suppressNavigable: true,
         cellRenderer: (props) => <DateCell {...props} />,
-      },
-      {
-        headerName: "Amount",
-        field: "type",
-        width: 150,
-        filter: TypeColumnFilter,
-        editable: true,
-        cellEditor: (props) => (
-          <AssignTransactionAmountDialog
-            transactionId={props.data.id}
-            amount={props.data.amount}
-            onAssign={() => handleCellEdited(props)}
-            onClose={() => handleCellEditorClosed(props)}
-          />
-        ),
-        cellRenderer: (props) => <AmountCell {...props} />,
       },
       {
         headerName: "Context",
         field: "raidActivity.type.name",
         flex: 1,
-        suppressNavigable: true,
         cellRenderer: (props) =>
           props.data === undefined ? (
             <LoadingCell />
@@ -113,6 +80,23 @@ export const TransactionsTable: FC<{
               </OverflowTooltipTypography>
             </CellLayout>
           ),
+      },
+      {
+        headerName: "Amount",
+        field: "type",
+        width: 150,
+        filter: TypeColumnFilter,
+        editable: true,
+        cellEditor: (props) => (
+          <AssignTransactionAmountDialog
+            transactionId={props.data.id}
+            amount={props.data.amount}
+            onAssign={() => handleCellEdited(props)}
+            onClose={() => handleCellEditorClosed(props)}
+          />
+        ),
+        // TODO: add an edit icon to this
+        cellRenderer: (props) => <AmountCell {...props} />,
       },
       {
         headerName: "Pilot",
@@ -155,11 +139,25 @@ export const TransactionsTable: FC<{
         ),
       },
       {
-        headerName: "Cleared",
-        field: "id",
+        headerName: "Rejected",
+        field: "rejected",
         width: 100,
-        suppressNavigable: true,
-        cellRenderer: (props) => <ClearedCell {...props} />,
+        sortable: true,
+        editable: true,
+        cellEditor: (props) => (
+          <AssignTransactionRejectedDialog
+            transactionId={props.data.id}
+            rejected={props.data.rejected}
+            onAssign={() => handleCellEdited(props)}
+            onClose={() => handleCellEditorClosed(props)}
+          />
+        ),
+        cellRenderer: (props) => (
+          <RejectedCell
+            {...props}
+            onToggle={() => props.api.refreshInfiniteCache()}
+          />
+        ),
       },
     ],
     [],

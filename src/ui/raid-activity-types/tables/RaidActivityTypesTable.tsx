@@ -46,27 +46,6 @@ export const RaidActivityTypesTable: FC<{}> = ({}) => {
         ),
       },
       {
-        headerName: "Last Updated",
-        field: "updatedAt",
-        width: 150,
-        sortable: true,
-        suppressNavigable: true,
-        cellRenderer: (props) => <DateCell {...props} />,
-      },
-      {
-        headerName: "Updated By",
-        field: "updatedByUser",
-        suppressNavigable: true,
-        cellRenderer: (props) =>
-          props.data === undefined ? (
-            <LoadingCell />
-          ) : (
-            <CellLayout>
-              <PlayerLink user={props.data.updatedByUser} />
-            </CellLayout>
-          ),
-      },
-      {
         headerName: "Default Payout",
         field: "defaultPayout",
         width: 170,
@@ -87,6 +66,27 @@ export const RaidActivityTypesTable: FC<{}> = ({}) => {
             onAssign={() => props.api.refreshInfiniteCache()}
           />
         ),
+      },
+      {
+        headerName: "Last Updated",
+        field: "updatedAt",
+        width: 150,
+        sortable: true,
+        suppressNavigable: true,
+        cellRenderer: (props) => <DateCell {...props} />,
+      },
+      {
+        headerName: "Updated By",
+        field: "updatedByUser",
+        suppressNavigable: true,
+        cellRenderer: (props) =>
+          props.data === undefined ? (
+            <LoadingCell />
+          ) : (
+            <CellLayout>
+              <PlayerLink user={props.data.updatedByUser} />
+            </CellLayout>
+          ),
       },
       {
         headerName: "Latest Raid Activity",
