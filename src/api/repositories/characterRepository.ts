@@ -10,6 +10,11 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
+import { startCase } from "lodash";
+
+const normalizeName = (name: string) => {
+  return startCase(name);
+};
 
 export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   createMany: async ({
@@ -25,7 +30,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.character.createMany({
       data: characters.map((c) => {
         return {
-          name: c.name,
+          name: normalizeName(c.name),
           raceId: c.raceId,
           classId: c.classId,
           defaultPilotId: c.defaultPilotId,
@@ -47,7 +52,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   }) => {
     return p.characterClass.create({
       data: {
-        name,
+        name: normalizeName(name),
         colorHexLight,
         colorHexDark,
         raceClassCombinations: {
@@ -55,7 +60,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
             return {
               race: {
                 connect: {
-                  name: raceName,
+                  name: normalizeName(raceName),
                 },
               },
             };
@@ -68,7 +73,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   createRace: async ({ name }: { name: string }) => {
     return p.characterRace.create({
       data: {
-        name,
+        name: normalizeName(name),
       },
     });
   },
@@ -76,7 +81,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   isNameAvailable: async ({ name }: { name: string }) => {
     const numCharactersWithName = await p.character.count({
       where: {
-        name,
+        name: normalizeName(name),
       },
     });
     return numCharactersWithName === 0;
@@ -171,7 +176,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   getClassByName: async ({ name }: { name: string }) => {
     return p.characterClass.findUniqueOrThrow({
       where: {
-        name,
+        name: normalizeName(name),
       },
     });
   },
@@ -191,7 +196,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   getRaceByName: async ({ name }: { name: string }) => {
     return p.characterRace.findUniqueOrThrow({
       where: {
-        name,
+        name: normalizeName(name),
       },
     });
   },
@@ -200,8 +205,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.character.findFirst({
       where: {
         name: {
-          equals: search,
-          mode: "insensitive",
+          equals: normalizeName(search),
         },
       },
     });
@@ -217,8 +221,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.character.findMany({
       where: {
         name: {
-          contains: search,
-          mode: "insensitive",
+          contains: normalizeName(search),
         },
       },
       orderBy: {
@@ -236,8 +239,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     const characters = await p.character.findMany({
       where: {
         name: {
-          in: characterNames,
-          mode: "insensitive",
+          in: characterNames.map((n) => normalizeName(n)),
         },
       },
       select: {

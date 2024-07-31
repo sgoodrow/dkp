@@ -1,5 +1,12 @@
-import { useCallback, useMemo } from "react";
-import { Box, PaletteMode, useTheme } from "@mui/material";
+import {
+  PropsWithChildren,
+  useCallback,
+  useMemo,
+  useState,
+  createContext,
+  useContext,
+} from "react";
+import { Box, PaletteMode, Unstable_Grid2, useTheme } from "@mui/material";
 import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
@@ -71,22 +78,38 @@ export const handleCellEditorClosed = ({
   }, 0);
 };
 
+const GridApiContext = createContext<GridApi | undefined>(undefined);
+
+export const useGridApi = () => {
+  const context = useContext(GridApiContext);
+  if (context === undefined) {
+    throw new Error("useGridApi must be used within a GridApiProvider");
+  }
+  return context;
+};
+
 export const InfiniteTable = <TData extends Data>({
   rowHeight,
   getRows,
   columnDefs,
   onGridReady,
-}: {
+  children,
+}: PropsWithChildren<{
   rowHeight?: AgGridReactProps["rowHeight"];
   getRows: GetRows<TData>;
   columnDefs: Column<TData>[];
   onGridReady?: (api: GridApi<TData>) => void;
-}) => {
+}>) => {
   const theme = useTheme();
+  const [api, setApi] = useState<GridApi<TData>>();
+
   const { mode } = theme.palette;
 
   const onGridReadyInternal = useCallback(
-    (params: GridReadyEvent) => onGridReady && onGridReady(params.api),
+    (params: GridReadyEvent) => {
+      setApi(params.api);
+      onGridReady && onGridReady(params.api);
+    },
     [onGridReady],
   );
 
@@ -142,6 +165,12 @@ export const InfiniteTable = <TData extends Data>({
 
   return (
     <Box flexGrow={1} className={getThemeName({ mode })}>
+      <GridApiContext.Provider value={api}>
+        <Unstable_Grid2 container spacing={1}>
+          {children}
+        </Unstable_Grid2>
+      </GridApiContext.Provider>
+      <Box mt={1} />
       <AgGridReact
         rowHeight={rowHeight}
         onGridReady={onGridReadyInternal}

@@ -8,10 +8,12 @@ import { FC } from "react";
 import { useForm } from "@tanstack/react-form";
 import { trpc } from "@/api/views/trpc/trpc";
 import { TextField } from "@mui/material";
+import { useGridApi } from "@/ui/shared/components/table/InfiniteTable";
 
 export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
   onClose,
 }) => {
+  const api = useGridApi();
   const { Field, Subscribe, handleSubmit, reset } = useForm({
     defaultValues: {
       name: "",
@@ -31,6 +33,7 @@ export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
     onSuccess: () => {
       reset();
       onClose();
+      api.refreshInfiniteCache();
       utils.raidActivity.invalidate();
     },
   });

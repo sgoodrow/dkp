@@ -22,13 +22,6 @@ const getCharacterNames = (
       : [characterName],
   );
 
-const getField = (o: Record<string, number | undefined>, field?: string) => {
-  if (field === undefined) {
-    return null;
-  }
-  return o[field] || null;
-};
-
 export const raidActivityController = (p?: PrismaTransactionClient) => ({
   create: async ({
     createdById,
@@ -68,7 +61,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       payout: activity.payout,
     });
 
-    const walletIds = await characterController(p).getCharacterNameWalletIdMap({
+    const walletMap = await characterController(p).getCharacterNameWalletIdMap({
       characterNames: uniq(
         flatMap([
           ...getCharacterNames(attendees),
@@ -78,7 +71,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       ),
     });
 
-    const itemIds = await itemController(p).getItemMap({
+    const itemMap = await itemController(p).getItemMap({
       itemNames: purchases.map((p) => p.itemName),
     });
 
@@ -95,8 +88,8 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
         attendees: attendees.map((a) => ({
           ...a,
           walletId:
-            getField(walletIds, a.pilotCharacterName) ||
-            getField(walletIds, a.characterName),
+            walletMap.get(a.pilotCharacterName) ||
+            walletMap.get(a.characterName),
         })),
         payout,
         raidActivityId: raidActivity.id,
@@ -108,8 +101,8 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
         adjustments: adjustments.map((a) => ({
           ...a,
           walletId:
-            getField(walletIds, a.pilotCharacterName) ||
-            getField(walletIds, a.characterName),
+            walletMap.get(a.pilotCharacterName) ||
+            walletMap.get(a.characterName),
         })),
         raidActivityId: raidActivity.id,
         createdById,
@@ -120,9 +113,9 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
         purchases: purchases.map((p) => ({
           ...p,
           walletId:
-            getField(walletIds, p.pilotCharacterName) ||
-            getField(walletIds, p.characterName),
-          itemId: getField(itemIds, p.itemName),
+            walletMap.get(p.pilotCharacterName) ||
+            walletMap.get(p.characterName),
+          itemId: itemMap.get(p.itemName),
         })),
         raidActivityId: raidActivity.id,
         createdById,

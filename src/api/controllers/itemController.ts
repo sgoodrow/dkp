@@ -6,6 +6,8 @@ type CreateItem = {
   wikiSlug: string;
 };
 
+const normalizeItemName = (name: string) => name.toLowerCase();
+
 export const itemController = (p?: PrismaTransactionClient) => ({
   createMany: async ({ items }: { items: CreateItem[] }) => {
     return itemRepository(p).createMany({ items });
@@ -30,8 +32,9 @@ export const itemController = (p?: PrismaTransactionClient) => ({
   },
 
   getItemMap: async ({ itemNames }: { itemNames: string[] }) => {
-    return itemRepository(p).getItemMap({
-      itemNames,
-    });
+    const map = await itemRepository(p).getItemMap({ itemNames });
+    return {
+      get: (itemName: string) => map[normalizeItemName(itemName)] || null,
+    };
   },
 });

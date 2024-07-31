@@ -4,10 +4,6 @@ import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { startCase } from "lodash";
 
-const normalizeName = (name: string) => {
-  return startCase(name);
-};
-
 type CreateCharacter = {
   name: string;
   raceId: number;
@@ -17,24 +13,12 @@ type CreateCharacter = {
 
 export const characterController = (p?: PrismaTransactionClient) => ({
   createMany: async ({ characters }: { characters: CreateCharacter[] }) => {
-    return characterRepository(p).createMany({
-      characters: characters.map((c) => {
-        return {
-          ...c,
-          name: normalizeName(c.name),
-        };
-      }),
-    });
+    return characterRepository(p).createMany({ characters });
   },
 
   create: async (character: CreateCharacter) => {
     return characterController(p).createMany({
-      characters: [
-        {
-          ...character,
-          name: normalizeName(character.name),
-        },
-      ],
+      characters: [character],
     });
   },
 
@@ -50,23 +34,19 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     allowedRaces: string[];
   }) => {
     return characterRepository(p).createClass({
-      name: normalizeName(name),
+      name,
       colorHexLight,
       colorHexDark,
-      allowedRaces: allowedRaces.map((r) => normalizeName(r)),
+      allowedRaces,
     });
   },
 
   createRace: async ({ name }: { name: string }) => {
-    return characterRepository(p).createRace({
-      name: normalizeName(name),
-    });
+    return characterRepository(p).createRace({ name });
   },
 
   isNameAvailable: async ({ name }: { name: string }) => {
-    return characterRepository(p).isNameAvailable({
-      name: normalizeName(name),
-    });
+    return characterRepository(p).isNameAvailable({ name });
   },
 
   isAllowedRaceClassCombination: async ({
@@ -180,8 +160,12 @@ export const characterController = (p?: PrismaTransactionClient) => ({
   }: {
     characterNames: string[];
   }) => {
-    return characterRepository(p).getCharacterNameWalletIdMap({
+    const map = await characterRepository(p).getCharacterNameWalletIdMap({
       characterNames,
     });
+    return {
+      get: (characterName?: string) =>
+        characterName === undefined ? null : map[characterName] || null,
+    };
   },
 });

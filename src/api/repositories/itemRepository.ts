@@ -3,7 +3,7 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/client";
 
-const normalizeItemName = (name: string) => name.toLowerCase();
+export const normalizeItemName = (name: string) => name.toLowerCase();
 
 export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
   createMany: async ({
@@ -14,7 +14,7 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.item.createMany({
       data: items.map((i) => {
         return {
-          name: i.name,
+          name: normalizeItemName(i.name),
           wikiSlug: i.wikiSlug,
         };
       }),

@@ -18,6 +18,8 @@ import { RaidActivityTypeNameCell } from "@/ui/raid-activity-types/tables/RaidAc
 import { RaidActivityTypeDefaultPayoutCell } from "@/ui/raid-activity-types/tables/RaidActivityTypeDefaultPayoutCell";
 import { AssignRaidActivityTypeDefaultPayoutDialog } from "@/ui/raid-activity-types/dialogs/AssignRaidActivityTypeDefaultPayoutDialog";
 import { AssignRaidActivityTypeNameDialog } from "@/ui/raid-activity-types/dialogs/AssignRaidActivityTypeNameDialog";
+import { Unstable_Grid2 } from "@mui/material";
+import { CreateRaidActivityTypeCard } from "@/ui/raid-activity-types/cards/CreateRaidActivityTypeCard";
 
 export type RaidActivityTypeRow =
   TrpcRouteOutputs["raidActivity"]["getManyTypes"]["rows"][number];
@@ -111,6 +113,10 @@ export const RaidActivityTypesTable: FC<{}> = ({}) => {
       rowHeight={64}
       getRows={utils.raidActivity.getManyTypes.fetch}
       columnDefs={columnDefs}
-    />
+    >
+      <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
+        <CreateRaidActivityTypeCard />
+      </Unstable_Grid2>
+    </InfiniteTable>
   );
 };
