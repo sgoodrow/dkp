@@ -7,7 +7,7 @@ import { CellLayout } from "@/ui/shared/components/table/CellLayout";
 import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
-import { AssignPilotIconButtonDialog } from "@/ui/transactions/buttons/AssignPilotIconButtonDialog";
+import { AssignTransactionPilotIconButton } from "@/ui/transactions/buttons/AssignTransactionPilotIconButton";
 
 export const PilotCell: FC<
   ICellRendererParams<TransactionRow> & { onAssign: () => void }
@@ -17,7 +17,7 @@ export const PilotCell: FC<
   ) : (
     <CellLayout>
       <Stack direction="row" spacing={1}>
-        <AssignPilotIconButtonDialog
+        <AssignTransactionPilotIconButton
           transactionId={data.id}
           pilot={data.wallet?.user || null}
           onAssign={onAssign}

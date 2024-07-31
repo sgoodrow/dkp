@@ -1,9 +1,8 @@
 "use client";
 
-import { FC, useCallback, useMemo, useState } from "react";
-import { GridApi } from "ag-grid-community";
+import { FC, useCallback, useMemo } from "react";
 import {
-  Column,
+  ColDef,
   GetRows,
   InfiniteTable,
 } from "@/ui/shared/components/table/InfiniteTable";
@@ -30,8 +29,6 @@ export const TransactionsTable: FC<{
 }> = ({ showRejected, showCleared }) => {
   const utils = trpc.useUtils();
 
-  const [api, setApi] = useState<GridApi<TransactionRow> | null>(null);
-
   const getRows: GetRows<TransactionRow> = useCallback(
     (params) =>
       utils.wallet.getManyTransactions.fetch({
@@ -42,7 +39,7 @@ export const TransactionsTable: FC<{
     [utils, showRejected, showCleared],
   );
 
-  const columnDefs: Column<TransactionRow>[] = useMemo(
+  const columnDefs: ColDef<TransactionRow>[] = useMemo(
     () => [
       {
         headerName: "Rejected",
@@ -52,7 +49,7 @@ export const TransactionsTable: FC<{
         cellRenderer: (params) => (
           <RejectedCell
             {...params}
-            onToggle={() => api?.refreshInfiniteCache()}
+            onToggle={() => params.api.refreshInfiniteCache()}
           />
         ),
       },
@@ -96,7 +93,10 @@ export const TransactionsTable: FC<{
         field: "characterName",
         flex: 1,
         cellRenderer: (params) => (
-          <PilotCell {...params} onAssign={() => api?.refreshInfiniteCache()} />
+          <PilotCell
+            {...params}
+            onAssign={() => params.api.refreshInfiniteCache()}
+          />
         ),
       },
       {
@@ -104,7 +104,10 @@ export const TransactionsTable: FC<{
         field: "itemName",
         flex: 1,
         cellRenderer: (params) => (
-          <ItemCell {...params} onAssign={() => api?.refreshInfiniteCache()} />
+          <ItemCell
+            {...params}
+            onAssign={() => params.api.refreshInfiniteCache()}
+          />
         ),
       },
       {
@@ -114,15 +117,10 @@ export const TransactionsTable: FC<{
         cellRenderer: (params) => <ClearedCell {...params} />,
       },
     ],
-    [api],
+    [],
   );
 
   return (
-    <InfiniteTable
-      rowHeight={64}
-      getRows={getRows}
-      columnDefs={columnDefs}
-      onGridReady={(api) => setApi(api)}
-    />
+    <InfiniteTable rowHeight={64} getRows={getRows} columnDefs={columnDefs} />
   );
 };

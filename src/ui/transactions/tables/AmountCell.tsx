@@ -23,7 +23,7 @@ const getDetails = (type: WalletTransactionType) => {
       } as const;
     case "ATTENDANCE":
       return {
-        Icon: uiRoutes.raids.icon,
+        Icon: uiRoutes.raidActivities.icon,
         tooltip: "Attendance",
       } as const;
     default:

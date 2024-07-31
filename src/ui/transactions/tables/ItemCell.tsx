@@ -1,14 +1,12 @@
-"use client";
-
 import { ICellRendererParams } from "ag-grid-community";
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { FC } from "react";
 import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { CellLayout } from "@/ui/shared/components/table/CellLayout";
 import { Box, Stack, Tooltip, Typography } from "@mui/material";
-import { AssignItemIconButtonDialog } from "@/ui/transactions/buttons/AssignItemIconButtonDialog";
 import { ItemLink } from "@/ui/shared/components/links/ItemLink";
 import { startCase } from "lodash";
+import { AssignTransactionItemIconButton } from "@/ui/transactions/buttons/AssignTransactionItemIconButton";
 
 export const ItemCell: FC<
   ICellRendererParams<TransactionRow> & { onAssign: () => void }
@@ -19,7 +17,7 @@ export const ItemCell: FC<
     <CellLayout>
       {data.itemName === null ? null : (
         <Stack direction="row" spacing={1}>
-          <AssignItemIconButtonDialog
+          <AssignTransactionItemIconButton
             transactionId={data.id}
             item={data.item}
             onAssign={onAssign}

@@ -44,6 +44,29 @@ export const raidActivityRepository = (
     });
   },
 
+  updateType: async ({
+    id,
+    name,
+    defaultPayout,
+    updatedById,
+  }: {
+    id: number;
+    name?: string;
+    defaultPayout?: number;
+    updatedById: string;
+  }) => {
+    return p.raidActivityType.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        defaultPayout,
+        updatedById,
+      },
+    });
+  },
+
   create: async ({
     typeId,
     note,
@@ -107,6 +130,19 @@ export const raidActivityRepository = (
     });
   },
 
+  countTypes: async ({
+    filterModel,
+    sortModel,
+  }: {
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
+    return p.raidActivityType.count({
+      where: agFilterModelToPrismaWhere(filterModel),
+      orderBy: agSortModelToPrismaOrderBy(sortModel),
+    });
+  },
+
   getTypeById: async ({ typeId }: { typeId: number }) => {
     return p.raidActivityType.findUniqueOrThrow({
       where: {
@@ -115,13 +151,22 @@ export const raidActivityRepository = (
     });
   },
 
+  getTypeByName: async ({ name }: { name: string }) => {
+    return p.raidActivityType.findUnique({
+      where: {
+        name,
+      },
+    });
+  },
+
   getMany: async ({ startRow, endRow, filterModel, sortModel }: AgGrid) => {
     return p.raidActivity.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
-        createdAt: "desc",
+        id: "desc",
       },
       where: agFilterModelToPrismaWhere(filterModel),
       include: {
+        type: true,
         _count: {
           select: {
             transactions: {
@@ -131,7 +176,43 @@ export const raidActivityRepository = (
             },
           },
         },
-        type: true,
+      },
+      skip: startRow,
+      take: endRow - startRow,
+    });
+  },
+
+  getManyTypes: async ({
+    startRow,
+    endRow,
+    filterModel,
+    sortModel,
+  }: AgGrid) => {
+    return p.raidActivityType.findMany({
+      orderBy: agSortModelToPrismaOrderBy(sortModel) || {
+        id: "desc",
+      },
+      where: agFilterModelToPrismaWhere(filterModel),
+      include: {
+        _count: {
+          select: {
+            raidActivities: true,
+          },
+        },
+        updatedByUser: {
+          include: {
+            discordMetadata: true,
+          },
+        },
+        raidActivities: {
+          orderBy: {
+            id: "desc",
+          },
+          take: 1,
+          include: {
+            type: true,
+          },
+        },
       },
       skip: startRow,
       take: endRow - startRow,

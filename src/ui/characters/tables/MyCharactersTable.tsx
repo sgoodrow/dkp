@@ -3,7 +3,7 @@
 import { trpc } from "@/api/views/trpc/trpc";
 import { FC, useMemo } from "react";
 import {
-  Column,
+  ColDef,
   InfiniteTable,
 } from "@/ui/shared/components/table/InfiniteTable";
 import { CopyToClipboardIconButton } from "@/ui/shared/components/buttons/CopyToClipboardIconButton";
@@ -22,7 +22,7 @@ export const MyCharactersTable: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
   const session = useSession();
 
-  const columnDefs: Column<Row>[] = useMemo(
+  const columnDefs: ColDef<Row>[] = useMemo(
     () => [
       {
         headerName: "",

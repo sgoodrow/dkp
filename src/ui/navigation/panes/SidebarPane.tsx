@@ -59,7 +59,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
   const items: SidebarItem[] = onAdminPage
     ? [
         uiRoutes.admin,
-        uiRoutes.raidTypes,
+        uiRoutes.raidActivityTypes,
         {
           ...uiRoutes.transactions,
           badgeCount: unclearedTransactionsCount,
@@ -71,7 +71,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
     : [
         uiRoutes.home,
         uiRoutes.players,
-        uiRoutes.raids,
+        uiRoutes.raidActivities,
         uiRoutes.purchases,
         uiRoutes.adjustments,
         uiRoutes.leaderboard,

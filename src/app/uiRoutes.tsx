@@ -45,13 +45,38 @@ export const uiRoutes = {
     icon: People,
     dataMonitoringId: monitoringIds.GOTO_PLAYERS,
   },
-  raids: {
-    segment: "raids",
-    href: () => `${uiRoutes.private.href()}/${uiRoutes.raids.segment}` as const,
-    name: "Raids",
+  player: {
+    href: ({ userId }: { userId: string }) =>
+      `${uiRoutes.players.href()}/${userId}` as const,
+    name: (name: string) => `Player - ${name}`,
+    dataMonitoringId: monitoringIds.GOTO_PLAYER,
+  },
+  character: {
+    href: ({
+      playerId,
+      characterId,
+    }: {
+      playerId: string;
+      characterId: number;
+    }) =>
+      `${uiRoutes.player.href({ userId: playerId })}/character/${characterId}` as const,
+    name: (name: string) => `Character - ${name}`,
+    dataMonitoringId: monitoringIds.GOTO_CHARACTER,
+  },
+  raidActivities: {
+    segment: "raid-activities",
+    href: () =>
+      `${uiRoutes.private.href()}/${uiRoutes.raidActivities.segment}` as const,
+    name: "Raid Activities",
     description: "View all raid activity.",
     icon: Event,
-    dataMonitoringId: monitoringIds.GOTO_RAIDS,
+    dataMonitoringId: monitoringIds.GOTO_RAID_ACTIVITIES,
+  },
+  raidActivity: {
+    href: (raidId: number) =>
+      `${uiRoutes.raidActivities.href()}/${raidId}` as const,
+    name: (name: string) => `Raid - ${name}`,
+    dataMonitoringId: monitoringIds.GOTO_RAID,
   },
   purchases: {
     segment: "purchases",
@@ -89,6 +114,12 @@ export const uiRoutes = {
     icon: EmojiEvents,
     dataMonitoringId: monitoringIds.GOTO_LEADERBOARD,
   },
+  item: {
+    href: ({ itemId }: { itemId: number }) =>
+      `${uiRoutes.items.href()}/${itemId}` as const,
+    name: (name: string) => `Item - ${name}`,
+    dataMonitoringId: monitoringIds.GOTO_ITEM,
+  },
   admin: {
     segment: "admin",
     href: () => `${uiRoutes.private.href()}/${uiRoutes.admin.segment}` as const,
@@ -98,40 +129,11 @@ export const uiRoutes = {
     dataMonitoringId: monitoringIds.GOTO_ADMIN,
     adminOnly: true,
   },
-  // Sub-pages
-  player: {
-    href: ({ userId }: { userId: string }) =>
-      `${uiRoutes.players.href()}/${userId}` as const,
-    name: (name: string) => `Player - ${name}`,
-    dataMonitoringId: monitoringIds.GOTO_PLAYER,
-  },
-  character: {
-    href: ({
-      playerId,
-      characterId,
-    }: {
-      playerId: string;
-      characterId: number;
-    }) =>
-      `${uiRoutes.player.href({ userId: playerId })}/character/${characterId}` as const,
-    name: (name: string) => `Character - ${name}`,
-    dataMonitoringId: monitoringIds.GOTO_CHARACTER,
-  },
-  raid: {
-    href: (raidId: number) => `${uiRoutes.raids.href()}/${raidId}` as const,
-    name: (name: string) => `Raid - ${name}`,
-    dataMonitoringId: monitoringIds.GOTO_RAID,
-  },
-  item: {
-    href: ({ itemId }: { itemId: number }) =>
-      `${uiRoutes.items.href()}/${itemId}` as const,
-    name: (name: string) => `Item - ${name}`,
-    dataMonitoringId: monitoringIds.GOTO_ITEM,
-  },
-  // Admin only sub-pages
-  raidTypes: {
+  raidActivityTypes: {
     href: () => `${uiRoutes.admin.href()}/raid-types` as const,
-    name: "Raid Types",
+    name: "Raid Activity Types",
+    description:
+      "View and manage raid activity types to categorize raid activites.",
     dataMonitoringId: monitoringIds.GOTO_RAID_TYPES,
     icon: EventRepeat,
     adminOnly: true,
@@ -139,8 +141,7 @@ export const uiRoutes = {
   transactions: {
     href: () => `${uiRoutes.admin.href()}/transactions` as const,
     name: "Transactions",
-    description:
-      "Process uncleared transactions by associating them with a player or item.",
+    description: "Amend uncleared transactions to apply them to a player.",
     dataMonitoringId: monitoringIds.GOTO_TRANSACTIONS,
     icon: AssignmentInd,
     adminOnly: true,
@@ -148,7 +149,8 @@ export const uiRoutes = {
   apiKeys: {
     href: () => `${uiRoutes.admin.href()}/api-keys` as const,
     name: "API Keys",
-    description: "View and manage API keys.",
+    description:
+      "View and manage API keys which are used to access the API programmatically.",
     dataMonitoringId: monitoringIds.GOTO_API_KEYS,
     icon: Key,
     adminOnly: true,

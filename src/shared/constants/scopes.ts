@@ -7,6 +7,7 @@ export const SCOPE = keysAreSameAsValuesCheck({
   reject_transaction: "reject_transaction",
   assign_transaction_pilot: "assign_transaction_pilot",
   assign_transaction_item: "assign_transaction_item",
+  update_raid_activity_type: "update_raid_activity_type",
 });
 
 export type Scope = keyof typeof SCOPE;

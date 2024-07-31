@@ -26,7 +26,7 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
   getLatestSyncEvent: async () => {
     return p.discordSyncEvent.findFirst({
       orderBy: {
-        createdAt: "desc",
+        id: "desc",
       },
       include: {
         createdByUser: {

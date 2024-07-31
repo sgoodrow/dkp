@@ -38,12 +38,10 @@ const getMemberDetails = ({ member }: { member: APIGuildMember }) => {
 
 export const discordService = {
   getMemberDetailsByMemberId: async ({ memberId }: { memberId: string }) => {
-    console.log(memberId);
     const member = await client.guilds.getMember(
       guild.discordServerId,
       memberId,
     );
-    console.log(member);
     return getMemberDetails({
       member,
     });

@@ -43,13 +43,32 @@ export type GetRows<TData extends Data> = (params: {
   rows: TData[];
 }>;
 
-// Fix the cellRenderer types.
-export type Column<TData extends Data> = Omit<
-  ColDef<TData>,
-  "cellRenderer" | "cellEditor"
-> & {
+export interface Column<TData extends Data>
+  extends Omit<ColDef<TData>, "cellRenderer" | "cellEditor"> {
   cellRenderer?: (params: ICellRendererParams<TData>) => JSX.Element;
   cellEditor?: (params: ICellEditorParams<TData>) => JSX.Element;
+}
+
+export const handleCellEdited = ({
+  rowIndex,
+  column,
+  api,
+}: ICellEditorParams) => {
+  api.refreshInfiniteCache();
+  setTimeout(() => {
+    api.setFocusedCell(rowIndex, column);
+  }, 0);
+};
+
+export const handleCellEditorClosed = ({
+  rowIndex,
+  column,
+  api,
+}: ICellEditorParams) => {
+  api.stopEditing();
+  setTimeout(() => {
+    api.setFocusedCell(rowIndex, column);
+  }, 0);
 };
 
 export const InfiniteTable = <TData extends Data>({

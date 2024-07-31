@@ -75,7 +75,6 @@ export const discordController = (p?: PrismaTransactionClient) => ({
       userId,
       provider: "discord",
     });
-    console.log(memberId);
     const metadata = await discordService.getMemberDetailsByMemberId({
       memberId,
     });

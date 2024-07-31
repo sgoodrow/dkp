@@ -3,6 +3,7 @@ import {
   adminProcedure,
   agFetchProcedure,
   createRoutes,
+  protectedProcedure,
 } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
@@ -56,4 +57,36 @@ export const raidActivityApiRoutes = createRoutes({
   getMany: agFetchProcedure.query(async ({ input }) => {
     return raidActivityController().getMany(input);
   }),
+
+  getManyTypes: agFetchProcedure.query(async ({ input }) => {
+    return raidActivityController().getManyTypes(input);
+  }),
+
+  updateType: adminProcedure
+    .meta({
+      scope: "update_raid_activity_type",
+    })
+    .input(
+      z.object({
+        id: z.number().nonnegative().int(),
+        name: z.string().optional(),
+        defaultPayout: z.number().nonnegative().optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return raidActivityController().updateType({
+        updatedById: ctx.userId,
+        ...input,
+      });
+    }),
+
+  isTypeNameAvailable: protectedProcedure
+    .input(
+      z.object({
+        name: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return raidActivityController().isTypeNameAvailable(input.name);
+    }),
 });

@@ -135,7 +135,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
         defaultPilotId: userId,
       },
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
-        createdAt: "desc",
+        id: "desc",
       },
       include: {
         class: {

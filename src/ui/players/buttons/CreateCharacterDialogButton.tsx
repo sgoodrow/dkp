@@ -108,7 +108,7 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                       return "Name can only contain letters";
                     }
                   },
-                  onChangeAsyncDebounceMs: 100,
+                  onChangeAsyncDebounceMs: 300,
                   onChangeAsync: async ({ value }) => {
                     const isNameAvailable =
                       await utils.character.isNameAvailable.fetch({

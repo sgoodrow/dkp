@@ -16,7 +16,7 @@ export const monitoringIds = keysAreSameAsValuesCheck({
 
   GOTO_CHARACTER: "GOTO_CHARACTER",
 
-  GOTO_RAIDS: "GOTO_RAIDS",
+  GOTO_RAID_ACTIVITIES: "GOTO_RAID_ACTIVITIES",
 
   GOTO_RAID: "GOTO_RAID",
 

@@ -10,6 +10,7 @@ import { flatMap, uniq } from "lodash";
 import { itemController } from "@/api/controllers/itemController";
 import { characterController } from "@/api/controllers/characterController";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
+import { userController } from "@/api/controllers/userController";
 
 const getCharacterNames = (
   list: {
@@ -176,5 +177,46 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       }),
       rows: await raidActivityRepository(p).getMany(agTable),
     };
+  },
+
+  getManyTypes: async (agTable: AgGrid) => {
+    const rows = await raidActivityRepository(p).getManyTypes(agTable);
+    return {
+      totalRowCount: await raidActivityRepository(p).countTypes({
+        ...agTable,
+      }),
+      rows: rows.map((r) => ({
+        ...r,
+        updatedByUser: userController(p).addDisplayName({
+          user: r.updatedByUser,
+        }),
+      })),
+    };
+  },
+
+  updateType: async ({
+    id,
+    name,
+    defaultPayout,
+    updatedById,
+  }: {
+    id: number;
+    name?: string;
+    defaultPayout?: number;
+    updatedById: string;
+  }) => {
+    return raidActivityRepository(p).updateType({
+      id,
+      name,
+      defaultPayout,
+      updatedById,
+    });
+  },
+
+  isTypeNameAvailable: async (name: string) => {
+    const type = await raidActivityRepository(p).getTypeByName({
+      name,
+    });
+    return type === null;
   },
 });

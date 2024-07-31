@@ -1,7 +1,7 @@
 "use client";
 
 import { trpc } from "@/api/views/trpc/trpc";
-import { CreateApiKeyDialogButton } from "@/ui/apiKeys/buttons/CreateApiKeyDialogButton";
+import { CreateApiKeyDialogButton } from "@/ui/api-keys/buttons/CreateApiKeyDialogButton";
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
 import { RemoveCircle } from "@mui/icons-material";
 import { IconButton, Skeleton, Stack, Typography } from "@mui/material";

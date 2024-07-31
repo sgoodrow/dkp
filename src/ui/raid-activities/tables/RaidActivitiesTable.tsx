@@ -7,23 +7,21 @@ import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { uiRoutes } from "@/app/uiRoutes";
 import { Edit } from "@mui/icons-material";
 import { NumberCell } from "@/ui/shared/components/table/NumberCell";
-import { DateTypography } from "@/ui/shared/components/typography/DateTypography";
 import {
-  Column,
+  ColDef,
   InfiniteTable,
 } from "@/ui/shared/components/table/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
-import { SiteLink } from "@/ui/shared/components/links/SiteLink";
-import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
 import { CellLayout } from "@/ui/shared/components/table/CellLayout";
 import { DateCell } from "@/ui/transactions/tables/DateCell";
+import { RaidActivityCell } from "@/ui/raid-activities/tables/RaidActivityCell";
 
 type Row = TrpcRouteOutputs["raidActivity"]["getMany"]["rows"][number];
 
-export const RaidsTable: FC<{}> = ({}) => {
+export const RaidActivitiesTable: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
-  const columnDefs: Column<Row>[] = useMemo(
+  const columnDefs: ColDef<Row>[] = useMemo(
     () => [
       {
         headerName: "",
@@ -37,7 +35,9 @@ export const RaidsTable: FC<{}> = ({}) => {
                 monitoringIds.COPY_RAID_ACTIVITY_LINK_TO_CLIPBOARD
               }
               value={
-                props.value === undefined ? "" : uiRoutes.raid.href(props.value)
+                props.value === undefined
+                  ? ""
+                  : uiRoutes.raidActivity.href(props.value)
               }
               label="Copy raid activity link"
             />
@@ -70,18 +70,11 @@ export const RaidsTable: FC<{}> = ({}) => {
         headerName: "Name",
         field: "type.name",
         filter: "agTextColumnFilter",
-        cellRenderer: (props) =>
-          props.data === undefined ? (
-            <LoadingCell />
-          ) : (
-            <CellLayout>
-              <SiteLink
-                data-monitoring-id={monitoringIds.GOTO_RAID}
-                label={props.value}
-                href={uiRoutes.raid.href(props.data?.id)}
-              />
-            </CellLayout>
-          ),
+        cellRenderer: (props) => (
+          <RaidActivityCell
+            data={props.data === undefined ? undefined : props.data}
+          />
+        ),
       },
       // Prisma doesn't support multiple relation counts, so we only
       // include the attendees count here (i.e. we don't include the purchase count yet)
