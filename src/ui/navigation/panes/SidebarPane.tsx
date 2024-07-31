@@ -17,7 +17,7 @@ import {
   monitoringIds,
 } from "@/ui/shared/constants/monitoringIds";
 import { SvgIconComponent } from "@mui/icons-material";
-import { Box, Divider, Drawer, Paper, Skeleton, Stack } from "@mui/material";
+import { Box, Divider, Drawer, Paper, Stack } from "@mui/material";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -32,7 +32,7 @@ type SidebarItem = {
 };
 
 const MOBILE_WIDTH = "56px";
-const DESKTOP_WIDTH = "200px";
+const DESKTOP_WIDTH = "210px";
 
 const PROFILE_IMAGE_SIZE = 24;
 

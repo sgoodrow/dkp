@@ -28,6 +28,7 @@ import { AssignTransactionAmountDialog } from "@/ui/transactions/dialogs/AssignT
 import { WalletTransactionType } from "@prisma/client";
 import { Unstable_Grid2 } from "@mui/material";
 import { SwitchCard } from "@/ui/shared/components/cards/SwitchCard";
+import { TypeCell } from "@/ui/transactions/tables/TypeCell";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
@@ -85,10 +86,16 @@ export const TransactionsTable: FC<{}> = ({}) => {
           ),
       },
       {
+        headerName: "Type",
+        field: "type",
+        width: 100,
+        filter: TypeColumnFilter,
+        cellRenderer: (props) => <TypeCell {...props} />,
+      },
+      {
         headerName: "Amount",
         field: "type",
-        width: 150,
-        filter: TypeColumnFilter,
+        width: 120,
         editable: true,
         cellEditor: (props) => (
           <AssignTransactionAmountDialog
