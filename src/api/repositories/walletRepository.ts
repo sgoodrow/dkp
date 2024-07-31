@@ -33,65 +33,39 @@ const getShowClearedTransactionPrismaWhere = (showCleared: boolean) =>
       };
 
 export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
-  assignTransactionItem: async ({
+  updateTransaction: async ({
     updatedById,
     transactionId,
+    rejected,
+    amount,
+    pilotId,
     itemId,
   }: {
     updatedById: string;
     transactionId: number;
-    itemId: number;
+    rejected?: boolean;
+    amount?: number;
+    pilotId?: string;
+    itemId?: number;
   }) => {
-    return p.walletTransaction.update({
-      where: {
-        id: transactionId,
-      },
-      data: {
-        itemId,
-        requiredIntervention: true,
-        updatedById,
-      },
-    });
-  },
-
-  assignTransactionPilot: async ({
-    updatedById,
-    transactionId,
-    walletId,
-  }: {
-    updatedById: string;
-    transactionId: number;
-    walletId: number;
-  }) => {
-    return p.walletTransaction.update({
-      where: {
-        id: transactionId,
-      },
-      data: {
-        walletId,
-        requiredIntervention: true,
-        updatedById,
-      },
-    });
-  },
-
-  rejectTransaction: async ({
-    updatedById,
-    transactionId,
-    rejected,
-  }: {
-    updatedById: string;
-    transactionId: number;
-    rejected: boolean;
-  }) => {
+    let walletId: number | undefined = undefined;
+    if (pilotId !== undefined) {
+      const wallet = await walletRepository(p).getByUserId({
+        userId: pilotId,
+      });
+      walletId = wallet.id;
+    }
     return p.walletTransaction.update({
       where: {
         id: transactionId,
       },
       data: {
         rejected,
-        requiredIntervention: true,
+        amount,
+        walletId,
+        itemId,
         updatedById,
+        requiredIntervention: true,
       },
     });
   },

@@ -34,7 +34,7 @@ export const AssignTransactionItemDialog: FC<{
 
   const utils = trpc.useUtils();
 
-  const { mutate } = trpc.wallet.assignTransactionItem.useMutation({
+  const { mutate } = trpc.wallet.updateTransaction.useMutation({
     onSuccess: () => {
       reset();
       onClose();

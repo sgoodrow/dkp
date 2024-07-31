@@ -4,54 +4,28 @@ import { walletRepository } from "@/api/repositories/walletRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 
 export const walletController = (p?: PrismaTransactionClient) => ({
-  assignTransactionItem: async ({
+  updateTransaction: async ({
     userId,
     transactionId,
+    rejected,
+    amount,
+    pilotId,
     itemId,
   }: {
     userId: string;
     transactionId: number;
-    itemId: number;
-  }) => {
-    return walletRepository(p).assignTransactionItem({
-      updatedById: userId,
-      transactionId,
-      itemId,
-    });
-  },
-
-  assignTransactionPilot: async ({
-    userId,
-    transactionId,
-    pilotId,
-  }: {
-    userId: string;
-    transactionId: number;
-    pilotId: string;
-  }) => {
-    const wallet = await walletRepository(p).getByUserId({
-      userId: pilotId,
-    });
-    return walletRepository(p).assignTransactionPilot({
-      updatedById: userId,
-      transactionId,
-      walletId: wallet.id,
-    });
-  },
-
-  rejectTransaction: async ({
-    userId,
-    transactionId,
-    rejected = false,
-  }: {
-    userId: string;
-    transactionId: number;
     rejected?: boolean;
+    amount?: number;
+    pilotId?: string;
+    itemId?: number;
   }) => {
-    return walletRepository(p).rejectTransaction({
+    return walletRepository(p).updateTransaction({
       updatedById: userId,
       transactionId,
       rejected,
+      amount,
+      pilotId,
+      itemId,
     });
   },
 

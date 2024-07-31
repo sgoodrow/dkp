@@ -2,8 +2,10 @@
 
 import { FC, useCallback, useMemo } from "react";
 import {
-  ColDef,
+  Column,
   GetRows,
+  handleCellEdited,
+  handleCellEditorClosed,
   InfiniteTable,
 } from "@/ui/shared/components/table/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
@@ -19,6 +21,10 @@ import { AmountCell } from "@/ui/transactions/tables/AmountCell";
 import { PilotCell } from "@/ui/transactions/tables/PilotCell";
 import { TypeColumnFilter } from "@/ui/transactions/tables/TypeColumnFilter";
 import { DateCell } from "@/ui/transactions/tables/DateCell";
+import { AssignTransactionRejectedDialog } from "@/ui/transactions/dialogs/AssignTransactionRejectedDialog";
+import { AssignTransactionPilotDialog } from "@/ui/transactions/dialogs/AssignTransactionPilotDialog";
+import { AssignTransactionItemDialog } from "@/ui/transactions/dialogs/AssignTransactionItemDialog";
+import { AssignTransactionAmountDialog } from "@/ui/transactions/dialogs/AssignTransactionAmountDialog";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
@@ -39,17 +45,26 @@ export const TransactionsTable: FC<{
     [utils, showRejected, showCleared],
   );
 
-  const columnDefs: ColDef<TransactionRow>[] = useMemo(
+  const columnDefs = useMemo<Column<TransactionRow>[]>(
     () => [
       {
         headerName: "Rejected",
         field: "rejected",
         width: 100,
         sortable: true,
-        cellRenderer: (params) => (
+        editable: true,
+        cellEditor: (props) => (
+          <AssignTransactionRejectedDialog
+            transactionId={props.data.id}
+            rejected={props.data.rejected}
+            onAssign={() => handleCellEdited(props)}
+            onClose={() => handleCellEditorClosed(props)}
+          />
+        ),
+        cellRenderer: (props) => (
           <RejectedCell
-            {...params}
-            onToggle={() => params.api.refreshInfiniteCache()}
+            {...props}
+            onToggle={() => props.api.refreshInfiniteCache()}
           />
         ),
       },
@@ -59,6 +74,7 @@ export const TransactionsTable: FC<{
         width: 150,
         sortable: true,
         filter: "agDateColumnFilter",
+        suppressNavigable: true,
         cellRenderer: (props) => <DateCell {...props} />,
       },
       {
@@ -66,12 +82,22 @@ export const TransactionsTable: FC<{
         field: "type",
         width: 150,
         filter: TypeColumnFilter,
-        cellRenderer: (params) => <AmountCell {...params} />,
+        editable: true,
+        cellEditor: (props) => (
+          <AssignTransactionAmountDialog
+            transactionId={props.data.id}
+            amount={props.data.amount}
+            onAssign={() => handleCellEdited(props)}
+            onClose={() => handleCellEditorClosed(props)}
+          />
+        ),
+        cellRenderer: (props) => <AmountCell {...props} />,
       },
       {
         headerName: "Context",
         field: "raidActivity.type.name",
         flex: 1,
+        suppressNavigable: true,
         cellRenderer: (props) =>
           props.data === undefined ? (
             <LoadingCell />
@@ -92,10 +118,19 @@ export const TransactionsTable: FC<{
         headerName: "Pilot",
         field: "characterName",
         flex: 1,
-        cellRenderer: (params) => (
+        editable: true,
+        cellEditor: (props) => (
+          <AssignTransactionPilotDialog
+            transactionId={props.data.id}
+            pilot={props.data.wallet?.user || null}
+            onAssign={() => handleCellEdited(props)}
+            onClose={() => handleCellEditorClosed(props)}
+          />
+        ),
+        cellRenderer: (props) => (
           <PilotCell
-            {...params}
-            onAssign={() => params.api.refreshInfiniteCache()}
+            {...props}
+            onAssign={() => props.api.refreshInfiniteCache()}
           />
         ),
       },
@@ -103,10 +138,19 @@ export const TransactionsTable: FC<{
         headerName: "Item",
         field: "itemName",
         flex: 1,
-        cellRenderer: (params) => (
+        editable: true,
+        cellEditor: (props) => (
+          <AssignTransactionItemDialog
+            transactionId={props.data.id}
+            item={props.data.item}
+            onAssign={() => handleCellEdited(props)}
+            onClose={() => handleCellEditorClosed(props)}
+          />
+        ),
+        cellRenderer: (props) => (
           <ItemCell
-            {...params}
-            onAssign={() => params.api.refreshInfiniteCache()}
+            {...props}
+            onAssign={() => props.api.refreshInfiniteCache()}
           />
         ),
       },
@@ -114,7 +158,8 @@ export const TransactionsTable: FC<{
         headerName: "Cleared",
         field: "id",
         width: 100,
-        cellRenderer: (params) => <ClearedCell {...params} />,
+        suppressNavigable: true,
+        cellRenderer: (props) => <ClearedCell {...props} />,
       },
     ],
     [],

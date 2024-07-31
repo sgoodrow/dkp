@@ -5,32 +5,24 @@ import {
   AssignButton,
   AssignValueDialog,
 } from "@/ui/shared/components/dialogs/AssignValueDialog";
-import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
-import { UserAutocomplete } from "@/ui/transactions/inputs/UserAutocomplete";
-import { DialogContentText } from "@mui/material";
+import { FormControlLabel, FormHelperText, Switch } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { FC } from "react";
 
-export const AssignTransactionPilotDialog: FC<{
+export const AssignTransactionRejectedDialog: FC<{
   transactionId: number;
-  pilot: {
-    id: string;
-    displayName: string;
-    discordMetadata: {
-      roleIds: string[];
-    } | null;
-  } | null;
+  rejected: boolean;
   onAssign: () => void;
   onClose: () => void;
-}> = ({ transactionId, pilot, onAssign, onClose }) => {
+}> = ({ transactionId, rejected, onAssign, onClose }) => {
   const { Field, Subscribe, handleSubmit, reset } = useForm({
     defaultValues: {
-      pilotId: pilot?.id || "",
+      rejected,
     },
     onSubmit: async ({ value }) => {
       mutate({
-        pilotId: value.pilotId,
-        transactionId: transactionId,
+        transactionId,
+        rejected: value.rejected,
       });
     },
   });
@@ -48,30 +40,34 @@ export const AssignTransactionPilotDialog: FC<{
 
   return (
     <AssignValueDialog
-      id="assign-transaction-pilot-dialog-title"
-      title={`${pilot ? "Re-" : ""}Assign Transaction Pilot`}
+      id="assign-transaction-rejected-dialog-title"
+      title="Toggle Transaction Rejected"
       onSubmit={handleSubmit}
       onClose={onClose}
     >
-      {pilot && (
-        <DialogContentText>
-          Are you sure you want to re-assign the pilot for this transaction?
-          <br />
-          <br />
-          It is currently assigned to <PlayerLink user={pilot} />.
-        </DialogContentText>
-      )}
       <Field
-        name="pilotId"
+        name="rejected"
         // eslint-disable-next-line react/no-children-prop
         children={(field) => (
-          <UserAutocomplete
-            label="Pilot"
-            onChange={field.setValue}
-            defaultValue={
-              pilot ? { id: pilot.id, label: pilot.displayName } : undefined
-            }
-          />
+          <>
+            <FormControlLabel
+              sx={{
+                ml: -1,
+                width: "100%",
+              }}
+              control={
+                <Switch
+                  autoFocus
+                  value={rejected}
+                  onChange={(e) => field.handleChange(e.target.checked)}
+                />
+              }
+              label="Rejected"
+            />
+            <FormHelperText>
+              Rejected transactions do not affect any player&apos;s wallet.
+            </FormHelperText>
+          </>
         )}
       />
       <Subscribe

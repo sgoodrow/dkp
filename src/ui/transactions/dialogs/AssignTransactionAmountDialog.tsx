@@ -5,32 +5,24 @@ import {
   AssignButton,
   AssignValueDialog,
 } from "@/ui/shared/components/dialogs/AssignValueDialog";
-import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
-import { UserAutocomplete } from "@/ui/transactions/inputs/UserAutocomplete";
-import { DialogContentText } from "@mui/material";
+import { TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { FC } from "react";
 
-export const AssignTransactionPilotDialog: FC<{
+export const AssignTransactionAmountDialog: FC<{
   transactionId: number;
-  pilot: {
-    id: string;
-    displayName: string;
-    discordMetadata: {
-      roleIds: string[];
-    } | null;
-  } | null;
+  amount: number;
   onAssign: () => void;
   onClose: () => void;
-}> = ({ transactionId, pilot, onAssign, onClose }) => {
+}> = ({ transactionId, amount, onAssign, onClose }) => {
   const { Field, Subscribe, handleSubmit, reset } = useForm({
     defaultValues: {
-      pilotId: pilot?.id || "",
+      amount,
     },
     onSubmit: async ({ value }) => {
       mutate({
-        pilotId: value.pilotId,
-        transactionId: transactionId,
+        transactionId,
+        amount: value.amount,
       });
     },
   });
@@ -48,28 +40,41 @@ export const AssignTransactionPilotDialog: FC<{
 
   return (
     <AssignValueDialog
-      id="assign-transaction-pilot-dialog-title"
-      title={`${pilot ? "Re-" : ""}Assign Transaction Pilot`}
+      id="assign-transaction-amount-dialog-title"
+      title="Change Transaction Amount"
       onSubmit={handleSubmit}
       onClose={onClose}
     >
-      {pilot && (
-        <DialogContentText>
-          Are you sure you want to re-assign the pilot for this transaction?
-          <br />
-          <br />
-          It is currently assigned to <PlayerLink user={pilot} />.
-        </DialogContentText>
-      )}
       <Field
-        name="pilotId"
+        name="amount"
+        validators={{
+          onChange: ({ value }) => {
+            if (value < 0) {
+              return "Amount must be greater than or equal to 0";
+            }
+            return;
+          },
+        }}
         // eslint-disable-next-line react/no-children-prop
         children={(field) => (
-          <UserAutocomplete
-            label="Pilot"
-            onChange={field.setValue}
-            defaultValue={
-              pilot ? { id: pilot.id, label: pilot.displayName } : undefined
+          <TextField
+            placeholder={String(amount)}
+            required
+            label="Amount"
+            autoFocus
+            fullWidth
+            type="number"
+            inputProps={{
+              step: "any",
+            }}
+            error={
+              field.state.meta.isTouched && field.state.meta.errors.length > 0
+            }
+            onChange={(e) => field.handleChange(Number(e.target.value))}
+            helperText={
+              field.state.meta.isTouched && field.state.meta.errors.length > 0
+                ? field.state.meta.errors.join(",")
+                : "Enter a non-negative amount for the transaction"
             }
           />
         )}

@@ -8,52 +8,21 @@ import {
 import { z } from "zod";
 
 export const walletApiRoutes = createRoutes({
-  assignTransactionItem: adminProcedure
+  updateTransaction: adminProcedure
     .meta({
-      scope: "assign_transaction_item",
-    })
-    .input(
-      z.object({
-        transactionId: z.number().nonnegative().int(),
-        itemId: z.number(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      return walletController().assignTransactionItem({
-        ...input,
-        userId: ctx.userId,
-      });
-    }),
-
-  assignTransactionPilot: adminProcedure
-    .meta({
-      scope: "assign_transaction_pilot",
-    })
-    .input(
-      z.object({
-        transactionId: z.number().nonnegative().int(),
-        pilotId: z.string(),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      return walletController().assignTransactionPilot({
-        ...input,
-        userId: ctx.userId,
-      });
-    }),
-
-  rejectTransaction: adminProcedure
-    .meta({
-      scope: "reject_transaction",
+      scope: "update_transaction",
     })
     .input(
       z.object({
         transactionId: z.number().nonnegative().int(),
         rejected: z.boolean().optional(),
+        amount: z.number().nonnegative().optional(),
+        pilotId: z.string().optional(),
+        itemId: z.number().nonnegative().int().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      return walletController().rejectTransaction({
+      return walletController().updateTransaction({
         ...input,
         userId: ctx.userId,
       });

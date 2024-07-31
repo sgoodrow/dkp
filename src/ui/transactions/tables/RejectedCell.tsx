@@ -24,7 +24,18 @@ export const RejectedCell: FC<
   return data === undefined ? (
     <LoadingCell />
   ) : (
-    <CellLayout alignItems="center">
+    <CellLayout
+      alignItems="center"
+      onKeyDownCapture={(e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          mutate({
+            transactionId: data.id,
+            rejected: !data.rejected,
+          });
+        }
+      }}
+    >
       <Tooltip
         disableInteractive
         placement="left"
