@@ -7,25 +7,17 @@ import {
 import { z } from "zod";
 
 export const discordApiRoutes = createRoutes({
-  sync: adminProcedure
-    .meta({
-      scope: "sync_discord_metadata",
-    })
-    .mutation(async ({ ctx }) => {
-      return discordController().sync({ userId: ctx.userId });
-    }),
+  sync: adminProcedure.mutation(async ({ ctx }) => {
+    return discordController().sync({ userId: ctx.userId });
+  }),
 
   getSummary: protectedProcedure.query(async () => {
     return discordController().getSummary();
   }),
 
-  getLatestSyncEvent: adminProcedure
-    .meta({
-      scope: "sync_discord_metadata",
-    })
-    .query(async ({ ctx }) => {
-      return discordController().getLatestSyncEvent();
-    }),
+  getLatestSyncEvent: adminProcedure.query(async ({ ctx }) => {
+    return discordController().getLatestSyncEvent();
+  }),
 
   getBestRole: protectedProcedure
     .input(

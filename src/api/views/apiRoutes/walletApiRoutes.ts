@@ -9,9 +9,6 @@ import { z } from "zod";
 
 export const walletApiRoutes = createRoutes({
   updateTransaction: adminProcedure
-    .meta({
-      scope: "update_transaction",
-    })
     .input(
       z.object({
         transactionId: z.number().nonnegative().int(),
@@ -28,13 +25,9 @@ export const walletApiRoutes = createRoutes({
       });
     }),
 
-  countUnclearedTransactions: adminProcedure
-    .meta({
-      scope: "count_uncleared_transactions",
-    })
-    .query(async ({}) => {
-      return walletController().countUnclearedTransactions();
-    }),
+  countUnclearedTransactions: adminProcedure.query(async ({}) => {
+    return walletController().countUnclearedTransactions();
+  }),
 
   getUserDkp: protectedProcedure.query(async ({ ctx }) => {
     return walletController().getUserDkp({

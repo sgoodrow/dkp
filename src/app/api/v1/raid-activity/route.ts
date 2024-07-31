@@ -4,8 +4,6 @@ import {
   TrpcRouteInputs,
 } from "@/api/views/trpc/trpcRoutes";
 
-// TODO: delete this, deprecated, use raid-activity instead; need to update discord bot
-
 const handler = ({
   trpc,
   body,

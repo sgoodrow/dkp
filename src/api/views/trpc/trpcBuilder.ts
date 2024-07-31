@@ -57,15 +57,16 @@ export const protectedProcedure = t.procedure.use(
       });
     }
 
-    if (!meta) {
+    // Ensure that all APIs being consumed programmatically have a meta scope
+    if (!meta?.scope) {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Missing meta for protected procedure: ${path}.`,
+        message: `Protected procedures ${path} has no meta scope. Only procedures with meta scopes are available programmatically.`,
       });
     }
 
     // Check if the user is using an API key with the appropriate scope
-    if (meta?.scope) {
+    if (meta.scope) {
       const { id } = await apiKeyController().authorize({
         authHeader: ctx.authHeader,
         scope: meta.scope,

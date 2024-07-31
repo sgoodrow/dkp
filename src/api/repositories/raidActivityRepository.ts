@@ -239,4 +239,8 @@ export const raidActivityRepository = (
       take: endRow - startRow,
     });
   },
+
+  getAllTypes: async () => {
+    return p.raidActivityType.findMany();
+  },
 });

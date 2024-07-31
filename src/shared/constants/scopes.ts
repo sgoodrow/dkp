@@ -2,11 +2,7 @@ import { keysAreSameAsValuesCheck } from "@/ui/shared/utils/keysAreSameAsValuesC
 
 export const SCOPE = keysAreSameAsValuesCheck({
   create_raid_activity: "create_raid_activity",
-  count_uncleared_transactions: "count_uncleared_transactions",
-  sync_discord_metadata: "sync_discord_metadata",
-  update_transaction: "update_transaction",
-  create_raid_activity_type: "create_raid_activity_type",
-  update_raid_activity_type: "update_raid_activity_type",
+  get_all_raid_activity_types: "get_all_raid_activity_types",
 });
 
 export type Scope = keyof typeof SCOPE;

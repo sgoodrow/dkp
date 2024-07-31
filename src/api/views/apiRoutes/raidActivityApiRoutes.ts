@@ -55,9 +55,6 @@ export const raidActivityApiRoutes = createRoutes({
     }),
 
   createType: adminProcedure
-    .meta({
-      scope: "create_raid_activity_type",
-    })
     .input(
       z.object({
         name: z.string(),
@@ -80,10 +77,13 @@ export const raidActivityApiRoutes = createRoutes({
     return raidActivityController().getManyTypes(input);
   }),
 
+  getAllTypes: protectedProcedure
+    .meta({ scope: "get_all_raid_activity_types" })
+    .query(async ({ ctx }) => {
+      return raidActivityController().getAllTypes();
+    }),
+
   updateType: adminProcedure
-    .meta({
-      scope: "update_raid_activity_type",
-    })
     .input(
       z.object({
         id: z.number().nonnegative().int(),

@@ -204,6 +204,10 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     };
   },
 
+  getAllTypes: async () => {
+    return raidActivityRepository(p).getAllTypes();
+  },
+
   updateType: async ({
     id,
     name,
