@@ -28,6 +28,7 @@ type SidebarItem = {
   dataMonitoringId: MonitoringId;
   adminOnly?: boolean;
   badgeCount?: number;
+  badgeHref?: string;
   badgeTooltip?: string;
   selectedIfIncludes?: boolean;
 };
