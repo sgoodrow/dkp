@@ -57,16 +57,8 @@ export const protectedProcedure = t.procedure.use(
       });
     }
 
-    // Ensure that all APIs being consumed programmatically have a meta scope
-    if (!meta?.scope) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: `Protected procedures ${path} has no meta scope. Only procedures with meta scopes are available programmatically.`,
-      });
-    }
-
-    // Check if the user is using an API key with the appropriate scope
-    if (meta.scope) {
+    // Check if the user is authorized to use this procedure programmatically.
+    if (meta?.scope) {
       const { id } = await apiKeyController().authorize({
         authHeader: ctx.authHeader,
         scope: meta.scope,
@@ -81,10 +73,8 @@ export const protectedProcedure = t.procedure.use(
     }
 
     throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: meta?.scope
-        ? "You must be logged in or using an API key to access this resource."
-        : "You must be logged in to access this resource.",
+      code: "FORBIDDEN",
+      message: `Protected procedures ${path} has no meta scope. Only procedures with meta scopes are available programmatically.`,
     });
   },
 );

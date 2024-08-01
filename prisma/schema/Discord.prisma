@@ -24,8 +24,8 @@ model DiscordSyncEvent {
     // Common
     id              Int      @id @default(autoincrement())
     createdAt       DateTime @default(now())
-    createdByUserId String
-    createdByUser   User     @relation("DiscordSyncEventCreator", fields: [createdByUserId], references: [id])
+    createdByUserId String?
+    createdByUser   User?    @relation("DiscordSyncEventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
 }
 
 model DiscordRole {

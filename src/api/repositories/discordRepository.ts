@@ -137,7 +137,7 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  createSyncEvent: async ({ userId }: { userId: string }) => {
+  createSyncEvent: async ({ userId }: { userId: string | null }) => {
     return p.discordSyncEvent.create({
       data: {
         createdByUserId: userId,

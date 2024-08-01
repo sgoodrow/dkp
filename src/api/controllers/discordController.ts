@@ -5,7 +5,7 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/client";
 import { discordService } from "@/api/services/discordService";
-import { difference, sortBy } from "lodash";
+import { difference } from "lodash";
 
 const cleanupOldUserMetadata = async () => {
   const desired = await discordService.getAllMemberDetails();
@@ -63,9 +63,11 @@ export const discordController = (p?: PrismaTransactionClient) => ({
     return event
       ? {
           ...event,
-          createdByUser: userController(p).addDisplayName({
-            user: event.createdByUser,
-          }),
+          createdByUser: event.createdByUser
+            ? userController(p).addDisplayName({
+                user: event.createdByUser,
+              })
+            : null,
         }
       : null;
   },
@@ -88,7 +90,7 @@ export const discordController = (p?: PrismaTransactionClient) => ({
     });
   },
 
-  sync: async ({ userId }: { userId: string }) => {
+  sync: async ({ userId }: { userId: string | null }) => {
     const desiredMembers = await cleanupOldUserMetadata();
     const desiredRoles = await cleanupOldRoles();
 

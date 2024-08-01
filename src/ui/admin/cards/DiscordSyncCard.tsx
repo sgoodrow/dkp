@@ -72,7 +72,12 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
         ) : (
           <Typography variant="body2" color="text.secondary">
             {dayjs(latestSyncEvent.createdAt).fromNow()} by{" "}
-            <PlayerLink inheritSize user={latestSyncEvent.createdByUser} />.
+            {latestSyncEvent.createdByUser !== null ? (
+              <PlayerLink inheritSize user={latestSyncEvent.createdByUser} />
+            ) : (
+              "Nightly runner"
+            )}
+            .
           </Typography>
         )}
       </Stack>
