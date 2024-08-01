@@ -145,7 +145,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     });
   },
 
-  upsertTypeByName: async ({
+  upsertType: async ({
     name,
     defaultPayout,
     createdById,
@@ -156,7 +156,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     createdById: string;
     updatedById: string;
   }) => {
-    return raidActivityRepository(p).upsertTypeByName({
+    return raidActivityRepository(p).upsertType({
       name,
       defaultPayout,
       createdById,

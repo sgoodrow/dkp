@@ -3,7 +3,7 @@ import { keysAreSameAsValuesCheck } from "@/ui/shared/utils/keysAreSameAsValuesC
 export const SCOPE = keysAreSameAsValuesCheck({
   create_raid_activity: "create_raid_activity",
   get_all_raid_activity_types: "get_all_raid_activity_types",
-  get_raid_activity_type_by_name: "get_raid_activity_type_by_name",
+  upsert_raid_activity_type: "upsert_raid_activity_type",
 });
 
 export type Scope = keyof typeof SCOPE;

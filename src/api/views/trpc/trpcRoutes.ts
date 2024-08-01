@@ -45,10 +45,11 @@ export type TrpcRouteOutputs = inferRouterOutputs<TrpcRoutes>;
 
 const createCaller = createCallerFactory(trpcRoutes);
 
-export type NextTrpcOptions<Params = any, Body = any> = {
+export type NextTrpcOptions<RouteParams = any, Body = any> = {
   trpc: ReturnType<typeof createCaller>;
   body: Body;
-  params: Params;
+  routeParams: RouteParams;
+  queryParams: URLSearchParams;
 };
 
 export const getTrpcHandler = (
@@ -63,10 +64,13 @@ export const getTrpcHandler = (
     const authHeader = request.headers.get("Authorization");
 
     try {
+      const url = new URL(request.url);
+
       const result = await handler({
         trpc: createCaller({ authHeader }),
         body: await request.json(),
-        params: options.params,
+        routeParams: options.params,
+        queryParams: url.searchParams,
       });
       return NextResponse.json(result);
     } catch (error) {

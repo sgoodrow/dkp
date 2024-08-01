@@ -69,13 +69,22 @@ export const raidActivityApiRoutes = createRoutes({
       });
     }),
 
-  getTypeByName: protectedProcedure
+  upsertType: adminProcedure
     .meta({
-      scope: "get_raid_activity_type_by_name",
+      scope: "upsert_raid_activity_type",
     })
-    .input(z.object({ name: z.string() }))
-    .query(async ({ input }) => {
-      return raidActivityController().getTypeByName({ name: input.name });
+    .input(
+      z.object({
+        name: z.string(),
+        defaultPayout: z.number().nonnegative(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return raidActivityController().upsertType({
+        createdById: ctx.userId,
+        updatedById: ctx.userId,
+        ...input,
+      });
     }),
 
   getMany: agFetchProcedure.query(async ({ input }) => {
