@@ -27,8 +27,11 @@ const Layout: FCWithChildren<{ params: { id: string } }> = ({
   params,
   children,
 }) => {
-  const id = Number(params.id);
-  return <RaidActivityRouteLayout id={id}>{children}</RaidActivityRouteLayout>;
+  return (
+    <RaidActivityRouteLayout id={Number(params.id)}>
+      {children}
+    </RaidActivityRouteLayout>
+  );
 };
 
 export default Layout;

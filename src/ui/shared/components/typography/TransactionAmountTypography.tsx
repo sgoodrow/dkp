@@ -1,0 +1,24 @@
+import { Skeleton, useTheme } from "@mui/material";
+import { FC } from "react";
+import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
+
+export const TransactionAmountTypography: FC<{
+  amount?: number;
+  positive: boolean;
+}> = ({ amount, positive }) => {
+  const theme = useTheme();
+  const sign = positive ? 1 : -1;
+  const color =
+    sign > 0 ? theme.palette.success.main : theme.palette.error.main;
+  return (
+    <OverflowTooltipTypography
+      fontFamily="monospace"
+      color={color}
+      fontWeight="bold"
+      width="100%"
+    >
+      {sign >= 0 ? "+" : "-"}
+      {amount || <Skeleton />}
+    </OverflowTooltipTypography>
+  );
+};

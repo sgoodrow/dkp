@@ -46,6 +46,12 @@ export const walletApiRoutes = createRoutes({
     return walletController().countUnclearedTransactions();
   }),
 
+  getCurrentUserWallet: protectedProcedure.query(async ({ ctx }) => {
+    return walletController().getByUserId({
+      userId: ctx.userId,
+    });
+  }),
+
   getUserDkp: protectedProcedure.query(async ({ ctx }) => {
     return walletController().getUserDkp({
       userId: ctx.userId,

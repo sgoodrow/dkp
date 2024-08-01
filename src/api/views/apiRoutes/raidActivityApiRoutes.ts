@@ -1,10 +1,12 @@
 import { raidActivityController } from "@/api/controllers/raidActivityController";
+import { walletController } from "@/api/controllers/walletController";
 import {
   adminProcedure,
   agFetchProcedure,
   createRoutes,
   protectedProcedure,
 } from "@/api/views/trpc/trpcBuilder";
+import { filter } from "lodash";
 import { z } from "zod";
 
 export const raidActivityApiRoutes = createRoutes({
@@ -96,7 +98,9 @@ export const raidActivityApiRoutes = createRoutes({
       }),
     )
     .query(async ({ input }) => {
-      return raidActivityController().get({ id: input.id });
+      return raidActivityController().get({
+        id: input.id,
+      });
     }),
 
   getMany: agFetchProcedure.query(async ({ input }) => {

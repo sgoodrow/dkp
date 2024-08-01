@@ -1,19 +1,13 @@
 "use client";
 
-import { FC, ReactNode } from "react";
+import { FC } from "react";
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
-import {
-  Box,
-  Divider,
-  Paper,
-  Skeleton,
-  Typography,
-  Unstable_Grid2,
-} from "@mui/material";
+import { Box, Typography, Unstable_Grid2 } from "@mui/material";
 import { trpc } from "@/api/views/trpc/trpc";
 import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 import { DiscordRoleTypography } from "@/ui/shared/components/typography/DiscordRoleTypography";
 import { guild } from "@/shared/constants/guild";
+import { StatCard } from "@/ui/shared/components/cards/LabeledCard copy";
 
 export const DiscordMetadataCard: FC<{}> = ({}) => {
   const { data: discordSummary } = trpc.discord.getSummary.useQuery();
@@ -52,21 +46,5 @@ export const DiscordMetadataCard: FC<{}> = ({}) => {
         </Unstable_Grid2>
       </Box>
     </LabeledCard>
-  );
-};
-
-const StatCard: FC<{ label: string; value?: ReactNode }> = ({
-  label,
-  value,
-}) => {
-  return (
-    <Box component={Paper} elevation={2} p={1} flexGrow={1}>
-      <Typography gutterBottom variant="body2" color="text.secondary">
-        {label}
-      </Typography>
-      <Typography variant="h4">
-        {value === undefined ? <Skeleton /> : value}
-      </Typography>
-    </Box>
   );
 };

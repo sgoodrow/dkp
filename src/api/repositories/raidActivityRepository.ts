@@ -171,6 +171,7 @@ export const raidActivityRepository = (
       },
       include: {
         type: true,
+        transactions: true,
       },
     });
   },
