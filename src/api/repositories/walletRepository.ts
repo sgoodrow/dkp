@@ -8,29 +8,28 @@ import {
 } from "@/api/shared/agGridUtils/filter";
 import { agSortModelToPrismaOrderBy } from "@/api/shared/agGridUtils/sort";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
-import { WalletTransactionType } from "@prisma/client";
+import { Wallet, WalletTransactionType } from "@prisma/client";
 
-const getShowRejectedTransactionPrismaWhere = (showRejected: boolean) =>
+const getRejectedTransactionsPrismaWhere = (showRejected: boolean) =>
   showRejected ? {} : { rejected: false };
 
-const getShowClearedTransactionPrismaWhere = (showCleared: boolean) =>
-  // The conditions which make a transaction 'uncleared' depend on if it is a purchase or not.
-  showCleared
-    ? {}
-    : {
-        OR: [
-          // If it is a purchase, it must be missing an item ID or a wallet ID
-          {
-            type: WalletTransactionType.PURCHASE,
-            OR: [{ itemId: null }, { walletId: null }],
-            // If it is not a purchase, it must be missing a wallet ID
-          },
-          {
-            type: { not: WalletTransactionType.PURCHASE },
-            walletId: null,
-          },
-        ],
-      };
+const UNCLEARED_PRISMA_WHERE = {
+  OR: [
+    // If it is a purchase, it must be missing an item ID or a wallet ID
+    {
+      type: WalletTransactionType.PURCHASE,
+      OR: [{ itemId: null }, { walletId: null }],
+      // If it is not a purchase, it must be missing a wallet ID
+    },
+    {
+      type: { not: WalletTransactionType.PURCHASE },
+      walletId: null,
+    },
+  ],
+};
+
+const getUnclearedTransactionsPrismaWhere = (showUncleared: boolean) =>
+  showUncleared ? UNCLEARED_PRISMA_WHERE : undefined;
 
 export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   updateTransaction: async ({
@@ -66,6 +65,42 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
         itemId,
         updatedById,
         requiredIntervention: true,
+      },
+    });
+  },
+
+  rejectManyUnclearedTransactions: async ({
+    userId,
+    before,
+    includePurchases,
+    includeAdjustments,
+  }: {
+    userId: string;
+    before: Date;
+    includePurchases: boolean;
+    includeAdjustments: boolean;
+  }) => {
+    let types: WalletTransactionType[] = [WalletTransactionType.ATTENDANCE];
+    if (includePurchases) {
+      types.push(WalletTransactionType.PURCHASE);
+    }
+    if (includeAdjustments) {
+      types.push(WalletTransactionType.ADJUSTMENT);
+    }
+    return p.walletTransaction.updateMany({
+      where: {
+        ...UNCLEARED_PRISMA_WHERE,
+        createdAt: {
+          lt: before,
+        },
+        type: {
+          in: types,
+        },
+      },
+      data: {
+        rejected: true,
+        requiredIntervention: true,
+        updatedById: userId,
       },
     });
   },
@@ -194,8 +229,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.walletTransaction.count({
       where: {
         AND: [
-          getShowClearedTransactionPrismaWhere(false),
-          getShowRejectedTransactionPrismaWhere(false),
+          UNCLEARED_PRISMA_WHERE,
+          getRejectedTransactionsPrismaWhere(false),
         ],
       },
     });
@@ -272,8 +307,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       where: {
         AND: {
           ...agFilterModelToPrismaWhere(filterModel),
-          ...getShowRejectedTransactionPrismaWhere(showRejected),
-          ...getShowClearedTransactionPrismaWhere(showCleared),
+          ...getRejectedTransactionsPrismaWhere(showRejected),
+          ...getUnclearedTransactionsPrismaWhere(!showCleared),
         },
       },
     });
@@ -297,8 +332,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       where: {
         AND: {
           ...agFilterModelToPrismaWhere(filterModel),
-          ...getShowRejectedTransactionPrismaWhere(showRejected),
-          ...getShowClearedTransactionPrismaWhere(showCleared),
+          ...getRejectedTransactionsPrismaWhere(showRejected),
+          ...getUnclearedTransactionsPrismaWhere(!showCleared),
         },
       },
       include: {

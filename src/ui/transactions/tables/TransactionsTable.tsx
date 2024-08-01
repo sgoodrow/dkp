@@ -29,6 +29,8 @@ import { WalletTransactionType } from "@prisma/client";
 import { Unstable_Grid2 } from "@mui/material";
 import { SwitchCard } from "@/ui/shared/components/cards/SwitchCard";
 import { TypeCell } from "@/ui/transactions/tables/TypeCell";
+import { ActionCard } from "@/ui/shared/components/cards/ActionCard";
+import { RejectOldTransactionsCard } from "@/ui/transactions/cards/RejectOldTransactionsCard";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
@@ -42,7 +44,7 @@ export const TransactionsTable: FC<{}> = ({}) => {
   const getRows: GetRows<TransactionRow> = useCallback(
     (params) =>
       utils.wallet.getManyTransactions.fetch({
-        showRejected: showRejected,
+        showRejected,
         showCleared,
         ...params,
       }),
@@ -181,12 +183,6 @@ export const TransactionsTable: FC<{}> = ({}) => {
     [],
   );
 
-  // TODO: add a reject all button:
-  // opens a dialog
-  // requires a date field - applies to all before date
-  // has a switch for including purchases, default to false
-  // rejects all
-
   return (
     <InfiniteTable rowHeight={64} getRows={getRows} columnDefs={columnDefs}>
       <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
@@ -204,6 +200,9 @@ export const TransactionsTable: FC<{}> = ({}) => {
           checked={showCleared}
           onClick={(newValue) => setShowCleared(newValue)}
         />
+      </Unstable_Grid2>
+      <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
+        <RejectOldTransactionsCard />
       </Unstable_Grid2>
     </InfiniteTable>
   );

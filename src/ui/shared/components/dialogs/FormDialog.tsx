@@ -43,7 +43,7 @@ export const FormDialog: FCWithChildren<{
   );
 };
 
-const FormDialogButton: FC<{
+export const FormDialogButton: FC<{
   label: string;
   disabled: boolean;
 }> = ({ label, disabled }) => {

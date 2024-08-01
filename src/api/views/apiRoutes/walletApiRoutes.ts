@@ -25,6 +25,23 @@ export const walletApiRoutes = createRoutes({
       });
     }),
 
+  rejectManyUnclearedTransactions: adminProcedure
+    .input(
+      z.object({
+        before: z.date(),
+        includePurchases: z.boolean(),
+        includeAdjustments: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return walletController().rejectManyUnclearedTransactions({
+        userId: ctx.userId,
+        before: input.before,
+        includePurchases: input.includePurchases,
+        includeAdjustments: input.includeAdjustments,
+      });
+    }),
+
   countUnclearedTransactions: adminProcedure.query(async ({}) => {
     return walletController().countUnclearedTransactions();
   }),

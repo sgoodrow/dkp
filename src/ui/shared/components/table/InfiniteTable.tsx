@@ -172,6 +172,7 @@ export const InfiniteTable = <TData extends Data>({
       </GridApiContext.Provider>
       <Box mt={1} />
       <AgGridReact
+        rowSelection="multiple"
         rowHeight={rowHeight}
         onGridReady={onGridReadyInternal}
         getRowId={getRowId}

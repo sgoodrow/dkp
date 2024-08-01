@@ -83,7 +83,8 @@ export const raidActivityApiRoutes = createRoutes({
       return raidActivityController().upsertType({
         createdById: ctx.userId,
         updatedById: ctx.userId,
-        ...input,
+        name: input.name,
+        defaultPayout: input.defaultPayout,
       });
     }),
 

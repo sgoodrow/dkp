@@ -6,20 +6,22 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { SvgIconComponent } from "@mui/icons-material";
 
-export const CreateCard: FCWithChildren<{
+export const ActionCard: FCWithChildren<{
+  Icon: SvgIconComponent;
+  label: string;
   description: string;
   onClick: () => void;
-}> = ({ description, onClick, children }) => {
+}> = ({ Icon, label, description, onClick, children }) => {
   return (
     <Card>
       <CardActionArea onClick={() => onClick()}>
         <CardContent>
           <Stack spacing={1}>
             <Stack direction="row" alignItems="center" spacing={1}>
-              <Add />
-              <Typography>Create new</Typography>
+              <Icon />
+              <Typography>{label}</Typography>
             </Stack>
             <Divider />
             <Typography variant="body2" color="text.secondary">

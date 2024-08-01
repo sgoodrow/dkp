@@ -64,13 +64,11 @@ export const getTrpcHandler = (
     const authHeader = request.headers.get("Authorization");
 
     try {
-      const url = new URL(request.url);
-
       const result = await handler({
         trpc: createCaller({ authHeader }),
         body: await request.json(),
         routeParams: options.params,
-        queryParams: url.searchParams,
+        queryParams: new URL(request.url).searchParams,
       });
       return NextResponse.json(result);
     } catch (error) {

@@ -29,6 +29,25 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     });
   },
 
+  rejectManyUnclearedTransactions: async ({
+    userId,
+    before,
+    includePurchases,
+    includeAdjustments,
+  }: {
+    userId: string;
+    before: Date;
+    includePurchases: boolean;
+    includeAdjustments: boolean;
+  }) => {
+    return walletRepository(p).rejectManyUnclearedTransactions({
+      userId,
+      before,
+      includePurchases,
+      includeAdjustments,
+    });
+  },
+
   create: async ({ userId }: { userId: string }) => {
     return walletRepository(p).create({ userId });
   },
