@@ -65,6 +65,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
           uiRoutes.raidActivityTypes,
           {
             ...uiRoutes.transactions,
+            badgeHref: uiRoutes.transactions.href(),
             badgeCount: unclearedTransactionsCount,
             badgeTooltip: "Number of uncleared transactions",
           },
@@ -86,6 +87,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
         uiRoutes.items,
         {
           ...uiRoutes.admin,
+          badgeHref: uiRoutes.transactions.href(),
           badgeCount: unclearedTransactionsCount,
           badgeTooltip: "Number of uncleared transactions",
         },
@@ -140,6 +142,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
                 dataMonitoringId,
                 adminOnly,
                 badgeCount,
+                badgeHref,
                 badgeTooltip,
                 selectedIfIncludes,
               }) => {
@@ -157,6 +160,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
                     selectedIfIncludes={selectedIfIncludes}
                     badge={{
                       count: badgeCount,
+                      href: badgeHref,
                       tooltip: badgeTooltip,
                       showZero: false,
                     }}

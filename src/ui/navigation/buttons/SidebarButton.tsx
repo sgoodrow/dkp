@@ -6,6 +6,7 @@ import { OpenInNew } from "@mui/icons-material";
 import {
   Badge,
   Box,
+  Link,
   Popper,
   ToggleButton,
   ToggleButtonProps,
@@ -26,6 +27,7 @@ export const SideBarButton: FC<{
   hideLabel?: boolean;
   badge?: {
     count?: number;
+    href?: string;
     tooltip?: string;
     showZero?: boolean;
   };
@@ -88,6 +90,8 @@ export const SideBarButton: FC<{
           }}
         >
           <Badge
+            component={Link}
+            href={badge?.href || ""}
             badgeContent={badge?.count}
             color="error"
             showZero={badge?.showZero}
