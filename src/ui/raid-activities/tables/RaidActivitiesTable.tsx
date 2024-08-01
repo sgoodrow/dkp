@@ -70,6 +70,7 @@ export const RaidActivitiesTable: FC<{}> = ({}) => {
         headerName: "Name",
         field: "type.name",
         filter: "agTextColumnFilter",
+        flex: 1,
         cellRenderer: (props) => (
           <RaidActivityCell
             data={props.data === undefined ? undefined : props.data}
@@ -87,12 +88,6 @@ export const RaidActivitiesTable: FC<{}> = ({}) => {
         // See: https://github.com/prisma/prisma/issues/8935
         // filter: "agNumberColumnFilter",
         cellRenderer: (props) => <NumberCell value={props.value} />,
-      },
-      {
-        headerName: "Note",
-        field: "note",
-        flex: 1,
-        filter: "agTextColumnFilter",
       },
     ],
     [],

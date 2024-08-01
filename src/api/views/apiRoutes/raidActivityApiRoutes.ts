@@ -15,6 +15,7 @@ export const raidActivityApiRoutes = createRoutes({
     .input(
       z.object({
         activity: z.object({
+          createdAt: z.date(),
           typeId: z.number().nonnegative().int(),
           payout: z.number().nonnegative().optional(),
           note: z.string().optional(),
