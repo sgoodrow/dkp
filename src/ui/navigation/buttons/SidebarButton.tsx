@@ -21,6 +21,7 @@ export const SideBarButton: FC<{
   icon: ReactNode;
   href?: string;
   selected?: boolean;
+  selectedIfIncludes?: boolean;
   onClick?: ToggleButtonProps["onClick"];
   hideLabel?: boolean;
   badge?: {
@@ -33,6 +34,7 @@ export const SideBarButton: FC<{
   dataMonitoringId,
   href,
   selected,
+  selectedIfIncludes,
   onClick,
   icon,
   hideLabel = false,
@@ -42,7 +44,10 @@ export const SideBarButton: FC<{
   const pathname = usePathname();
   const theme = useTheme();
   const isExternal = href?.startsWith("http");
-  const isSelected = !!selected || (!!href && pathname === href);
+  const pathBasedSelection = selectedIfIncludes
+    ? pathname.includes(href || "")
+    : pathname === href;
+  const isSelected = !!selected || (!!href && pathBasedSelection);
 
   return (
     <>

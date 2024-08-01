@@ -164,6 +164,12 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     });
   },
 
+  get: async ({ id }: { id: number }) => {
+    return raidActivityRepository(p).get({
+      id,
+    });
+  },
+
   getTypePayout: async ({
     typeId,
     payout,

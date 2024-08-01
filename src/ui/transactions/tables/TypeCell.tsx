@@ -7,6 +7,7 @@ import { WalletTransactionType } from "@prisma/client";
 import { Tooltip } from "@mui/material";
 import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
 import { uiRoutes } from "@/app/uiRoutes";
+import { ShoppingCart } from "@mui/icons-material";
 
 const getDetails = (type: WalletTransactionType) => {
   switch (type) {

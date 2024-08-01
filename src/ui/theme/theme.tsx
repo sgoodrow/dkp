@@ -224,8 +224,8 @@ export const theme = experimental_extendTheme({
         root: ({ theme, ownerState }) => {
           const disabled = ownerState.disabled;
           return {
-            borderTopLeftRadius: theme.shape.borderRadius,
-            borderTopRightRadius: theme.shape.borderRadius,
+            borderTopLeftRadius: theme.shape.borderRadius * 2,
+            borderTopRightRadius: theme.shape.borderRadius * 2,
             marginLeft: 1,
             marginRight: 1,
             backgroundColor: disabled
@@ -233,9 +233,10 @@ export const theme = experimental_extendTheme({
               : undefined,
             ":hover": {
               backgroundColor: !disabled
-                ? `rgba(${theme.vars.palette.primary.mainChannel}/${theme.vars.palette.action.hoverOpacity})`
+                ? `rgba(${theme.vars.palette.action.activeChannel}/${theme.vars.palette.action.hoverOpacity})`
                 : undefined,
             },
+            minHeight: "48px",
           };
         },
       },

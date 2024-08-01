@@ -19,7 +19,7 @@ import {
 import { SvgIconComponent } from "@mui/icons-material";
 import { Box, Divider, Drawer, Paper, Stack } from "@mui/material";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type SidebarItem = {
   href: () => string;
@@ -29,6 +29,7 @@ type SidebarItem = {
   adminOnly?: boolean;
   badgeCount?: number;
   badgeTooltip?: string;
+  selectedIfIncludes?: boolean;
 };
 
 const MOBILE_WIDTH = "56px";
@@ -40,7 +41,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
   isMobile,
   children,
 }) => {
-  const pathname = usePathname();
+  const path = usePathname();
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
   const { data: dkp } = trpc.wallet.getUserDkp.useQuery();
   const { data: unclearedTransactionsCount } =
@@ -52,23 +53,30 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
     uiRoutes.home.href(),
   );
 
-  const onAdminPage = pathname.startsWith(uiRoutes.admin.href());
+  const { onNestedRoute, items } = useMemo<{
+    onNestedRoute: boolean;
+    items: SidebarItem[];
+  }>(() => {
+    if (path.startsWith(uiRoutes.admin.href())) {
+      return {
+        onNestedRoute: true,
+        items: [
+          uiRoutes.admin,
+          uiRoutes.raidActivityTypes,
+          {
+            ...uiRoutes.transactions,
+            badgeCount: unclearedTransactionsCount,
+            badgeTooltip: "Number of uncleared transactions",
+          },
+          uiRoutes.bots,
+          uiRoutes.apiKeys,
+        ],
+      };
+    }
 
-  const width = isMobile ? MOBILE_WIDTH : DESKTOP_WIDTH;
-
-  const items: SidebarItem[] = onAdminPage
-    ? [
-        uiRoutes.admin,
-        uiRoutes.raidActivityTypes,
-        {
-          ...uiRoutes.transactions,
-          badgeCount: unclearedTransactionsCount,
-          badgeTooltip: "Number of uncleared transactions",
-        },
-        uiRoutes.bots,
-        uiRoutes.apiKeys,
-      ]
-    : [
+    return {
+      onNestedRoute: false,
+      items: [
         uiRoutes.home,
         uiRoutes.players,
         uiRoutes.raidActivities,
@@ -81,13 +89,17 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
           badgeCount: unclearedTransactionsCount,
           badgeTooltip: "Number of uncleared transactions",
         },
-      ];
+      ],
+    };
+  }, [path, unclearedTransactionsCount]);
+
+  const width = isMobile ? MOBILE_WIDTH : DESKTOP_WIDTH;
 
   useEffect(() => {
-    if (!onAdminPage) {
-      setPrevPageHref(pathname);
+    if (!onNestedRoute) {
+      setPrevPageHref(path);
     }
-  }, [onAdminPage, pathname]);
+  }, [onNestedRoute, path]);
 
   return (
     <>
@@ -100,7 +112,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
             component={Paper}
             width={width}
           >
-            {onAdminPage ? (
+            {onNestedRoute ? (
               <BackButton
                 data-monitoring-id={monitoringIds.GO_BACK}
                 href={prevPageHref || ""}
@@ -129,6 +141,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
                 adminOnly,
                 badgeCount,
                 badgeTooltip,
+                selectedIfIncludes,
               }) => {
                 if (adminOnly && !isAdmin) {
                   return null;
@@ -141,6 +154,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
                     name={name}
                     icon={<Icon />}
                     hideLabel={isMobile}
+                    selectedIfIncludes={selectedIfIncludes}
                     badge={{
                       count: badgeCount,
                       tooltip: badgeTooltip,

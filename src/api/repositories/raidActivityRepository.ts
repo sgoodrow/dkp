@@ -164,6 +164,17 @@ export const raidActivityRepository = (
     });
   },
 
+  get: async ({ id }: { id: number }) => {
+    return p.raidActivity.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      include: {
+        type: true,
+      },
+    });
+  },
+
   getTypeById: async ({ typeId }: { typeId: number }) => {
     return p.raidActivityType.findUniqueOrThrow({
       where: {

@@ -23,7 +23,7 @@ export const RaidActivityCell: FC<{
       ) : (
         <>
           <SiteLink
-            data-monitoring-id={monitoringIds.GOTO_RAID}
+            data-monitoring-id={monitoringIds.GOTO_RAID_ACTIVITY_ATTENDANCE}
             label={data.type.name}
             href={uiRoutes.raidActivity.href(data.id)}
           />

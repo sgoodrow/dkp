@@ -13,6 +13,7 @@ import {
   ShoppingCart,
   SmartToy,
 } from "@mui/icons-material";
+import dayjs from "dayjs";
 
 export const uiRoutes = {
   // Organizational segments
@@ -71,12 +72,38 @@ export const uiRoutes = {
     description: "View all raid activity.",
     icon: Event,
     dataMonitoringId: monitoringIds.GOTO_RAID_ACTIVITIES,
+    selectedIfIncludes: true,
   },
   raidActivity: {
     href: (raidId: number) =>
       `${uiRoutes.raidActivities.href()}/${raidId}` as const,
-    name: (name: string) => `Raid - ${name}`,
-    dataMonitoringId: monitoringIds.GOTO_RAID,
+    name: ({ createdAt, type }: { createdAt: Date; type: { name: string } }) =>
+      `${dayjs(createdAt).format("M/D")} ${type.name}`,
+    dataMonitoringId: monitoringIds.GOTO_RAID_ACTIVITY_ATTENDANCE,
+  },
+  raidActivityAttendance: {
+    segment: "attendance",
+    href: (raidId: number) =>
+      `${uiRoutes.raidActivity.href(raidId)}/${uiRoutes.raidActivityAttendance.segment}` as const,
+    name: (options: { createdAt: Date; type: { name: string } }) =>
+      `${uiRoutes.raidActivity.name(options)} - Attendance`,
+    dataMonitoringId: monitoringIds.GOTO_RAID_ACTIVITY_ATTENDANCE,
+  },
+  raidActivityAdjustments: {
+    segment: "adjustments",
+    href: (raidId: number) =>
+      `${uiRoutes.raidActivity.href(raidId)}/${uiRoutes.raidActivityAdjustments.segment}` as const,
+    name: (options: { createdAt: Date; type: { name: string } }) =>
+      `${uiRoutes.raidActivity.name(options)} - Attendance`,
+    dataMonitoringId: monitoringIds.GOTO_RAID_ACTIVITY_ADJUSTMENTS,
+  },
+  raidActivityPurchases: {
+    segment: "purchases",
+    href: (raidId: number) =>
+      `${uiRoutes.raidActivity.href(raidId)}/${uiRoutes.raidActivityPurchases.segment}` as const,
+    name: (options: { createdAt: Date; type: { name: string } }) =>
+      `${uiRoutes.raidActivity.name(options)} - Attendance`,
+    dataMonitoringId: monitoringIds.GOTO_RAID_ACTIVITY_PURCHASES,
   },
   purchases: {
     segment: "purchases",
