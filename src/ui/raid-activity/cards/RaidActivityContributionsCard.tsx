@@ -4,8 +4,7 @@ import { FC } from "react";
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
 import { Box, Typography, Unstable_Grid2 } from "@mui/material";
 import { trpc } from "@/api/views/trpc/trpc";
-import { Note } from "@mui/icons-material";
-import { StatCard } from "@/ui/shared/components/cards/LabeledCard copy";
+import { StatCard } from "@/ui/shared/components/cards/StatCard";
 import { sumBy } from "lodash";
 import { transaction } from "@/shared/utils/transaction";
 import { TransactionAmountTypography } from "@/ui/shared/components/typography/TransactionAmountTypography";
@@ -40,7 +39,6 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
   return (
     <LabeledCard
       title="My Contribution"
-      titleAvatar={<Note />}
       labelId="raid-activity-contribution-label"
     >
       {myClearedTransactions?.length === 0 &&

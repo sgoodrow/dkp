@@ -15,7 +15,7 @@ export const NestedHeaderLayout: FCWithChildren<{
   actions?: ReactNode;
 }> = ({ name, actions, children }) => {
   return (
-    <Stack spacing={3} flexGrow={1}>
+    <Stack spacing={3} flexGrow={1} width={1}>
       <Box>
         <Stack direction="row" spacing={1} alignItems="center">
           <IconButton href={uiRoutes.raidActivities.href()}>

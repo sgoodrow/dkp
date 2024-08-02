@@ -4,8 +4,7 @@ import { FC } from "react";
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
 import { Box, Typography, Unstable_Grid2 } from "@mui/material";
 import { trpc } from "@/api/views/trpc/trpc";
-import { StatCard } from "@/ui/shared/components/cards/LabeledCard copy";
-import { uiRoutes } from "@/app/uiRoutes";
+import { StatCard } from "@/ui/shared/components/cards/StatCard";
 import { transaction } from "@/shared/utils/transaction";
 
 export const RaidActivityTransactionSummaryCard: FC<{ id: number }> = ({
@@ -33,7 +32,6 @@ export const RaidActivityTransactionSummaryCard: FC<{ id: number }> = ({
   return (
     <LabeledCard
       title="Transaction Summary"
-      titleAvatar={<uiRoutes.transactions.icon />}
       labelId="raid-activity-transaction-summary-label"
     >
       <Typography>

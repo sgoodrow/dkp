@@ -1,4 +1,5 @@
 import { characterController } from "@/api/controllers/characterController";
+import { raidActivityController } from "@/api/controllers/raidActivityController";
 import { agFilterModelSchema } from "@/api/shared/agGridUtils/filter";
 import { agSortModelSchema } from "@/api/shared/agGridUtils/sort";
 import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
@@ -44,6 +45,18 @@ export const characterApiRoutes = createRoutes({
       return characterController().isAllowedRaceClassCombination({
         raceId: input.raceId,
         classId: input.classId,
+      });
+    }),
+
+  getByRaidActivityId: protectedProcedure
+    .input(
+      z.object({
+        raidActivityId: z.number().int().positive(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return characterController().getByRaidActivityId({
+        raidActivityId: input.raidActivityId,
       });
     }),
 

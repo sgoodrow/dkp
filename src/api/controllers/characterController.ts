@@ -1,3 +1,4 @@
+import { raidActivityController } from "@/api/controllers/raidActivityController";
 import { characterRepository } from "@/api/repositories/characterRepository";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
@@ -64,6 +65,21 @@ export const characterController = (p?: PrismaTransactionClient) => ({
 
   countByUserId: async ({ userId }: { userId: string }) => {
     return characterRepository(p).countByUserId({ userId });
+  },
+
+  getManyByNameMatch: async ({ names }: { names: string[] }) => {
+    return characterRepository(p).getManyByNameMatch({ names });
+  },
+
+  getByRaidActivityId: async ({
+    raidActivityId,
+  }: {
+    raidActivityId: number;
+  }) => {
+    const names = await raidActivityController(p).getCharacterNames({
+      id: raidActivityId,
+    });
+    return characterRepository(p).getManyByNameMatch({ names });
   },
 
   getPilotIdFromNames: async ({

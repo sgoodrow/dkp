@@ -2,8 +2,11 @@ import { OverflowTooltipTypography } from "@/ui/shared/components/typography/Ove
 import dayjs from "dayjs";
 import { FC } from "react";
 
-export const DateTypography: FC<{ date?: Date }> = ({ date }) => {
+export const DateTypography: FC<{ date?: Date | null }> = ({ date }) => {
   if (date === undefined) {
+    return null;
+  }
+  if (date === null) {
     return (
       <OverflowTooltipTypography color="text.secondary" variant="body2">
         Never

@@ -121,6 +121,30 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  getManyByNameMatch: async ({ names }: { names: string[] }) => {
+    return p.character.findMany({
+      where: {
+        name: {
+          in: names.map((name) => normalizeName(name)),
+        },
+      },
+      include: {
+        class: {
+          select: {
+            name: true,
+            colorHexDark: true,
+            colorHexLight: true,
+          },
+        },
+        race: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+  },
+
   getManyByUserId: async ({
     userId,
     startRow,

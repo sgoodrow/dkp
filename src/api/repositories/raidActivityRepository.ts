@@ -176,6 +176,21 @@ export const raidActivityRepository = (
     });
   },
 
+  getTransactionCharacterNames: async ({ id }: { id: number }) => {
+    return p.raidActivity.findUniqueOrThrow({
+      where: {
+        id,
+      },
+      select: {
+        transactions: {
+          select: {
+            characterName: true,
+          },
+        },
+      },
+    });
+  },
+
   getTypeById: async ({ typeId }: { typeId: number }) => {
     return p.raidActivityType.findUniqueOrThrow({
       where: {

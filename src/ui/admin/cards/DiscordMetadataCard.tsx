@@ -7,7 +7,7 @@ import { trpc } from "@/api/views/trpc/trpc";
 import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 import { DiscordRoleTypography } from "@/ui/shared/components/typography/DiscordRoleTypography";
 import { guild } from "@/shared/constants/guild";
-import { StatCard } from "@/ui/shared/components/cards/LabeledCard copy";
+import { StatCard } from "@/ui/shared/components/cards/StatCard";
 
 export const DiscordMetadataCard: FC<{}> = ({}) => {
   const { data: discordSummary } = trpc.discord.getSummary.useQuery();

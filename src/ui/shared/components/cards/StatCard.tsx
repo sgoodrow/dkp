@@ -10,7 +10,7 @@ export const StatCard: FC<{ label: string; value?: ReactNode }> = ({
       <Typography gutterBottom variant="body2" color="text.secondary">
         {label}
       </Typography>
-      <Typography variant="h4" width="100%">
+      <Typography variant="h5" width="100%">
         {value === undefined ? <Skeleton /> : value}
       </Typography>
     </Box>

@@ -17,7 +17,11 @@ export const RaidActivityRouteLayout: FCWithChildren<{ id: number }> = ({
     <NestedHeaderLayout
       name={data ? uiRoutes.raidActivity.name(data) : undefined}
     >
-      <Tabs aria-label="Raid activity tabs" value={pathname}>
+      <Tabs
+        aria-label="Raid activity tabs"
+        value={pathname}
+        variant="scrollable"
+      >
         <Tab
           label="Summary"
           icon={<Summarize />}

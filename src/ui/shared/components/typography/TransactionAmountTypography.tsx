@@ -10,15 +10,16 @@ export const TransactionAmountTypography: FC<{
   const sign = positive ? 1 : -1;
   const color =
     sign > 0 ? theme.palette.success.main : theme.palette.error.main;
-  return (
+  return amount === undefined ? (
+    <Skeleton />
+  ) : (
     <OverflowTooltipTypography
       fontFamily="monospace"
       color={color}
       fontWeight="bold"
-      width="100%"
     >
       {sign >= 0 ? "+" : "-"}
-      {amount || <Skeleton />}
+      {amount}
     </OverflowTooltipTypography>
   );
 };

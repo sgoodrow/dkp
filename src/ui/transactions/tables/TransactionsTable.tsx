@@ -29,8 +29,10 @@ import { WalletTransactionType } from "@prisma/client";
 import { Unstable_Grid2 } from "@mui/material";
 import { SwitchCard } from "@/ui/shared/components/cards/SwitchCard";
 import { TypeCell } from "@/ui/transactions/tables/TypeCell";
-import { ActionCard } from "@/ui/shared/components/cards/ActionCard";
 import { RejectOldTransactionsCard } from "@/ui/transactions/cards/RejectOldTransactionsCard";
+
+// TODO: ensure that character name is required to match a real character in order for a transaction to be cleared; this
+// matters for class stats and is a good way to mitigate repeat issues with transaction character pilots not being detected.
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];

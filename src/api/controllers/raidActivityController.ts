@@ -186,6 +186,13 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     return raidActivityType.defaultPayout;
   },
 
+  getCharacterNames: async ({ id }: { id: number }) => {
+    const { transactions } = await raidActivityRepository(
+      p,
+    ).getTransactionCharacterNames({ id });
+    return uniq(transactions.map((t) => t.characterName));
+  },
+
   getTypeByName: async ({ name }: { name: string }) => {
     return raidActivityRepository(p).getTypeByName({
       name,
