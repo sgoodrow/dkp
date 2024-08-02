@@ -7,6 +7,8 @@ import { Box, Stack, Tooltip, Typography } from "@mui/material";
 import { ItemLink } from "@/ui/shared/components/links/ItemLink";
 import { startCase } from "lodash";
 import { AssignTransactionItemIconButton } from "@/ui/transactions/buttons/AssignTransactionItemIconButton";
+import { app } from "@/shared/constants/app";
+import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 
 export const ItemCell: FC<
   ICellRendererParams<TransactionRow> & { onAssign: () => void }
@@ -22,9 +24,11 @@ export const ItemCell: FC<
             item={data.item}
             onAssign={onAssign}
           />
-          <Box>
+          <Box overflow="auto">
             {data.item === null ? (
-              <Typography color="warning.main">Item not recognized</Typography>
+              <Typography color="warning.main">
+                {app.copy.notRecognized}
+              </Typography>
             ) : (
               <ItemLink itemName={data.item.name} />
             )}
@@ -33,9 +37,9 @@ export const ItemCell: FC<
               placement="left"
               disableInteractive
             >
-              <Typography variant="body2" color="text.secondary">
+              <OverflowTooltipTypography variant="body2" color="text.secondary">
                 {startCase(data.itemName)}
-              </Typography>
+              </OverflowTooltipTypography>
             </Tooltip>
           </Box>
         </Stack>

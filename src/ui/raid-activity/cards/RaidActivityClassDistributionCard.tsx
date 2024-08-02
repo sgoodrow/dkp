@@ -14,7 +14,7 @@ import {
   LabelList,
   Tooltip,
 } from "recharts";
-import { groupBy } from "lodash";
+import { groupBy, sortBy } from "lodash";
 import { getAbbreviations } from "@/shared/utils/stringUtils";
 import { ClassName } from "@/ui/shared/components/static/ClassName";
 import pluralize from "pluralize";
@@ -41,7 +41,7 @@ export const RaidActivityClassDistributionCard: FC<{ id: number }> = ({
 
     const charactersByClass = groupBy(characters, (c) => c.classId);
 
-    return classes.map((c) => ({
+    return sortBy(classes, (c) => c.name).map((c) => ({
       name: classAbbreviations[c.name],
       value: charactersByClass[c.id]?.length || 0,
       class: c,

@@ -1,5 +1,4 @@
 import { characterController } from "@/api/controllers/characterController";
-import { raidActivityController } from "@/api/controllers/raidActivityController";
 import { agFilterModelSchema } from "@/api/shared/agGridUtils/filter";
 import { agSortModelSchema } from "@/api/shared/agGridUtils/sort";
 import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";

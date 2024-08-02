@@ -1,27 +1,22 @@
 "use client";
 
 import { FC } from "react";
-import { trpc } from "@/api/views/trpc/trpc";
 import { uiRoutes } from "@/app/uiRoutes";
 import { SiteLink } from "@/ui/shared/components/links/SiteLink";
-import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { Stack, TypographyProps } from "@mui/material";
 
 export const CharacterLink: FC<{
-  characterName: string;
+  character: {
+    id: number;
+    name: string;
+    defaultPilotId: string | null;
+  };
   variant?: TypographyProps["variant"];
-}> = ({ characterName, variant }) => {
-  const { data: character } = trpc.character.getByNameMatch.useQuery({
-    search: characterName,
-  });
-  return character === null ? (
-    <OverflowTooltipTypography color="text.secondary" variant={variant}>
-      {characterName}
-    </OverflowTooltipTypography>
-  ) : (
+}> = ({ character, variant }) => {
+  return (
     <Stack direction="row" spacing={0.5} alignItems="center">
-      {character?.defaultPilotId === null ? (
+      {character.defaultPilotId === null ? (
         <uiRoutes.bots.icon fontSize="small" />
       ) : null}
       <SiteLink
@@ -35,7 +30,7 @@ export const CharacterLink: FC<{
               })
             : ""
         }
-        label={<>{characterName}</>}
+        label={character.name}
       />
     </Stack>
   );

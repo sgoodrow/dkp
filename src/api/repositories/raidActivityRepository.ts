@@ -171,7 +171,12 @@ export const raidActivityRepository = (
       },
       include: {
         type: true,
-        transactions: true,
+        transactions: {
+          include: {
+            item: true,
+            character: true,
+          },
+        },
       },
     });
   },

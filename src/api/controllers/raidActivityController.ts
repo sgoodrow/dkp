@@ -61,7 +61,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       payout: activity.payout,
     });
 
-    const walletMap = await characterController(p).getCharacterNameWalletIdMap({
+    const characterMap = await characterController(p).getCharacterNameMap({
       characterNames: uniq(
         flatMap([
           ...getCharacterNames(attendees),
@@ -87,9 +87,11 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       await walletController(p).createManyAttendants({
         attendees: attendees.map((a) => ({
           ...a,
+          characterId: characterMap.get(a.characterName)?.id || null,
           walletId:
-            walletMap.get(a.pilotCharacterName) ||
-            walletMap.get(a.characterName),
+            characterMap.get(a.pilotCharacterName)?.defaultWalletId ||
+            characterMap.get(a.characterName)?.defaultWalletId ||
+            null,
         })),
         payout,
         raidActivityId: raidActivity.id,
@@ -100,9 +102,11 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       await walletController(p).createManyAdjustments({
         adjustments: adjustments.map((a) => ({
           ...a,
+          characterId: characterMap.get(a.characterName)?.id || null,
           walletId:
-            walletMap.get(a.pilotCharacterName) ||
-            walletMap.get(a.characterName),
+            characterMap.get(a.pilotCharacterName)?.defaultWalletId ||
+            characterMap.get(a.characterName)?.defaultWalletId ||
+            null,
         })),
         raidActivityId: raidActivity.id,
         createdById,
@@ -112,9 +116,11 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       await walletController(p).createManyPurchases({
         purchases: purchases.map((p) => ({
           ...p,
+          characterId: characterMap.get(p.characterName)?.id || null,
           walletId:
-            walletMap.get(p.pilotCharacterName) ||
-            walletMap.get(p.characterName),
+            characterMap.get(p.pilotCharacterName)?.defaultWalletId ||
+            characterMap.get(p.characterName)?.defaultWalletId ||
+            null,
           itemId: itemMap.get(p.itemName),
         })),
         raidActivityId: raidActivity.id,

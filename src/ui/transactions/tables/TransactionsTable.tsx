@@ -30,6 +30,8 @@ import { Unstable_Grid2 } from "@mui/material";
 import { SwitchCard } from "@/ui/shared/components/cards/SwitchCard";
 import { TypeCell } from "@/ui/transactions/tables/TypeCell";
 import { RejectOldTransactionsCard } from "@/ui/transactions/cards/RejectOldTransactionsCard";
+import { CharacterCell } from "@/ui/transactions/tables/CharacterCell";
+import { AssignTransactionCharacterDialog } from "@/ui/transactions/dialogs/AssignTransactionCharacterDialog";
 
 // TODO: ensure that character name is required to match a real character in order for a transaction to be cleared; this
 // matters for class stats and is a good way to mitigate repeat issues with transaction character pilots not being detected.
@@ -117,8 +119,29 @@ export const TransactionsTable: FC<{}> = ({}) => {
         ),
       },
       {
+        headerName: "Character",
+        field: "characterId",
+        flex: 1,
+        editable: true,
+        cellEditor: (props) => (
+          <AssignTransactionCharacterDialog
+            transactionId={props.data.id}
+            character={props.data.character}
+            characterName={props.data.characterName}
+            onAssign={() => handleCellEdited(props)}
+            onClose={() => handleCellEditorClosed(props)}
+          />
+        ),
+        cellRenderer: (props) => (
+          <CharacterCell
+            {...props}
+            onAssign={() => props.api.refreshInfiniteCache()}
+          />
+        ),
+      },
+      {
         headerName: "Pilot",
-        field: "characterName",
+        field: "wallet.userId",
         flex: 1,
         editable: true,
         cellEditor: (props) => (

@@ -2,7 +2,7 @@
 
 import { FC } from "react";
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
-import { Button, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Button, Skeleton, Stack, Typography } from "@mui/material";
 import { trpc } from "@/api/views/trpc/trpc";
 import { enqueueSnackbar } from "notistack";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
@@ -34,7 +34,7 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
       titleInfo="Discord metadata is synced nightly, but admins can manually sync anytime."
       titleAvatar={<Sync />}
     >
-      <Typography>
+      <Box>
         Force a refresh of the application&apos;s Discord metadata.
         <br />
         <br />
@@ -42,7 +42,7 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
         reflected here immediately, such as the removal of the{" "}
         <DiscordRoleTypography roleId={guild.discordAdminRoleId} /> role from a
         member.
-      </Typography>
+      </Box>
       <Stack direction="row" spacing={1}>
         <Button
           fullWidth

@@ -11,5 +11,6 @@ export const app = {
   description: "An app for managing DKP.",
   copy: {
     noneAssociated: "None associated.",
+    notRecognized: "Not recognized",
   },
 } as const;

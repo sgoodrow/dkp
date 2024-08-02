@@ -5,9 +5,10 @@ import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { FC } from "react";
 import { CellLayout } from "@/ui/shared/components/table/CellLayout";
 import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
-import { Box, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { AssignTransactionPilotIconButton } from "@/ui/transactions/buttons/AssignTransactionPilotIconButton";
+import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 
 export const PilotCell: FC<
   ICellRendererParams<TransactionRow> & { onAssign: () => void }
@@ -22,21 +23,14 @@ export const PilotCell: FC<
           pilot={data.wallet?.user || null}
           onAssign={onAssign}
         />
-        <Box>
+        <Box alignContent="center" overflow="auto">
           {data.wallet === null ? (
-            <Typography color="warning.main">Pilot missing</Typography>
+            <OverflowTooltipTypography color="warning.main">
+              Pilot missing
+            </OverflowTooltipTypography>
           ) : (
             <PlayerLink user={data.wallet.user} />
           )}
-          <Tooltip
-            title="The name of the character that was uploaded."
-            placement="left"
-            disableInteractive
-          >
-            <Typography variant="body2" color="text.secondary">
-              {data.pilotCharacterName || data.characterName}
-            </Typography>
-          </Tooltip>
         </Box>
       </Stack>
     </CellLayout>

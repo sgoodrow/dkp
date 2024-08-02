@@ -10,6 +10,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     rejected,
     amount,
     pilotId,
+    characterId,
     itemId,
   }: {
     userId: string;
@@ -17,6 +18,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     rejected?: boolean;
     amount?: number;
     pilotId?: string;
+    characterId?: number;
     itemId?: number;
   }) => {
     return walletRepository(p).updateTransaction({
@@ -25,6 +27,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       rejected,
       amount,
       pilotId,
+      characterId,
       itemId,
     });
   },
@@ -63,6 +66,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       characterName: string;
       pilotCharacterName?: string;
       walletId: number | null;
+      characterId: number | null;
     }[];
     payout: number;
     raidActivityId: number;
@@ -90,6 +94,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       characterName: string;
       pilotCharacterName?: string;
       walletId: number | null;
+      characterId: number | null;
     }[];
     raidActivityId?: number;
     createdById: string;
@@ -115,6 +120,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       itemName: string;
       pilotCharacterName?: string;
       walletId: number | null;
+      characterId: number | null;
       itemId: number | null;
     }[];
     raidActivityId?: number;

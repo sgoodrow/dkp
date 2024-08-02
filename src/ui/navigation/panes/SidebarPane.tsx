@@ -11,7 +11,6 @@ import { WelcomeDialogButton } from "@/ui/navigation/buttons/WelcomeDialogButton
 import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 import { GoogleDriveDocumentsIcon } from "@/ui/shared/components/icons/GoogleDriveDocumentsIcon";
 import { ProfileIcon } from "@/ui/shared/components/icons/ProfileIcon";
-import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import {
   MonitoringId,
   monitoringIds,
@@ -50,6 +49,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
       enabled: isAdmin,
     });
   const { data: user } = trpc.user.get.useQuery();
+
   const [prevPageHref, setPrevPageHref] = useState<string>(
     uiRoutes.home.href(),
   );
@@ -125,7 +125,8 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
               <SideBarButton
                 dataMonitoringId={uiRoutes.player.dataMonitoringId}
                 href={uiRoutes.player.href({ userId: user?.id || "" })}
-                name={<PlayerLink user={user} />}
+                label={user?.displayName}
+                labelColor={user?.displayRole.color}
                 icon={<ProfileIcon size={PROFILE_IMAGE_SIZE} />}
                 hideLabel={isMobile}
                 badge={{
@@ -155,7 +156,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
                     key={dataMonitoringId}
                     dataMonitoringId={dataMonitoringId}
                     href={href()}
-                    name={name}
+                    label={name}
                     icon={<Icon />}
                     hideLabel={isMobile}
                     selectedIfIncludes={selectedIfIncludes}
@@ -179,14 +180,14 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
             <SideBarButton
               dataMonitoringId={monitoringIds.GOTO_RULES}
               icon={<GoogleDriveDocumentsIcon />}
-              name="Rules"
+              label="Rules"
               href={guild.rulesLink}
               hideLabel={isMobile}
             />
             <SideBarButton
               dataMonitoringId={monitoringIds.GOTO_DISCORD}
               icon={<DiscordIcon />}
-              name="Discord"
+              label="Discord"
               href={guild.discordInviteLink}
               hideLabel={isMobile}
             />

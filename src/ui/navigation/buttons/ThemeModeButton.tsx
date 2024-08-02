@@ -39,7 +39,7 @@ export const ThemeModeButton: FC<{ hideLabel: boolean }> = ({ hideLabel }) => {
       <SideBarButton
         dataMonitoringId={monitoringIds.TOGGLE_THEME_CHANGE_OPEN}
         icon={<CurrentIcon />}
-        name="Theme"
+        label="Theme"
         onClick={handleClick}
         selected={Boolean(anchorEl)}
         hideLabel={hideLabel}

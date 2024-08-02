@@ -8,22 +8,22 @@ import {
 } from "@/api/shared/agGridUtils/filter";
 import { agSortModelToPrismaOrderBy } from "@/api/shared/agGridUtils/sort";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
-import { Wallet, WalletTransactionType } from "@prisma/client";
+import { WalletTransactionType } from "@prisma/client";
 
 const getRejectedTransactionsPrismaWhere = (showRejected: boolean) =>
   showRejected ? {} : { rejected: false };
 
 const UNCLEARED_PRISMA_WHERE = {
   OR: [
-    // If it is a purchase, it must be missing an item ID or a wallet ID
     {
+      // If it is a purchase, it must be missing an item, wallet or character ID
       type: WalletTransactionType.PURCHASE,
-      OR: [{ itemId: null }, { walletId: null }],
-      // If it is not a purchase, it must be missing a wallet ID
+      OR: [{ itemId: null }, { walletId: null }, { characterId: null }],
     },
     {
+      // If it is not a purchase, it must be missing a wallet or character ID
       type: { not: WalletTransactionType.PURCHASE },
-      walletId: null,
+      OR: [{ walletId: null }, { characterId: null }],
     },
   ],
 };
@@ -39,6 +39,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     amount,
     pilotId,
     itemId,
+    characterId,
   }: {
     updatedById: string;
     transactionId: number;
@@ -46,6 +47,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     amount?: number;
     pilotId?: string;
     itemId?: number;
+    characterId?: number;
   }) => {
     let walletId: number | undefined = undefined;
     if (pilotId !== undefined) {
@@ -63,6 +65,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
         amount,
         walletId,
         itemId,
+        characterId,
         updatedById,
         requiredIntervention: true,
       },
@@ -124,6 +127,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       characterName: string;
       pilotCharacterName?: string;
       walletId: number | null;
+      characterId: number | null;
     }[];
     payout: number;
     raidActivityId: number;
@@ -132,12 +136,13 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   }) => {
     return p.walletTransaction.createMany({
       data: attendees.map(
-        ({ characterName, pilotCharacterName, walletId }) => ({
+        ({ characterName, pilotCharacterName, walletId, characterId }) => ({
           type: WalletTransactionType.ATTENDANCE,
           amount: payout,
           characterName,
           pilotCharacterName,
           walletId,
+          characterId,
           itemId: null,
           raidActivityId,
           createdById,
@@ -159,6 +164,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       characterName: string;
       pilotCharacterName?: string;
       walletId: number | null;
+      characterId: number | null;
     }[];
     raidActivityId?: number;
     createdById: string;
@@ -166,13 +172,21 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   }) => {
     return p.walletTransaction.createMany({
       data: adjustments.map(
-        ({ amount, reason, characterName, pilotCharacterName, walletId }) => ({
+        ({
+          amount,
+          reason,
+          characterName,
+          pilotCharacterName,
+          walletId,
+          characterId,
+        }) => ({
           type: WalletTransactionType.ADJUSTMENT,
           amount,
           reason,
           characterName,
           pilotCharacterName,
           walletId,
+          characterId,
           itemId: null,
           raidActivityId,
           createdById,
@@ -195,6 +209,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       itemName: string;
       walletId: number | null;
       itemId: number | null;
+      characterId: number | null;
     }[];
     raidActivityId?: number;
     createdById: string;
@@ -209,6 +224,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
           itemName,
           itemId,
           walletId,
+          characterId,
         }) => ({
           type: WalletTransactionType.PURCHASE,
           amount,
@@ -339,6 +355,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       include: {
         createdByUser: true,
         item: true,
+        character: true,
         wallet: {
           include: {
             user: {

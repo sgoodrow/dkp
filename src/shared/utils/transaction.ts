@@ -6,14 +6,16 @@ export const transaction = {
     type,
     itemId,
     walletId,
+    characterId,
     rejected,
   }: {
     type: WalletTransactionType;
     itemId: number | null;
     walletId: number | null;
+    characterId: number | null;
     rejected: boolean;
   }) => {
-    if (walletId === null || rejected) {
+    if (walletId === null || characterId === null || rejected) {
       return false;
     }
     switch (type) {
@@ -32,17 +34,19 @@ export const transaction = {
     type,
     itemId,
     walletId,
+    characterId,
     rejected,
   }: {
     type: WalletTransactionType;
     itemId: number | null;
     walletId: number | null;
+    characterId: number | null;
     rejected: boolean;
   }) => {
     if (rejected) {
       return false;
     }
-    if (walletId === null) {
+    if (walletId === null || characterId === null) {
       return true;
     }
     switch (type) {
@@ -61,11 +65,13 @@ export const transaction = {
     type,
     itemId,
     walletId,
+    characterId,
     rejected,
   }: {
     type: WalletTransactionType;
     itemId: number | null;
     walletId: number | null;
+    characterId: number | null;
     rejected: boolean;
   }) => {
     return (
@@ -73,6 +79,7 @@ export const transaction = {
         type,
         itemId,
         walletId,
+        characterId,
         rejected,
       }) && type === "ATTENDANCE"
     );
@@ -82,11 +89,13 @@ export const transaction = {
     type,
     itemId,
     walletId,
+    characterId,
     rejected,
   }: {
     type: WalletTransactionType;
     itemId: number | null;
     walletId: number | null;
+    characterId: number | null;
     rejected: boolean;
   }) => {
     return (
@@ -94,20 +103,36 @@ export const transaction = {
         type,
         itemId,
         walletId,
+        characterId,
         rejected,
       }) && type === "ADJUSTMENT"
     );
+  },
+
+  isPurchase: ({
+    type,
+    rejected,
+  }: {
+    type: WalletTransactionType;
+    rejected: boolean;
+  }) => {
+    if (rejected) {
+      return false;
+    }
+    return type === "PURCHASE";
   },
 
   isClearedPurchase: ({
     type,
     itemId,
     walletId,
+    characterId,
     rejected,
   }: {
     type: WalletTransactionType;
     itemId: number | null;
     walletId: number | null;
+    characterId: number | null;
     rejected: boolean;
   }) => {
     return (
@@ -115,6 +140,7 @@ export const transaction = {
         type,
         itemId,
         walletId,
+        characterId,
         rejected,
       }) && type === "PURCHASE"
     );

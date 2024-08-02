@@ -21,7 +21,7 @@ export const ItemLink: FC<{
   ) : (
     <SiteLink
       placement="left"
-      data-monitoring-id={monitoringIds.GOTO_CHARACTER}
+      data-monitoring-id={monitoringIds.GOTO_ITEM}
       href={
         item
           ? uiRoutes.item.href({

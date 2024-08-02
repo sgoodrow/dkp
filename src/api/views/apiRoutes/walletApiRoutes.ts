@@ -15,12 +15,18 @@ export const walletApiRoutes = createRoutes({
         rejected: z.boolean().optional(),
         amount: z.number().nonnegative().optional(),
         pilotId: z.string().optional(),
+        characterId: z.number().nonnegative().int().optional(),
         itemId: z.number().nonnegative().int().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
       return walletController().updateTransaction({
-        ...input,
+        amount: input.amount,
+        itemId: input.itemId,
+        pilotId: input.pilotId,
+        transactionId: input.transactionId,
+        characterId: input.characterId,
+        rejected: input.rejected,
         userId: ctx.userId,
       });
     }),

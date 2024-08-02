@@ -145,6 +145,31 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  getByRaidActivityId: async ({
+    raidActivityId,
+  }: {
+    raidActivityId: number;
+  }) => {
+    return p.character.findMany({
+      where: {
+        transactions: {
+          every: {
+            raidActivityId,
+          },
+        },
+      },
+      include: {
+        transactions: {
+          select: {
+            raidActivityId: true,
+          },
+        },
+        class: true,
+        race: true,
+      },
+    });
+  },
+
   getManyByUserId: async ({
     userId,
     startRow,
@@ -255,7 +280,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  getCharacterNameWalletIdMap: async ({
+  getCharacterNameMap: async ({
     characterNames,
   }: {
     characterNames: string[];
@@ -268,9 +293,9 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
       },
       select: {
         name: true,
+        id: true,
         defaultPilot: {
           select: {
-            email: true,
             wallet: {
               select: {
                 id: true,
@@ -280,12 +305,22 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
         },
       },
     });
-    return characters.reduce(
-      (acc, c) => {
-        acc[c.name] = c.defaultPilot?.wallet?.id;
-        return acc;
-      },
-      {} as Record<string, number | undefined>,
-    );
+    return characters.reduce<
+      Record<
+        string,
+        {
+          name: string;
+          id: number;
+          defaultWalletId: number | null;
+        }
+      >
+    >((acc, c) => {
+      acc[c.name] = {
+        name: c.name,
+        id: c.id,
+        defaultWalletId: c.defaultPilot?.wallet?.id || null,
+      };
+      return acc;
+    }, {});
   },
 });

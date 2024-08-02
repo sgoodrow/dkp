@@ -76,10 +76,7 @@ export const characterController = (p?: PrismaTransactionClient) => ({
   }: {
     raidActivityId: number;
   }) => {
-    const names = await raidActivityController(p).getCharacterNames({
-      id: raidActivityId,
-    });
-    return characterRepository(p).getManyByNameMatch({ names });
+    return characterRepository(p).getByRaidActivityId({ raidActivityId });
   },
 
   getPilotIdFromNames: async ({
@@ -171,12 +168,12 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     return characterRepository(p).getByNameIncludes({ search, take });
   },
 
-  getCharacterNameWalletIdMap: async ({
+  getCharacterNameMap: async ({
     characterNames,
   }: {
     characterNames: string[];
   }) => {
-    const map = await characterRepository(p).getCharacterNameWalletIdMap({
+    const map = await characterRepository(p).getCharacterNameMap({
       characterNames,
     });
     return {

@@ -2,6 +2,7 @@ import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { apiKeyController } from "@/api/controllers/apiKeyController";
 import { userRepository } from "@/api/repositories/userRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
+import { discordController } from "@/api/controllers/discordController";
 
 export const userController = (p?: PrismaTransactionClient) => ({
   addDisplayName: <
@@ -9,6 +10,7 @@ export const userController = (p?: PrismaTransactionClient) => ({
       name: string | null;
       discordMetadata: {
         displayName: string;
+        roleIds: string[];
       } | null;
     },
   >({
@@ -67,7 +69,12 @@ export const userController = (p?: PrismaTransactionClient) => ({
 
   get: async ({ userId }: { userId: string }) => {
     const user = await userRepository(p).get({ userId });
-    return userController(p).addDisplayName({ user });
+
+    const displayRole = await discordController(p).getBestRole({
+      roleIds: user.discordMetadata?.roleIds || [],
+    });
+
+    return { ...userController(p).addDisplayName({ user }), displayRole };
   },
 
   getStatus: async ({ userId }: { userId: string }) => {

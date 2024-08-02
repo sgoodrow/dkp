@@ -10,7 +10,7 @@ export const BackButton: FC<{
 }> = ({ href, ["data-monitoring-id"]: dataMonitoringId, hideLabel }) => {
   return (
     <SideBarButton
-      name="Back"
+      label="Back"
       icon={<ArrowBack />}
       dataMonitoringId={dataMonitoringId}
       href={href}

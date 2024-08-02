@@ -6,6 +6,7 @@ import { Tooltip } from "@mui/material";
 import { Block, CheckCircleOutline } from "@mui/icons-material";
 import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { RequirementTooltip } from "@/ui/shared/components/tooltips/RequirementTooltip";
+import { transaction } from "@/shared/utils/transaction";
 
 export const ClearedCell: FC<ICellRendererParams<TransactionRow>> = ({
   data,
@@ -44,8 +45,7 @@ export const ClearedCell: FC<ICellRendererParams<TransactionRow>> = ({
             </>
           }
         >
-          {data.walletId !== null &&
-          (data.itemName === null || data.itemId != null) ? (
+          {transaction.isCleared(data) ? (
             <CheckCircleOutline color="success" />
           ) : (
             <CheckCircleOutline color="disabled" />

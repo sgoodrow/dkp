@@ -23,19 +23,21 @@ model WalletTransaction {
     updatedAt DateTime @updatedAt
 
     // Properties
-    requiredIntervention Boolean               @default(false)
     type                 WalletTransactionType
-    amount               Float
-    characterName        String
-    reason               String?
-    pilotCharacterName   String?
-    itemName             String?
+    requiredIntervention Boolean               @default(false)
     rejected             Boolean               @default(false)
     rejectedAt           DateTime?
+    amount               Float
+    reason               String?
+    characterName        String
+    pilotCharacterName   String?
+    itemName             String?
 
     // Relationships
     walletId       Int?
     wallet         Wallet?       @relation(fields: [walletId], references: [id])
+    characterId    Int?
+    character      Character?    @relation(fields: [characterId], references: [id])
     itemId         Int?
     item           Item?         @relation(fields: [itemId], references: [id])
     raidActivityId Int?

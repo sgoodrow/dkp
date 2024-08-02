@@ -164,25 +164,26 @@ export const InfiniteTable = <TData extends Data>({
   );
 
   return (
-    <Box flexGrow={1} className={getThemeName({ mode })}>
+    <Box display="flex" flexGrow={1} flexDirection="column">
       <GridApiContext.Provider value={api}>
         <Unstable_Grid2 container spacing={1}>
           {children}
         </Unstable_Grid2>
       </GridApiContext.Provider>
-      <Box mt={1} />
-      <AgGridReact
-        rowSelection="multiple"
-        rowHeight={rowHeight}
-        onGridReady={onGridReadyInternal}
-        getRowId={getRowId}
-        alwaysShowVerticalScroll
-        infiniteInitialRowCount={100}
-        rowModelType="infinite"
-        datasource={datasource}
-        defaultColDef={defaultColDef}
-        columnDefs={columnDefs}
-      />
+      <Box flexGrow={1} className={getThemeName({ mode })} mt={1}>
+        <AgGridReact
+          rowSelection="multiple"
+          rowHeight={rowHeight}
+          onGridReady={onGridReadyInternal}
+          getRowId={getRowId}
+          alwaysShowVerticalScroll
+          infiniteInitialRowCount={100}
+          rowModelType="infinite"
+          datasource={datasource}
+          defaultColDef={defaultColDef}
+          columnDefs={columnDefs}
+        />
+      </Box>
     </Box>
   );
 };

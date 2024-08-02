@@ -9,7 +9,7 @@ import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
 export const SignOutButton: FC<{ isMobile: boolean }> = ({ isMobile }) => {
   return (
     <SideBarButton
-      name="Sign out"
+      label="Sign out"
       icon={<Logout />}
       onClick={() => signOut()}
       dataMonitoringId={monitoringIds.SIGN_OUT}

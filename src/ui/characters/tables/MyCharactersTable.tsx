@@ -54,7 +54,7 @@ export const MyCharactersTable: FC<{}> = ({}) => {
             <LoadingCell />
           ) : (
             <CellLayout>
-              <CharacterLink characterName={props.data.name} />
+              <CharacterLink character={props.data} />
             </CellLayout>
           ),
       },

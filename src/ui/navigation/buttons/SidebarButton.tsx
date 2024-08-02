@@ -11,6 +11,7 @@ import {
   ToggleButton,
   ToggleButtonProps,
   Tooltip,
+  TypographyProps,
   useTheme,
 } from "@mui/material";
 import { usePathname } from "next/navigation";
@@ -18,7 +19,8 @@ import { FC, ReactNode, useState } from "react";
 
 export const SideBarButton: FC<{
   dataMonitoringId: MonitoringId;
-  name: ReactNode;
+  label: ReactNode;
+  labelColor?: TypographyProps["color"];
   icon: ReactNode;
   href?: string;
   selected?: boolean;
@@ -32,7 +34,8 @@ export const SideBarButton: FC<{
     showZero?: boolean;
   };
 }> = ({
-  name,
+  label,
+  labelColor,
   dataMonitoringId,
   href,
   selected,
@@ -73,8 +76,9 @@ export const SideBarButton: FC<{
               textAlign="left"
               flexGrow={1}
               placement="right"
+              color={labelColor}
             >
-              {name}
+              {label}
             </OverflowTooltipTypography>
             {isExternal && <OpenInNew fontSize="small" />}
           </>

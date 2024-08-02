@@ -13,7 +13,7 @@ export const WelcomeDialogButton: FC<{
     <>
       <SideBarButton
         dataMonitoringId={monitoringIds.TOGGLE_HELP_OPEN}
-        name="Help"
+        label="Help"
         icon={<QuestionMark />}
         onClick={() => setAboutAppDialogOpen(true)}
         selected={aboutAppDialogOpen}

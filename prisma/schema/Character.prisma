@@ -9,11 +9,12 @@ model Character {
 
     // Relationships
     defaultPilotId String?
-    defaultPilot   User?          @relation(fields: [defaultPilotId], references: [id])
+    defaultPilot   User?               @relation(fields: [defaultPilotId], references: [id])
     classId        Int
-    class          CharacterClass @relation(fields: [classId], references: [id])
+    class          CharacterClass      @relation(fields: [classId], references: [id])
     raceId         Int
-    race           CharacterRace  @relation(fields: [raceId], references: [id])
+    race           CharacterRace       @relation(fields: [raceId], references: [id])
+    transactions   WalletTransaction[]
 
     // Indexes
     @@index([defaultPilotId])
