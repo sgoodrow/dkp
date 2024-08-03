@@ -55,7 +55,8 @@ export const AssignTransactionItemDialog: FC<{
           Are you sure you want to re-assign the item for this transaction?
           <br />
           <br />
-          It is currently assigned to <ItemLink itemName={item?.name} />.
+          It is currently assigned to{" "}
+          <ItemLink item={item} itemName={item.name} />.
         </DialogContentText>
       )}
       <Field

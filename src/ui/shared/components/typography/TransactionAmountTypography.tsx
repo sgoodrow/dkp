@@ -3,7 +3,7 @@ import { FC } from "react";
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 
 export const TransactionAmountTypography: FC<{
-  amount?: number;
+  amount?: number | null;
   positive: boolean;
 }> = ({ amount, positive }) => {
   const theme = useTheme();
@@ -19,7 +19,7 @@ export const TransactionAmountTypography: FC<{
       fontWeight="bold"
     >
       {sign >= 0 ? "+" : "-"}
-      {amount}
+      {amount || 0}
     </OverflowTooltipTypography>
   );
 };

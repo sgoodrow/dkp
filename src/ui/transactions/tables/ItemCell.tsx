@@ -30,7 +30,7 @@ export const ItemCell: FC<
                 {app.copy.notRecognized}
               </Typography>
             ) : (
-              <ItemLink itemName={data.item.name} />
+              <ItemLink item={data.item} itemName={data.itemName} />
             )}
             <Tooltip
               title="The name of the item that was uploaded."

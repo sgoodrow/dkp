@@ -1,4 +1,4 @@
-// Prisma lacks the ability to upsert many records at once, including their relationships.
+// Prisma lacks the ability to upsert many records at once while including their relationships.
 //
 // Consequently, these models which need to be synced avoid nice-to-have relationships, such as a
 // many-to-many relationship between DiscordUserMetadata and DiscordRole) to mitigate dealing with

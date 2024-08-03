@@ -1,7 +1,11 @@
 export const statsBy = <T>(
-  array: T[],
+  array: T[] | undefined,
   iteratee: (item: T) => number | null,
 ) => {
+  if (array === undefined) {
+    return;
+  }
+
   const validNumbers = array
     .map(iteratee)
     .filter((num): num is number => num !== null);
