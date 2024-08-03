@@ -100,7 +100,7 @@ export const RaidActivitySummaryCard: FC<{ id: number }> = ({ id }) => {
                 <>
                   {clearedAttendane?.length}{" "}
                   {attendance?.length ? (
-                    <>({meanBy(attendance, (t) => t.amount)}) DKP each</>
+                    <>({meanBy(attendance, (t) => t.amount)} DKP each)</>
                   ) : null}
                 </>
               }

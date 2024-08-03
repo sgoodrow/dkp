@@ -14,6 +14,7 @@ export const SiteLink: FC<{
   color?: Property.Color;
   variant?: TypographyProps["variant"];
   placement?: TooltipProps["placement"];
+  startIcon?: ReactNode;
 }> = ({
   "data-monitoring-id": dataMonitoringId,
   href,
@@ -24,6 +25,7 @@ export const SiteLink: FC<{
   color,
   variant,
   placement,
+  startIcon,
 }) => {
   const isExternal = href?.startsWith("http");
   const typography = (
@@ -52,6 +54,7 @@ export const SiteLink: FC<{
         color,
       }}
     >
+      {startIcon}
       {typography}
       {isExternal && <OpenInNew sx={{ ml: 0.25 }} fontSize="inherit" />}
     </Link>

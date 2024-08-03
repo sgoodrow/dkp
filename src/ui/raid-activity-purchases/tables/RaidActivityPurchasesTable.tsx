@@ -29,6 +29,8 @@ export const RaidActivityPurchasesTable: FC<{ id: number }> = ({ id }) => {
       utils.wallet.getManyTransactions.fetch({
         type: WalletTransactionType.PURCHASE,
         raidActivityId: id,
+        showCleared: true,
+        showRejected: true,
         ...params,
       }),
     [utils, id],

@@ -87,7 +87,6 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     raidActivityId: number;
     amount: number;
   }) => {
-    console.log("Setting raid activity attendance amount to ", amount);
     return p.walletTransaction.updateMany({
       where: {
         type: WalletTransactionType.ATTENDANCE,

@@ -16,6 +16,7 @@ export const CharacterLink: FC<{
 }> = ({ character, variant }) => {
   return (
     <Stack direction="row" spacing={0.5} alignItems="center">
+      {/* TODO: fix this not being inline */}
       {character.defaultPilotId === null ? (
         <uiRoutes.bots.icon fontSize="small" />
       ) : null}

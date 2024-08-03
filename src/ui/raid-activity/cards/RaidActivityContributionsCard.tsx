@@ -43,9 +43,22 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
     (t) => t.amount,
   );
 
-  const characters = cleared?.map((t) => t.character!);
+  const characters = cleared?.reduce<
+    { name: string; id: number; defaultPilotId: string | null }[]
+  >((acc, t) => {
+    if (t.character) {
+      acc.push(t.character);
+    }
+    return acc;
+  }, []);
 
-  const items = cleared?.map((t) => t.item!);
+  const items = cleared?.reduce<{ name: string; id: number }[]>((acc, t) => {
+    if (t.item) {
+      acc.push(t.item);
+    }
+    return acc;
+  }, []);
+  console.log(mine);
 
   return (
     <LabeledCard
@@ -122,6 +135,7 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
                   }
                 />
               </Unstable_Grid2>
+              {/* TODO: fix this not showing cleared purhcases */}
               <Unstable_Grid2 xs={6} sm={4}>
                 <StatCard
                   label="Items purchased"

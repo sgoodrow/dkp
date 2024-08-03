@@ -43,6 +43,8 @@ export const RaidActivityAttendanceTable: FC<{ id: number }> = ({ id }) => {
       utils.wallet.getManyTransactions.fetch({
         type: WalletTransactionType.ATTENDANCE,
         raidActivityId: id,
+        showCleared: true,
+        showRejected: true,
         ...params,
       }),
     [utils, id],

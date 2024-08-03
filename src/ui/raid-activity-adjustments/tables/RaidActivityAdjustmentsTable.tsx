@@ -29,6 +29,8 @@ export const RaidActivityAdjustmentsTable: FC<{ id: number }> = ({ id }) => {
       utils.wallet.getManyTransactions.fetch({
         type: WalletTransactionType.ADJUSTMENT,
         raidActivityId: id,
+        showCleared: true,
+        showRejected: true,
         ...params,
       }),
     [utils, id],
