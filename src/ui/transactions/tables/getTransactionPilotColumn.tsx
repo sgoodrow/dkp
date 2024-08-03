@@ -1,3 +1,4 @@
+import { app } from "@/shared/constants/app";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 import {
@@ -47,11 +48,25 @@ export const getTransactionPilotColumn = ({
           <Box alignContent="center" overflow="auto">
             {data.wallet === null ? (
               <OverflowTooltipTypography color="warning.main">
-                Pilot missing
+                {data.pilotCharacterName === null
+                  ? "Pilot missing"
+                  : app.copy.notRecognized}
               </OverflowTooltipTypography>
             ) : (
               <PlayerLink user={data.wallet.user} />
             )}
+            <OverflowTooltipTypography
+              variant="body2"
+              color="text.secondary"
+              tooltip={
+                data.pilotCharacterName === null
+                  ? "No pilot character name was uploaded."
+                  : "The name of the pilot character that was uploaded."
+              }
+              placement="left"
+            >
+              {data.pilotCharacterName || "-"}
+            </OverflowTooltipTypography>
           </Box>
         </Stack>
       </CellLayout>

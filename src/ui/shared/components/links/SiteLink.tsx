@@ -37,6 +37,7 @@ export const SiteLink: FC<{
       placement={placement}
       variant={variant}
     >
+      {startIcon}
       {label}
     </OverflowTooltipTypography>
   );

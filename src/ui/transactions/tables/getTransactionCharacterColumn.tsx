@@ -7,7 +7,7 @@ import { AssignTransactionCharacterDialog } from "@/ui/transactions/dialogs/Assi
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 import { LoadingCell } from "@/ui/shared/components/tables/LoadingCell";
-import { Box, Stack, Tooltip } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { AssignTransactionCharacterIconButton } from "@/ui/transactions/buttons/AssignTransactionCharacterIconButton";
 import { CharacterLink } from "@/ui/shared/components/links/CharacterLink";
 import { app } from "@/shared/constants/app";
@@ -55,15 +55,14 @@ export const getTransactionCharacterColumn = ({
             ) : (
               <CharacterLink character={data.character} />
             )}
-            <Tooltip
-              title="The name of the character that was uploaded."
+            <OverflowTooltipTypography
+              variant="body2"
+              color="text.secondary"
+              tooltip="The name of the character that was uploaded."
               placement="left"
-              disableInteractive
             >
-              <OverflowTooltipTypography variant="body2" color="text.secondary">
-                {data.characterName}
-              </OverflowTooltipTypography>
-            </Tooltip>
+              {data.characterName}
+            </OverflowTooltipTypography>
           </Box>
         </Stack>
       </CellLayout>
