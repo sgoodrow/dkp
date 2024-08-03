@@ -1,9 +1,10 @@
-import { Typography } from "@mui/material";
+import { RaidActivityPurchasesTable } from "@/ui/raid-activity-purchases/tables/RaidActivityPurchasesTable";
+import { FC } from "react";
 
-export const RaidActivityPurchasesRoutePage = () => {
+export const RaidActivityPurchasesRoutePage: FC<{ id: number }> = ({ id }) => {
   return (
     <>
-      <Typography>Purchases list here</Typography>
+      <RaidActivityPurchasesTable id={id} />
     </>
   );
 };

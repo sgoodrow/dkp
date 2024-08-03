@@ -32,6 +32,21 @@ export const walletApiRoutes = createRoutes({
       });
     }),
 
+  setRaidActivityAttendanceAmount: adminProcedure
+    .input(
+      z.object({
+        raidActivityId: z.number().nonnegative().int(),
+        amount: z.number().nonnegative(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return walletController().setRaidActivityAttendanceAmount({
+        userId: ctx.userId,
+        raidActivityId: input.raidActivityId,
+        amount: input.amount,
+      });
+    }),
+
   rejectManyUnclearedTransactions: adminProcedure
     .input(
       z.object({

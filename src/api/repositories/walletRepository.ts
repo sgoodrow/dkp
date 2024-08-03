@@ -78,6 +78,28 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  setRaidActivityAttendanceAmount: async ({
+    userId,
+    raidActivityId,
+    amount,
+  }: {
+    userId: string;
+    raidActivityId: number;
+    amount: number;
+  }) => {
+    console.log("Setting raid activity attendance amount to ", amount);
+    return p.walletTransaction.updateMany({
+      where: {
+        type: WalletTransactionType.ATTENDANCE,
+        raidActivityId,
+      },
+      data: {
+        amount,
+        updatedById: userId,
+      },
+    });
+  },
+
   rejectManyUnclearedTransactions: async ({
     userId,
     before,

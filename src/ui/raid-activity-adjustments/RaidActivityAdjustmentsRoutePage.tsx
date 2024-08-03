@@ -1,9 +1,12 @@
-import { Typography } from "@mui/material";
+import { RaidActivityAdjustmentsTable } from "@/ui/raid-activity-adjustments/tables/RaidActivityAdjustmentsTable";
+import { FC } from "react";
 
-export const RaidActivityAdjustmentsRoutePage = () => {
+export const RaidActivityAdjustmentsRoutePage: FC<{ id: number }> = ({
+  id,
+}) => {
   return (
     <>
-      <Typography>Adjustments list here</Typography>
+      <RaidActivityAdjustmentsTable id={id} />
     </>
   );
 };

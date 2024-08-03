@@ -109,6 +109,19 @@ export const transaction = {
     );
   },
 
+  isAttendance: ({
+    type,
+    rejected,
+  }: {
+    type: WalletTransactionType;
+    rejected: boolean;
+  }) => {
+    if (rejected) {
+      return false;
+    }
+    return type === "ATTENDANCE";
+  },
+
   isPurchase: ({
     type,
     rejected,
