@@ -20,7 +20,7 @@ import { FC, ReactNode, useState } from "react";
 export const SideBarButton: FC<{
   dataMonitoringId: MonitoringId;
   label: ReactNode;
-  labelColor?: TypographyProps["color"];
+  labelColor?: string | null;
   icon: ReactNode;
   href?: string;
   selected?: boolean;
@@ -76,7 +76,9 @@ export const SideBarButton: FC<{
               textAlign="left"
               flexGrow={1}
               placement="right"
-              color={labelColor}
+              sx={{
+                color: labelColor,
+              }}
             >
               {label}
             </OverflowTooltipTypography>
