@@ -42,7 +42,7 @@ export const ingestRaidActivities = async ({ userId }: { userId: string }) => {
         count: random(40, 115),
       }),
       purchases: getRandomPurchases({
-        count: random(5, 20),
+        count: random(5, 700),
       }),
       createdById: userId,
       updatedById: userId,

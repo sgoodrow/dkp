@@ -153,7 +153,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.character.findMany({
       where: {
         transactions: {
-          every: {
+          some: {
             raidActivityId,
           },
         },

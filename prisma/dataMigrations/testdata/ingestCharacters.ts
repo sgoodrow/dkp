@@ -11,6 +11,17 @@ const knownCharacters = [
   { name: "Healion", class: "Cleric", race: "High Elf" },
   { name: "Forest", class: "Druid", race: "Half Elf" },
   { name: "Weteye", class: "Shaman", race: "Troll" },
+  { name: "Grim", class: "Warrior", race: "Ogre" },
+  { name: "Zephyr", class: "Monk", race: "Human" },
+  { name: "Thorne", class: "Rogue", race: "Half Elf" },
+  { name: "Lumina", class: "Paladin", race: "High Elf" },
+  { name: "Grimlock", class: "Rogue", race: "Dwarf" },
+  { name: "Sylvana", class: "Ranger", race: "Wood Elf" },
+  { name: "Azura", class: "Wizard", race: "Erudite" },
+  { name: "Korg", class: "Warrior", race: "Barbarian" },
+  { name: "Seraphina", class: "Bard", race: "Human" },
+  { name: "Zorn", class: "Necromancer", race: "Iksar" },
+  { name: "Elara", class: "Magician", race: "Gnome" },
 ];
 
 const botCharacters = [
@@ -25,15 +36,7 @@ const botCharacters = [
 
 export const knownCharacterNames = knownCharacters.map((c) => c.name);
 
-export const unknownCharacterNames = [
-  "Potatus",
-  "Mortatus",
-  "Squid",
-  "Bob",
-  "Derbadger",
-  "Jairn",
-  "Edwina",
-];
+export const unknownCharacterNames = ["Squid", "Bob", "Edwina"];
 
 export const botCharacterNames = botCharacters.map((c) => c.name);
 

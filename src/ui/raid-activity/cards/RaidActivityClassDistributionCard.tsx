@@ -59,13 +59,8 @@ export const RaidActivityClassDistributionCard: FC<{ id: number }> = ({
       <Box height="400px">
         <ResponsiveContainer>
           <BarChart data={data} layout="vertical" margin={{ right: 35 }}>
-            <XAxis type="number" tick={false} />
-            <YAxis
-              type="category"
-              dataKey="name"
-              tick={false}
-              allowDataOverflow
-            />
+            <XAxis type="number" hide />
+            <YAxis type="category" dataKey="name" tick={false} />
             <Tooltip
               content={({ active, payload }) => {
                 const bar = payload?.[0];
