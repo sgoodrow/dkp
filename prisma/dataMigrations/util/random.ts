@@ -27,7 +27,7 @@ export const getRandomRaidActivity = ({
   const randomType = getSample(raidActivityTypes);
   return {
     typeId: randomType.id,
-    createdAt: getRandomDate(5),
+    createdAt: getRandomDate(5).toISOString(),
     note: randomString(10, 100),
   };
 };

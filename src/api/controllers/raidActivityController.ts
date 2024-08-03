@@ -35,7 +35,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     updatedById: string;
     activity: {
       typeId: number;
-      createdAt?: Date;
+      createdAt?: string;
       payout?: number;
       note?: string;
     };
@@ -79,7 +79,10 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       const raidActivity = await raidActivityRepository(p).create({
         typeId: activity.typeId,
         note: activity.note,
-        createdAt: activity.createdAt,
+        createdAt:
+          activity.createdAt === undefined
+            ? undefined
+            : new Date(activity.createdAt),
         createdById,
         updatedById,
       });

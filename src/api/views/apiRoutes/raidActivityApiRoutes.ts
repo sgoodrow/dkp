@@ -1,12 +1,10 @@
 import { raidActivityController } from "@/api/controllers/raidActivityController";
-import { walletController } from "@/api/controllers/walletController";
 import {
   adminProcedure,
   agFetchProcedure,
   createRoutes,
   protectedProcedure,
 } from "@/api/views/trpc/trpcBuilder";
-import { filter } from "lodash";
 import { z } from "zod";
 
 export const raidActivityApiRoutes = createRoutes({
@@ -17,7 +15,7 @@ export const raidActivityApiRoutes = createRoutes({
     .input(
       z.object({
         activity: z.object({
-          createdAt: z.date(),
+          createdAt: z.string().datetime(),
           typeId: z.number().nonnegative().int(),
           payout: z.number().nonnegative().optional(),
           note: z.string().optional(),
