@@ -1,49 +1,49 @@
 model Wallet {
-    // Common
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    // Relationships
-    userId       String              @unique
-    user         User                @relation(fields: [userId], references: [id])
-    transactions WalletTransaction[]
+  // Relationships
+  userId       String              @unique
+  user         User                @relation(fields: [userId], references: [id])
+  transactions WalletTransaction[]
 }
 
 enum WalletTransactionType {
-    ATTENDANCE
-    PURCHASE
-    ADJUSTMENT
+  ATTENDANCE
+  PURCHASE
+  ADJUSTMENT
 }
 
 model WalletTransaction {
-    // Common
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    // Properties
-    type                 WalletTransactionType
-    requiredIntervention Boolean               @default(false)
-    rejected             Boolean               @default(false)
-    rejectedAt           DateTime?
-    amount               Float
-    reason               String?
-    characterName        String
-    pilotCharacterName   String?
-    itemName             String?
+  // Properties
+  type                 WalletTransactionType
+  requiredIntervention Boolean               @default(false)
+  rejected             Boolean               @default(false)
+  rejectedAt           DateTime?
+  amount               Float
+  reason               String?
+  characterName        String
+  pilotCharacterName   String?
+  itemName             String?
 
-    // Relationships
-    walletId       Int?
-    wallet         Wallet?       @relation(fields: [walletId], references: [id])
-    characterId    Int?
-    character      Character?    @relation(fields: [characterId], references: [id])
-    itemId         Int?
-    item           Item?         @relation(fields: [itemId], references: [id])
-    raidActivityId Int?
-    raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
-    createdById    String
-    createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
-    updatedById    String
-    updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
+  // Relationships
+  walletId       Int?
+  wallet         Wallet?       @relation(fields: [walletId], references: [id])
+  characterId    Int?
+  character      Character?    @relation(fields: [characterId], references: [id])
+  itemId         Int?
+  item           Item?         @relation(fields: [itemId], references: [id])
+  raidActivityId Int?
+  raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
+  createdById    String
+  createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
+  updatedById    String
+  updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
 }

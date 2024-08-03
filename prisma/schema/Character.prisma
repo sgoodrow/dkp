@@ -1,60 +1,60 @@
 model Character {
-    // Common
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    // Properties
-    name String @unique
+  // Properties
+  name String @unique
 
-    // Relationships
-    defaultPilotId String?
-    defaultPilot   User?               @relation(fields: [defaultPilotId], references: [id])
-    classId        Int
-    class          CharacterClass      @relation(fields: [classId], references: [id])
-    raceId         Int
-    race           CharacterRace       @relation(fields: [raceId], references: [id])
-    transactions   WalletTransaction[]
+  // Relationships
+  defaultPilotId String?
+  defaultPilot   User?               @relation(fields: [defaultPilotId], references: [id])
+  classId        Int
+  class          CharacterClass      @relation(fields: [classId], references: [id])
+  raceId         Int
+  race           CharacterRace       @relation(fields: [raceId], references: [id])
+  transactions   WalletTransaction[]
 
-    // Indexes
-    @@index([defaultPilotId])
-    @@index([classId])
-    @@index([raceId])
+  // Indexes
+  @@index([defaultPilotId])
+  @@index([classId])
+  @@index([raceId])
 }
 
 model CharacterClass {
-    // Common
-    id Int @id @default(autoincrement())
+  // Common
+  id Int @id @default(autoincrement())
 
-    // Properties
-    name          String @unique
-    colorHexDark  String
-    colorHexLight String
+  // Properties
+  name          String @unique
+  colorHexDark  String
+  colorHexLight String
 
-    // Relationships
-    characters            Character[]
-    raceClassCombinations RaceClassCombination[]
+  // Relationships
+  characters            Character[]
+  raceClassCombinations RaceClassCombination[]
 }
 
 model CharacterRace {
-    // Common
-    id Int @id @default(autoincrement())
+  // Common
+  id Int @id @default(autoincrement())
 
-    // Properties
-    name String @unique
+  // Properties
+  name String @unique
 
-    // Relationships
-    characters            Character[]
-    raceClassCombinations RaceClassCombination[]
+  // Relationships
+  characters            Character[]
+  raceClassCombinations RaceClassCombination[]
 }
 
 model RaceClassCombination {
-    // Common
-    id Int @id @default(autoincrement())
+  // Common
+  id Int @id @default(autoincrement())
 
-    // Relationships
-    raceId  Int
-    race    CharacterRace  @relation(fields: [raceId], references: [id])
-    classId Int
-    class   CharacterClass @relation(fields: [classId], references: [id])
+  // Relationships
+  raceId  Int
+  race    CharacterRace  @relation(fields: [raceId], references: [id])
+  classId Int
+  class   CharacterClass @relation(fields: [classId], references: [id])
 }

@@ -10,7 +10,7 @@ help:
 	@echo " * local-setup              install the local server dependencies"
 	@echo " * local-run                run local server"
 	@echo " * local-db-reset-total     reset all tables of the local database"
-	@echo " * local-pre-commit         run pre-commit hooks"
+	@echo " * pre-commit               run pre-commit hooks"
 	@echo
 	@echo "--- Data Migrations ---"
 	@echo " * db-init                  initialize a database"
@@ -77,7 +77,7 @@ local-db-reset-total:
 	@make db-migrate
 	@make db-init
 
-local-pre-commit:
+pre-commit:
 	@yarn run concurrently --group --kill-others-on-fail --prefix command --prefix-colors auto \
 		"next lint" \
 		"prisma validate" \

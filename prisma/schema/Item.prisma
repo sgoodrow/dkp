@@ -1,11 +1,11 @@
 model Item {
-    // Common
-    id Int @id @default(autoincrement())
+  // Common
+  id Int @id @default(autoincrement())
 
-    // Properties
-    name     String
-    wikiSlug String
+  // Properties
+  name     String
+  wikiSlug String
 
-    // Relationships
-    purchases WalletTransaction[]
+  // Relationships
+  purchases WalletTransaction[]
 }

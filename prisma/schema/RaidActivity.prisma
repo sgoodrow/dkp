@@ -1,36 +1,36 @@
 model RaidActivity {
-    // Common
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    // Properties
-    note String?
+  // Properties
+  note String?
 
-    // Relationships
-    transactions  WalletTransaction[]
-    typeId        Int
-    type          RaidActivityType    @relation(fields: [typeId], references: [id])
-    createdById   String
-    createdByUser User                @relation("RaidActivityCreator", fields: [createdById], references: [id])
-    updatedById   String
-    updatedByUser User                @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
+  // Relationships
+  transactions  WalletTransaction[]
+  typeId        Int
+  type          RaidActivityType    @relation(fields: [typeId], references: [id])
+  createdById   String
+  createdByUser User                @relation("RaidActivityCreator", fields: [createdById], references: [id])
+  updatedById   String
+  updatedByUser User                @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
 }
 
 model RaidActivityType {
-    // Common
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    // Properties
-    name          String @unique
-    defaultPayout Float
+  // Properties
+  name          String @unique
+  defaultPayout Float
 
-    // Relationships
-    raidActivities RaidActivity[]
-    createdById    String
-    createdByUser  User           @relation("RaidActivityTypeCreator", fields: [createdById], references: [id])
-    updatedById    String
-    updatedByUser  User           @relation("RaidActivityTypeLatestUpdater", fields: [updatedById], references: [id])
+  // Relationships
+  raidActivities RaidActivity[]
+  createdById    String
+  createdByUser  User           @relation("RaidActivityTypeCreator", fields: [createdById], references: [id])
+  updatedById    String
+  updatedByUser  User           @relation("RaidActivityTypeLatestUpdater", fields: [updatedById], references: [id])
 }

@@ -7,34 +7,34 @@
 // Additionally, they avoid cascading deletions since upserts happen via delete+create transactions.
 
 model DiscordUserMetadata {
-    // Common
-    id Int @id @default(autoincrement())
+  // Common
+  id Int @id @default(autoincrement())
 
-    // Properties
-    memberId    String   @unique
-    displayName String
-    roleIds     String[]
+  // Properties
+  memberId    String   @unique
+  displayName String
+  roleIds     String[]
 
-    // Relationships
-    userId String? @unique
-    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  // Relationships
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model DiscordSyncEvent {
-    // Common
-    id              Int      @id @default(autoincrement())
-    createdAt       DateTime @default(now())
-    createdByUserId String?
-    createdByUser   User?    @relation("DiscordSyncEventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  // Common
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  createdByUserId String?
+  createdByUser   User?    @relation("DiscordSyncEventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
 }
 
 model DiscordRole {
-    // Common
-    id Int @id @default(autoincrement())
+  // Common
+  id Int @id @default(autoincrement())
 
-    // Properties
-    name     String  @unique
-    roleId   String  @unique
-    color    String?
-    priority Int
+  // Properties
+  name     String  @unique
+  roleId   String  @unique
+  color    String?
+  priority Int
 }

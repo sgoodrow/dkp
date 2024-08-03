@@ -1,1 +1,1 @@
-make local-pre-commit
+make pre-commit
