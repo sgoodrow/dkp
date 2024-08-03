@@ -23,7 +23,7 @@ import {
 } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "./theme.css";
-import { TypographyCell } from "@/ui/shared/components/table/TypographyCell";
+import { TypographyCell } from "@/ui/shared/components/tables/TypographyCell";
 
 const getThemeName = ({ mode }: { mode: PaletteMode }) => {
   switch (mode) {

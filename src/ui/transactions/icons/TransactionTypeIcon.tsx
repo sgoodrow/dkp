@@ -1,13 +1,8 @@
-import { ICellRendererParams } from "ag-grid-community";
-import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { FC } from "react";
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
-import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
 import { WalletTransactionType } from "@prisma/client";
 import { Tooltip } from "@mui/material";
 import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
 import { uiRoutes } from "@/app/uiRoutes";
-import { ShoppingCart } from "@mui/icons-material";
 
 const getDetails = (type: WalletTransactionType) => {
   switch (type) {
@@ -29,16 +24,6 @@ const getDetails = (type: WalletTransactionType) => {
     default:
       return exhaustiveSwitchCheck(type);
   }
-};
-
-export const TypeCell: FC<ICellRendererParams<TransactionRow>> = ({ data }) => {
-  return data === undefined ? (
-    <LoadingCell />
-  ) : (
-    <CellLayout>
-      <TransactionTypeIcon type={data.type} />
-    </CellLayout>
-  );
 };
 
 export const TransactionTypeIcon: FC<{

@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Box, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { WalletTransactionType } from "@prisma/client";
-import { TransactionTypeIcon } from "@/ui/transactions/tables/TypeCell";
+import { TransactionTypeIcon } from "@/ui/transactions/icons/TransactionTypeIcon";
 import { CustomFilterProps } from "ag-grid-react";
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { EnumFilter } from "@/api/shared/agGridUtils/filterTypes/enum";

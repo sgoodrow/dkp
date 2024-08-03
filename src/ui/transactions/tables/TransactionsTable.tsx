@@ -4,37 +4,22 @@ import { FC, useCallback, useMemo, useState } from "react";
 import {
   Column,
   GetRows,
-  handleCellEdited,
-  handleCellEditorClosed,
   InfiniteTable,
-} from "@/ui/shared/components/table/InfiniteTable";
+} from "@/ui/shared/components/tables/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
-import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
-import { ItemCell } from "@/ui/transactions/tables/ItemCell";
-import { TypographyCell } from "@/ui/shared/components/table/TypographyCell";
-import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
-import { ClearedCell } from "@/ui/transactions/tables/ClearedCell";
-import { RejectedCell } from "@/ui/transactions/tables/RejectedCell";
-import { AmountCell } from "@/ui/transactions/tables/AmountCell";
-import { PilotCell } from "@/ui/transactions/tables/PilotCell";
-import { TypeColumnFilter } from "@/ui/transactions/tables/TypeColumnFilter";
-import { DateCell } from "@/ui/transactions/tables/DateCell";
-import { AssignTransactionRejectedDialog } from "@/ui/transactions/dialogs/AssignTransactionRejectedDialog";
-import { AssignTransactionPilotDialog } from "@/ui/transactions/dialogs/AssignTransactionPilotDialog";
-import { AssignTransactionItemDialog } from "@/ui/transactions/dialogs/AssignTransactionItemDialog";
-import { AssignTransactionAmountDialog } from "@/ui/transactions/dialogs/AssignTransactionAmountDialog";
-import { WalletTransactionType } from "@prisma/client";
 import { Unstable_Grid2 } from "@mui/material";
 import { SwitchCard } from "@/ui/shared/components/cards/SwitchCard";
-import { TypeCell } from "@/ui/transactions/tables/TypeCell";
 import { RejectOldTransactionsCard } from "@/ui/transactions/cards/RejectOldTransactionsCard";
-import { CharacterCell } from "@/ui/transactions/tables/CharacterCell";
-import { AssignTransactionCharacterDialog } from "@/ui/transactions/dialogs/AssignTransactionCharacterDialog";
-
-// TODO: ensure that character name is required to match a real character in order for a transaction to be cleared; this
-// matters for class stats and is a good way to mitigate repeat issues with transaction character pilots not being detected.
+import { getTransactionRejectedColumn } from "@/ui/transactions/tables/getTransactionRejectedColumn";
+import { getTransactionItemColumn } from "@/ui/transactions/tables/getTransactionItemColumn";
+import { getTransactionPilotColumn } from "@/ui/transactions/tables/getTransactionPilotColumn";
+import { getTransactionTypeColumn } from "@/ui/transactions/tables/getTransactionTypeColumn";
+import { getTransactionContextColumn } from "@/ui/transactions/tables/getTransactionContextColumn";
+import { getTransactionClearedColumn } from "@/ui/transactions/tables/getTransactionClearedColumn";
+import { getCreatedAtColumn } from "@/ui/shared/components/tables/getCreatedAtColumn";
+import { getTransactionAmountColumn } from "@/ui/transactions/tables/getTransactionAmountColumn";
+import { getTransactionCharacterColumn } from "@/ui/transactions/tables/getTransactionCharacterColumn";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
@@ -42,6 +27,8 @@ export type TransactionRow =
 export const TransactionsTable: FC<{}> = ({}) => {
   const [showRejected, setShowRejected] = useState(false);
   const [showCleared, setShowCleared] = useState(false);
+
+  const { data: isAdmin } = trpc.user.isAdmin.useQuery();
 
   const utils = trpc.useUtils();
 
@@ -57,155 +44,17 @@ export const TransactionsTable: FC<{}> = ({}) => {
 
   const columnDefs = useMemo<Column<TransactionRow>[]>(
     () => [
-      {
-        headerName: "Cleared",
-        field: "id",
-        width: 100,
-        cellRenderer: (props) => <ClearedCell {...props} />,
-      },
-      {
-        headerName: "Date",
-        field: "createdAt",
-        width: 150,
-        sortable: true,
-        filter: "agDateColumnFilter",
-        cellRenderer: (props) => <DateCell {...props} />,
-      },
-      {
-        headerName: "Context",
-        field: "raidActivity.type.name",
-        flex: 1,
-        cellRenderer: (props) =>
-          props.data === undefined ? (
-            <LoadingCell />
-          ) : props.data.raidActivity === null ? (
-            <TypographyCell color="text.secondary">Unknown</TypographyCell>
-          ) : (
-            <CellLayout>
-              <OverflowTooltipTypography>
-                {props.data.raidActivity.type.name}
-              </OverflowTooltipTypography>
-              <OverflowTooltipTypography variant="body2" color="text.secondary">
-                {props.data.reason}
-              </OverflowTooltipTypography>
-            </CellLayout>
-          ),
-      },
-      {
-        headerName: "Type",
-        field: "type",
-        width: 100,
-        filter: TypeColumnFilter,
-        cellRenderer: (props) => <TypeCell {...props} />,
-      },
-      {
-        headerName: "Amount",
-        field: "type",
-        width: 120,
-        editable: true,
-        cellEditor: (props) => (
-          <AssignTransactionAmountDialog
-            transactionId={props.data.id}
-            amount={props.data.amount}
-            onAssign={() => handleCellEdited(props)}
-            onClose={() => handleCellEditorClosed(props)}
-          />
-        ),
-        cellRenderer: (props) => (
-          <AmountCell
-            {...props}
-            onAssign={() => props.api.refreshInfiniteCache()}
-          />
-        ),
-      },
-      {
-        headerName: "Character",
-        field: "characterId",
-        flex: 1,
-        editable: true,
-        cellEditor: (props) => (
-          <AssignTransactionCharacterDialog
-            transactionId={props.data.id}
-            character={props.data.character}
-            characterName={props.data.characterName}
-            onAssign={() => handleCellEdited(props)}
-            onClose={() => handleCellEditorClosed(props)}
-          />
-        ),
-        cellRenderer: (props) => (
-          <CharacterCell
-            {...props}
-            onAssign={() => props.api.refreshInfiniteCache()}
-          />
-        ),
-      },
-      {
-        headerName: "Pilot",
-        field: "wallet.userId",
-        flex: 1,
-        editable: true,
-        cellEditor: (props) => (
-          <AssignTransactionPilotDialog
-            transactionId={props.data.id}
-            pilot={props.data.wallet?.user || null}
-            onAssign={() => handleCellEdited(props)}
-            onClose={() => handleCellEditorClosed(props)}
-          />
-        ),
-        cellRenderer: (props) => (
-          <PilotCell
-            {...props}
-            onAssign={() => props.api.refreshInfiniteCache()}
-          />
-        ),
-      },
-      {
-        headerName: "Item",
-        field: "itemName",
-        flex: 1,
-        editable: (props) =>
-          props.data?.type === WalletTransactionType.PURCHASE,
-        cellEditor: (props) =>
-          props.data.type === WalletTransactionType.PURCHASE ? (
-            <AssignTransactionItemDialog
-              transactionId={props.data.id}
-              item={props.data.item}
-              onAssign={() => handleCellEdited(props)}
-              onClose={() => handleCellEditorClosed(props)}
-            />
-          ) : (
-            <></>
-          ),
-        cellRenderer: (props) => (
-          <ItemCell
-            {...props}
-            onAssign={() => props.api.refreshInfiniteCache()}
-          />
-        ),
-      },
-      {
-        headerName: "Rejected",
-        field: "rejected",
-        width: 100,
-        sortable: true,
-        editable: true,
-        cellEditor: (props) => (
-          <AssignTransactionRejectedDialog
-            transactionId={props.data.id}
-            rejected={props.data.rejected}
-            onAssign={() => handleCellEdited(props)}
-            onClose={() => handleCellEditorClosed(props)}
-          />
-        ),
-        cellRenderer: (props) => (
-          <RejectedCell
-            {...props}
-            onToggle={() => props.api.refreshInfiniteCache()}
-          />
-        ),
-      },
+      getTransactionClearedColumn(),
+      getCreatedAtColumn(),
+      getTransactionContextColumn(),
+      getTransactionTypeColumn(),
+      getTransactionAmountColumn({ editable: isAdmin }),
+      getTransactionCharacterColumn({ editable: isAdmin }),
+      getTransactionPilotColumn({ editable: isAdmin }),
+      getTransactionItemColumn({ editable: isAdmin }),
+      getTransactionRejectedColumn({ editable: isAdmin }),
     ],
-    [],
+    [isAdmin],
   );
 
   return (

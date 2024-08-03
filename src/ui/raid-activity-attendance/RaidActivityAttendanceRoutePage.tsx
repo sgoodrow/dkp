@@ -1,9 +1,10 @@
-import { Typography } from "@mui/material";
+import { RaidActivityAttendanceTable } from "@/ui/raid-activity-attendance/tables/RaidActivityAttendanceTable";
+import { FC } from "react";
 
-export const RaidActivityAttendanceRoutePage = () => {
+export const RaidActivityAttendanceRoutePage: FC<{ id: number }> = ({ id }) => {
   return (
     <>
-      <Typography>Attendance list here</Typography>
+      <RaidActivityAttendanceTable id={id} />
     </>
   );
 };

@@ -2,6 +2,7 @@ import { userController } from "@/api/controllers/userController";
 import { PrismaTransactionClient } from "@/api/repositories/shared/client";
 import { walletRepository } from "@/api/repositories/walletRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
+import { WalletTransactionType } from "@prisma/client";
 
 export const walletController = (p?: PrismaTransactionClient) => ({
   updateTransaction: async ({
@@ -155,9 +156,13 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     sortModel,
     showRejected,
     showCleared,
+    type,
+    raidActivityId,
   }: {
-    showRejected: boolean;
-    showCleared: boolean;
+    showRejected?: boolean;
+    showCleared?: boolean;
+    type?: WalletTransactionType;
+    raidActivityId?: number;
   } & AgGrid) => {
     const rows = await walletRepository(p).getManyTransactions({
       startRow,
@@ -166,11 +171,15 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       sortModel,
       showRejected,
       showCleared,
+      type,
+      raidActivityId,
     });
     return {
       totalRowCount: await walletRepository(p).countTransactions({
         showRejected,
         showCleared,
+        type,
+        raidActivityId,
         filterModel,
       }),
       rows: rows.map((r) => ({

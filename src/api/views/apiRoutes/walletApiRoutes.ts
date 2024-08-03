@@ -5,6 +5,7 @@ import {
   createRoutes,
   protectedProcedure,
 } from "@/api/views/trpc/trpcBuilder";
+import { WalletTransactionType } from "@prisma/client";
 import { z } from "zod";
 
 export const walletApiRoutes = createRoutes({
@@ -67,8 +68,10 @@ export const walletApiRoutes = createRoutes({
   getManyTransactions: agFetchProcedure
     .input(
       z.object({
-        showRejected: z.boolean(),
-        showCleared: z.boolean(),
+        showRejected: z.boolean().optional(),
+        showCleared: z.boolean().optional(),
+        type: z.nativeEnum(WalletTransactionType).optional(),
+        raidActivityId: z.number().nonnegative().int().optional(),
       }),
     )
     .query(async ({ input }) => {

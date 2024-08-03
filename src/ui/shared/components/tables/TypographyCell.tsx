@@ -1,4 +1,4 @@
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
+import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 import { TypographyProps } from "@mui/material";
 

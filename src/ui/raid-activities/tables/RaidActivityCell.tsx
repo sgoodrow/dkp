@@ -1,6 +1,6 @@
 import { FC } from "react";
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
-import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
+import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
+import { LoadingCell } from "@/ui/shared/components/tables/LoadingCell";
 import { Typography } from "@mui/material";
 import { RaidActivityType } from "@prisma/client";
 import { SiteLink } from "@/ui/shared/components/links/SiteLink";

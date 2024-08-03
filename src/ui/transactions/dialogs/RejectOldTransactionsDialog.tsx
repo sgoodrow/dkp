@@ -7,7 +7,7 @@ import {
 import { FC } from "react";
 import { useForm } from "@tanstack/react-form";
 import { trpc } from "@/api/views/trpc/trpc";
-import { useGridApi } from "@/ui/shared/components/table/InfiniteTable";
+import { useGridApi } from "@/ui/shared/components/tables/InfiniteTable";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { Box, FormControlLabel, FormHelperText, Switch } from "@mui/material";

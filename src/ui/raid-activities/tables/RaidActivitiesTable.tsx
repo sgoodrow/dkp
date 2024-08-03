@@ -6,15 +6,15 @@ import { CopyToClipboardIconButton } from "@/ui/shared/components/buttons/CopyTo
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { uiRoutes } from "@/app/uiRoutes";
 import { Edit } from "@mui/icons-material";
-import { NumberCell } from "@/ui/shared/components/table/NumberCell";
+import { NumberCell } from "@/ui/shared/components/tables/NumberCell";
 import {
   Column,
   InfiniteTable,
-} from "@/ui/shared/components/table/InfiniteTable";
+} from "@/ui/shared/components/tables/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
-import { DateCell } from "@/ui/transactions/tables/DateCell";
+import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
+import { DateCell } from "@/ui/shared/components/tables/DateCell";
 import { RaidActivityCell } from "@/ui/raid-activities/tables/RaidActivityCell";
 
 type Row = TrpcRouteOutputs["raidActivity"]["getMany"]["rows"][number];

@@ -5,16 +5,16 @@ import { FC, useMemo } from "react";
 import {
   Column,
   InfiniteTable,
-} from "@/ui/shared/components/table/InfiniteTable";
+} from "@/ui/shared/components/tables/InfiniteTable";
 import { CopyToClipboardIconButton } from "@/ui/shared/components/buttons/CopyToClipboardIconButton";
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { uiRoutes } from "@/app/uiRoutes";
 import { useSession } from "next-auth/react";
-import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
+import { LoadingCell } from "@/ui/shared/components/tables/LoadingCell";
 import { CharacterLink } from "@/ui/shared/components/links/CharacterLink";
 import { ClassName } from "@/ui/shared/components/static/ClassName";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
+import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 
 type Row = TrpcRouteOutputs["character"]["getManyByUserId"]["rows"][number];
 

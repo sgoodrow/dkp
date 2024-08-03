@@ -8,7 +8,7 @@ import { FC } from "react";
 import { useForm } from "@tanstack/react-form";
 import { trpc } from "@/api/views/trpc/trpc";
 import { TextField } from "@mui/material";
-import { useGridApi } from "@/ui/shared/components/table/InfiniteTable";
+import { useGridApi } from "@/ui/shared/components/tables/InfiniteTable";
 
 export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
   onClose,

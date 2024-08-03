@@ -4,13 +4,13 @@ import { FC, useMemo } from "react";
 import {
   Column,
   InfiniteTable,
-} from "@/ui/shared/components/table/InfiniteTable";
+} from "@/ui/shared/components/tables/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
-import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
+import { LoadingCell } from "@/ui/shared/components/tables/LoadingCell";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
-import { DateCell } from "@/ui/transactions/tables/DateCell";
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
+import { DateCell } from "@/ui/shared/components/tables/DateCell";
+import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 
 type Row = TrpcRouteOutputs["user"]["getAdmins"]["rows"][number];
 

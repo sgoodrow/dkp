@@ -10,8 +10,14 @@ import { agSortModelToPrismaOrderBy } from "@/api/shared/agGridUtils/sort";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { WalletTransactionType } from "@prisma/client";
 
-const getRejectedTransactionsPrismaWhere = (showRejected: boolean) =>
+const getRejectedTransactionsPrismaWhere = (showRejected?: boolean) =>
   showRejected ? {} : { rejected: false };
+
+const getTypeTransactionsPrismaWhere = (type?: WalletTransactionType) =>
+  type ? { type } : undefined;
+
+const getRaidActivityTransactionsPrismaWhere = (raidActivityId?: number) =>
+  raidActivityId ? { raidActivityId } : undefined;
 
 const UNCLEARED_PRISMA_WHERE = {
   OR: [
@@ -313,10 +319,14 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   countTransactions: async ({
     showRejected,
     showCleared,
+    type,
+    raidActivityId,
     filterModel,
   }: {
-    showRejected: boolean;
-    showCleared: boolean;
+    showRejected?: boolean;
+    showCleared?: boolean;
+    type?: WalletTransactionType;
+    raidActivityId?: number;
     filterModel: AgFilterModel;
   }) => {
     return p.walletTransaction.count({
@@ -325,6 +335,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
           ...agFilterModelToPrismaWhere(filterModel),
           ...getRejectedTransactionsPrismaWhere(showRejected),
           ...getUnclearedTransactionsPrismaWhere(!showCleared),
+          ...getTypeTransactionsPrismaWhere(type),
+          ...getRaidActivityTransactionsPrismaWhere(raidActivityId),
         },
       },
     });
@@ -337,9 +349,13 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     sortModel,
     showRejected,
     showCleared,
+    type,
+    raidActivityId,
   }: {
-    showRejected: boolean;
-    showCleared: boolean;
+    showRejected?: boolean;
+    showCleared?: boolean;
+    type?: WalletTransactionType;
+    raidActivityId?: number;
   } & AgGrid) => {
     return p.walletTransaction.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
@@ -350,6 +366,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
           ...agFilterModelToPrismaWhere(filterModel),
           ...getRejectedTransactionsPrismaWhere(showRejected),
           ...getUnclearedTransactionsPrismaWhere(!showCleared),
+          ...getTypeTransactionsPrismaWhere(type),
+          ...getRaidActivityTransactionsPrismaWhere(raidActivityId),
         },
       },
       include: {

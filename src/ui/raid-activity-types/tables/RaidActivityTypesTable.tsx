@@ -6,12 +6,12 @@ import {
   handleCellEdited,
   handleCellEditorClosed,
   InfiniteTable,
-} from "@/ui/shared/components/table/InfiniteTable";
+} from "@/ui/shared/components/tables/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
-import { LoadingCell } from "@/ui/shared/components/table/LoadingCell";
+import { LoadingCell } from "@/ui/shared/components/tables/LoadingCell";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
-import { CellLayout } from "@/ui/shared/components/table/CellLayout";
-import { DateCell } from "@/ui/transactions/tables/DateCell";
+import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
+import { DateCell } from "@/ui/shared/components/tables/DateCell";
 import { RaidActivityCell } from "@/ui/raid-activities/tables/RaidActivityCell";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { RaidActivityTypeNameCell } from "@/ui/raid-activity-types/tables/RaidActivityTypeNameCell";
