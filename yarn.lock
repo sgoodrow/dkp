@@ -1631,6 +1631,13 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.2.tgz#5950e50960793055845e956c427fc2b0d70c5239"
   integrity sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==
 
+"@types/php-serialize@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@types/php-serialize/-/php-serialize-3.0.4.tgz#1d82eeda256f5b1a8565f57b70a38f18ad230db3"
+  integrity sha512-laDQ0tgM40FZja0ZnxJbLpKn8MpIp++GQCYZ8Qkq5Cm9bi/DJfqKNwoQtZp6xyHBq2pJd78jaEAmLqOpx/dYFA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/pluralize@^0.0.33":
   version "0.0.33"
   resolved "https://registry.yarnpkg.com/@types/pluralize/-/pluralize-0.0.33.tgz#8ad9018368c584d268667dd9acd5b3b806e8c82a"
@@ -4255,6 +4262,11 @@ path-type@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
+
+php-serialize@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/php-serialize/-/php-serialize-5.0.1.tgz#a580a4356344f98bc6d5028b6ef9fe656e7ca938"
+  integrity sha512-+uxULDruX7uwGZmC1HjcvQMg6APyK1wzWXnaRR0Vxb7Vk4YMn5/Chp9tm+ccNqmXOtfZ/oZVbR8GZnPnojltDw==
 
 picocolors@^1.0.0:
   version "1.0.1"

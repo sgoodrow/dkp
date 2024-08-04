@@ -1,4 +1,4 @@
-import { PrismaTransactionClient } from "@/api/repositories/shared/client";
+import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { apiKeyController } from "@/api/controllers/apiKeyController";
 import { userRepository } from "@/api/repositories/userRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";

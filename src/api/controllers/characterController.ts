@@ -1,9 +1,7 @@
-import { raidActivityController } from "@/api/controllers/raidActivityController";
 import { characterRepository } from "@/api/repositories/characterRepository";
-import { PrismaTransactionClient } from "@/api/repositories/shared/client";
+import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
-import { startCase } from "lodash";
 
 type CreateCharacter = {
   name: string;

@@ -1,0 +1,100 @@
+datasource db {
+    provider = "mysql"
+    url      = env("EQ_DKP_PLUS_DB_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "./client"
+}
+
+model eqdkp_User {
+    // Properties
+    user_id    Int    @id
+    username   String
+    user_email String // This field is encrypted 
+
+    // Relationships
+    user_characters eqdkp_UserCharacter[]
+
+    @@map("eqdkp23_users")
+}
+
+model eqdkp_UserCharacter {
+    // Properties
+    member_id Int @id
+    user_id   Int
+
+    // Relationships
+    user      eqdkp_User      @relation(fields: [user_id], references: [user_id])
+    character eqdkp_Character @relation(fields: [member_id], references: [member_id])
+
+    @@map("eqdkp23_member_user")
+}
+
+model eqdkp_Character {
+    // Properties
+    member_id   Int    @id
+    member_name String
+    // The core character data is here. The race and class fields are IDs corresponding to
+    // data in the member_profilefields table.
+    // type ProfileData = {
+    //   race: number;
+    //   class: number;
+    //   guild: string;
+    //   gender: "male" | "female";
+    //   level: string;
+    // }
+    profiledata Json
+
+    // Relationships
+    wallet        eqdkp_Wallet?
+    userCharacter eqdkp_UserCharacter?
+
+    @@map("eqdkp23_members")
+}
+
+model eqdkp_Wallet {
+    // Properties
+    id        Int   @id
+    member_id Int   @unique
+    current   Float
+
+    // Relationships
+    character eqdkp_Character @relation(fields: [member_id], references: [member_id])
+
+    @@map("eqdkp23_member_points")
+}
+
+model eqdkp_CharacterAttribute {
+    id Int @id
+
+    // For example "race" or "class"
+    name String
+
+    // This field is a PHP deserialized JSON object.
+    // For example:
+    // {
+    // "options": {
+    //    "0": "Unknown",
+    //    "1": "Gnome",
+    //    "2": "Human",
+    //    "3": "Barbarian",
+    //    "4": "Dwarf",
+    //    "5": "High Elf",
+    //    "6": "Dark Elf",
+    //    "7": "Wood Elf"
+    //    "8": "Half Elf",
+    //    "10": "Troll",
+    //    "11": "Ogre",
+    //    "12": "Froglok",
+    //    "13": "Iksar",
+    //    "14": "Erudite",
+    //    "15": "Halfling",
+    //   },
+    //   ...
+    // }
+    data String
+
+    @@map("eqdkp23_member_profilefields")
+}

@@ -1,4 +1,5 @@
 import { ENV } from "@/api/env";
+import { eqdkpDataMigration } from "prisma/dataMigrations/eqdkp/main";
 import { ingestClasses } from "prisma/dataMigrations/initDb/ingestClasses";
 import { ingestDiscordMetadata } from "prisma/dataMigrations/initDb/ingestDiscordMetadata";
 import { ingestItems } from "prisma/dataMigrations/initDb/ingestItems";
@@ -18,6 +19,7 @@ export const initDbDataMigration = async () => {
   await ingestItems();
   await ingestRaces();
   await ingestClasses();
+  await eqdkpDataMigration();
   await ingestDiscordMetadata({ userId });
 
   logger.info("Finished workflow.");

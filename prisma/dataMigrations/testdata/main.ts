@@ -4,7 +4,7 @@ import { ingestRaidActivities } from "prisma/dataMigrations/testdata/ingestRaidA
 import { getDevUser } from "prisma/dataMigrations/util/getDevUser";
 import { createLogger } from "prisma/dataMigrations/util/log";
 
-const logger = createLogger("Ingested test data");
+const logger = createLogger("Ingesting test data");
 
 export const testDataDataMigration = async () => {
   logger.info("Started workflow.");

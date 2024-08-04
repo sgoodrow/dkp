@@ -67,7 +67,8 @@ local-run:
 	@docker-compose up -d
 	@docker-compose run --rm wait-for-postgres
 	@$(nvm) && yarn run dotenv concurrently --kill-others-on-fail --prefix command --prefix-colors auto \
-		"prisma generate --watch" \
+		"prisma generate --watch --schema=./prisma/schema/schema.prisma" \
+		"prisma generate --watch --schema=./prisma/eqdkp/schema.prisma" \
 		"next dev --turbo" \
 
 local-db-reset-total:
@@ -98,6 +99,9 @@ db-testdata:
 db-reset-testdata:
 	@make db-reset
 	@make db-testdata
+
+db-etl-eqdkp:
+	@yarn run dotenv tsx ./prisma/dataMigrations/eqdkp/run.ts
 
 # --- Utilities ---
 

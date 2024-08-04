@@ -2,7 +2,7 @@ import { walletController } from "@/api/controllers/walletController";
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
 import { flatMap, uniq } from "lodash";
 import { itemController } from "@/api/controllers/itemController";

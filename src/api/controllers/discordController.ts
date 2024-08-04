@@ -3,7 +3,7 @@ import { discordRepository } from "@/api/repositories/discordRepository";
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 import { discordService } from "@/api/services/discordService";
 import { difference } from "lodash";
 
