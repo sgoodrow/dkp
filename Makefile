@@ -7,16 +7,17 @@ help:
 	@echo "Usage: make [target]"
 	@echo
 	@echo "--- Developing ---"
-	@echo " * local-setup              install the local server dependencies"
+	@echo " * local-setup              install the local server dependencies and setup the db"
 	@echo " * local-run                run local server"
 	@echo
 	@echo "--- Database ---"
-	@echo " * db-init                  initialize a database"
 	@echo " * db-clear                 clears the non-user tables of a database"
+	@echo " * db-init                  initialize a database"
 	@echo " * db-testdata              seed a database with test data"
 	@echo " * db-drop-local            drop the local database and start again"
-	@echo " * db-migrate               migrate the local database"
-	@echo " * db-browse                open prisma studio"
+	@echo " * db-migrate               apply schema migrations to a database"
+	@echo " * db-browse                open prisma studio to browse a database"
+	@echo " * db-etl-eqdkp             ETL data from EQ DKP into a database"
 	@echo
 	@echo "--- Utilities ---"
 	@echo " * app-version              get project version"
@@ -25,7 +26,7 @@ help:
 	@echo "--- Testing ---"
 	@echo " * test                     run tests with interactive CLI"
 	@echo
-	@echo "--- Deployment ---"
+	@echo "--- Deploying ---"
 	@echo " * build                    build the application"
 
 
