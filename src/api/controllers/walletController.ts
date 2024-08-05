@@ -1,5 +1,5 @@
 import { userController } from "@/api/controllers/userController";
-import { PrismaTransactionClient } from "@/api/repositories/shared/client";
+import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { walletRepository } from "@/api/repositories/walletRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { WalletTransactionType } from "@prisma/client";
@@ -68,8 +68,8 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     });
   },
 
-  create: async ({ userId }: { userId: string }) => {
-    return walletRepository(p).create({ userId });
+  upsert: async ({ userId }: { userId: string }) => {
+    return walletRepository(p).upsert({ userId });
   },
 
   createManyAttendants: async ({

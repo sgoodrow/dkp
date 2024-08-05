@@ -1,5 +1,5 @@
 import { itemRepository } from "@/api/repositories/itemRepository";
-import { PrismaTransactionClient } from "@/api/repositories/shared/client";
+import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 
 type CreateItem = {
   name: string;

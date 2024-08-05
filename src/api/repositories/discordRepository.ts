@@ -1,7 +1,7 @@
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 import { guild } from "@/shared/constants/guild";
 
 export const discordRepository = (p: PrismaTransactionClient = prisma) => ({

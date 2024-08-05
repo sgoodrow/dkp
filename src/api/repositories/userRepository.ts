@@ -1,7 +1,7 @@
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 import {
   AgFilterModel,
   agFilterModelToPrismaWhere,
@@ -13,6 +13,18 @@ import {
 import { guild } from "@/shared/constants/guild";
 
 export const userRepository = (p: PrismaTransactionClient = prisma) => ({
+  upsert: ({ email }: { email: string }) => {
+    return p.user.upsert({
+      where: {
+        email,
+      },
+      create: {
+        email,
+      },
+      update: {},
+    });
+  },
+
   isAdmin: ({ userId }: { userId: string }) => {
     return p.discordUserMetadata.findFirst({
       where: {

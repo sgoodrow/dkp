@@ -39,3 +39,7 @@ next-env.d.ts
 
 # pre commit
 .husky/_
+
+# unmanaged prisma client
+prisma/eqdkp/client
+

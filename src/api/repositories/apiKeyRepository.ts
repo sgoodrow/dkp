@@ -1,7 +1,7 @@
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 import { Scope } from "@/shared/constants/scopes";
 import { createHash } from "crypto";
 

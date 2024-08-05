@@ -1,9 +1,7 @@
-import { raidActivityController } from "@/api/controllers/raidActivityController";
 import { characterRepository } from "@/api/repositories/characterRepository";
-import { PrismaTransactionClient } from "@/api/repositories/shared/client";
+import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
-import { startCase } from "lodash";
 
 type CreateCharacter = {
   name: string;
@@ -17,10 +15,8 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     return characterRepository(p).createMany({ characters });
   },
 
-  create: async (character: CreateCharacter) => {
-    return characterController(p).createMany({
-      characters: [character],
-    });
+  upsert: async (character: CreateCharacter) => {
+    return characterRepository(p).upsert(character);
   },
 
   createClass: async ({

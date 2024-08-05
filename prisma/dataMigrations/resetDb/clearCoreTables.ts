@@ -1,4 +1,4 @@
-import { prisma } from "@/api/repositories/shared/client";
+import { prisma } from "@/api/repositories/shared/prisma";
 import { createLogger } from "prisma/dataMigrations/util/log";
 
 const logger = createLogger("Clearing core tables");

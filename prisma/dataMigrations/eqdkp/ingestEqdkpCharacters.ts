@@ -1,0 +1,70 @@
+import { prisma } from "@/api/repositories/shared/prisma";
+import { eqdkpController } from "prisma/dataMigrations/eqdkp/eqdkpController";
+import { createLogger } from "prisma/dataMigrations/util/log";
+import { eqdkpService } from "prisma/dataMigrations/eqdkp/eqdkpService";
+import { userController } from "@/api/controllers/userController";
+import { characterController } from "@/api/controllers/characterController";
+
+const logger = createLogger("Ingesting EQ DKP characters");
+
+const BATCH_SIZE = 1000;
+
+export const ingestEqdkpCharacters = async () => {
+  logger.info("Started workflow.");
+
+  const emails: Record<number, string> = {};
+
+  let skip = 0;
+  do {
+    const characters = await eqdkpController().getManyMigrationCharacters({
+      skip,
+      take: BATCH_SIZE,
+    });
+
+    if (characters === null) {
+      break;
+    }
+    skip += BATCH_SIZE;
+
+    for (const c of characters) {
+      const { userId, characterName, raceId, classId } = c;
+      // TODO: consider skipping users with no earned or spent DKP.
+      // TODO: consider skipping users who haven't been active in a long time (input option)
+
+      await prisma.$transaction(async (p) => {
+        // Get the user email
+        if (emails[userId] === undefined) {
+          const user = await eqdkpService.getUserById({ userId });
+          emails[userId] = user.email;
+        }
+
+        // Upsert the user
+        const user = await userController(p).upsert({
+          email: emails[userId],
+        });
+
+        // Check if the character name is valid
+        const isNameValid = /^[a-zA-Z]*$/.test(characterName);
+
+        // Create the character if its well-defined
+        if (raceId !== undefined && classId !== undefined && isNameValid) {
+          const character = await characterController(p).upsert({
+            name: characterName,
+            raceId,
+            classId,
+            defaultPilotId: user.id,
+          });
+          logger.info(
+            `Upserted character ${character.name} for user ${user.email}`,
+          );
+        } else {
+          logger.warn(
+            `Could not create character because it is not well-defined: ${JSON.stringify(c)}`,
+          );
+        }
+      });
+    }
+  } while (true);
+
+  logger.info("Finished workflow.");
+};

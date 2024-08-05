@@ -1,6 +1,6 @@
 import { ENV } from "@/api/env";
 import { apiKeyRepository } from "@/api/repositories/apiKeyRepository";
-import { PrismaTransactionClient } from "@/api/repositories/shared/client";
+import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { app } from "@/shared/constants/app";
 import { SCOPE, Scope } from "@/shared/constants/scopes";
 import { TRPCError } from "@trpc/server";

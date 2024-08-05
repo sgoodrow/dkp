@@ -1,7 +1,7 @@
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 
 export const normalizeItemName = (name: string) => name.toLowerCase();
 

@@ -29,6 +29,11 @@ const envSchema = z.object({
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DATABASE: z.string(),
 
+  // EQ DKP Plus Migration
+  EQ_DKP_PLUS_DB_URL: z.string().optional(),
+  EQ_DKP_PLUS_BASE_URL: z.string().optional(),
+  EQ_DKP_PLUS_API_KEY: z.string().optional(),
+
   // Development
   DEV_USER_EMAIL: z.string().optional(),
 });

@@ -1,13 +1,17 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Discord from "next-auth/providers/discord";
-import { prisma } from "@/api/repositories/shared/client";
+import { prisma } from "@/api/repositories/shared/prisma";
 import { walletController } from "@/api/controllers/walletController";
 import { discordController } from "@/api/controllers/discordController";
 
 export const { handlers, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  providers: [Discord],
+  providers: [
+    Discord({
+      allowDangerousEmailAccountLinking: true,
+    }),
+  ],
   events: {
     signIn: async ({ user }) => {
       if (user.id === undefined) {
@@ -21,7 +25,7 @@ export const { handlers, auth } = NextAuth({
       if (user.id === undefined) {
         throw new Error("User ID is undefined during createUser event.");
       }
-      await walletController().create({
+      await walletController().upsert({
         userId: user.id,
       });
     },

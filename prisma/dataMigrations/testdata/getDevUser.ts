@@ -14,5 +14,5 @@ export const getDevUser = async () => {
     );
   }
 
-  return { userId: user.id };
+  return user;
 };

@@ -1,7 +1,7 @@
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 import {
   AgFilterModel,
   agFilterModelToPrismaWhere,
@@ -135,11 +135,15 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  create: async ({ userId }: { userId: string }) => {
-    return p.wallet.create({
-      data: {
+  upsert: async ({ userId }: { userId: string }) => {
+    return p.wallet.upsert({
+      where: {
         userId,
       },
+      create: {
+        userId,
+      },
+      update: {},
     });
   },
 

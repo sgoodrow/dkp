@@ -1,7 +1,7 @@
 import {
   prisma,
   PrismaTransactionClient,
-} from "@/api/repositories/shared/client";
+} from "@/api/repositories/shared/prisma";
 import {
   AgFilterModel,
   agFilterModelToPrismaWhere,
@@ -17,6 +17,36 @@ const normalizeName = (name: string) => {
 };
 
 export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
+  upsert: async ({
+    name,
+    raceId,
+    classId,
+    defaultPilotId,
+  }: {
+    name: string;
+    raceId: number;
+    classId: number;
+    defaultPilotId?: string;
+  }) => {
+    const normalizedName = normalizeName(name);
+    return p.character.upsert({
+      where: {
+        name: normalizedName,
+      },
+      create: {
+        name: normalizedName,
+        raceId,
+        classId,
+        defaultPilotId,
+      },
+      update: {
+        raceId,
+        classId,
+        defaultPilotId,
+      },
+    });
+  },
+
   createMany: async ({
     characters,
   }: {
