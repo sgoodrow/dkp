@@ -67,7 +67,7 @@ local-run:
 	@docker-compose up -d
 	@docker-compose run --rm wait-for-postgres
 	@$(nvm) && yarn run dotenv concurrently --kill-others-on-fail --prefix command --prefix-colors auto \
-		"prisma generate --watch --schema=./prisma/schema/schema.prisma" \
+		"prisma generate --watch --schema=./prisma/schema" \
 		"prisma generate --watch --schema=./prisma/eqdkp/schema.prisma" \
 		"next dev --turbo" \
 
@@ -81,7 +81,7 @@ local-db-reset-total:
 pre-commit:
 	@yarn run concurrently --group --kill-others-on-fail --prefix command --prefix-colors auto \
 		"next lint" \
-		"prisma validate --schema=./prisma/schema/schema.prisma" \
+		"prisma validate --schema=./prisma/schema" \
 		"prisma validate --schema=./prisma/eqdkp/schema.prisma" \
 		"prettier --write --check ." \
 		"prisma format" \
@@ -125,8 +125,8 @@ test:
 # --- Deployment ---
 
 build:
-	@yarn run prisma generate --schema=./prisma/schema/schema.prisma
-	@yarn run prisma migrate --schema=./prisma/schema/schema.prisma deploy
+	@yarn run prisma generate --schema=./prisma/schema
+	@yarn run prisma migrate --schema=./prisma/schema deploy
 	@yarn run prisma generate --schema=./prisma/eqdkp/schema.prisma
 	@yarn run next build
 
