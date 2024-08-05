@@ -3,12 +3,10 @@ import { createLogger } from "prisma/dataMigrations/util/log";
 
 const logger = createLogger("Ingesting admin user");
 
-export const ingestAdminUser = async () => {
+export const ingestSystemUser = async () => {
   logger.info("Started workflow.");
 
-  const user = await userController().upsert({
-    email: "admin@dkp.com",
-  });
+  const user = await userController().upsertSystemUser();
 
   logger.info("Finished workflow.");
 

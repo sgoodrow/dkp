@@ -12,16 +12,34 @@ import {
 } from "@/api/shared/agGridUtils/sort";
 import { guild } from "@/shared/constants/guild";
 
+const SYSTEM_USER_EMAIL = "system@dkp.com";
+
 export const userRepository = (p: PrismaTransactionClient = prisma) => ({
-  upsert: ({ email }: { email: string }) => {
+  upsertSystemUser: async () => {
+    return p.user.upsert({
+      where: {
+        email: SYSTEM_USER_EMAIL,
+      },
+      create: {
+        name: "System",
+        email: SYSTEM_USER_EMAIL,
+      },
+      update: {},
+    });
+  },
+
+  upsert: ({ name, email }: { name: string; email: string }) => {
     return p.user.upsert({
       where: {
         email,
       },
       create: {
+        name,
         email,
       },
-      update: {},
+      update: {
+        name,
+      },
     });
   },
 
@@ -56,6 +74,15 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
       },
       orderBy: agSortModelToPrismaOrderBy(sortModel),
     });
+  },
+
+  getSystemUserId: async () => {
+    const systemUser = await p.user.findFirstOrThrow({
+      where: {
+        email: SYSTEM_USER_EMAIL,
+      },
+    });
+    return systemUser.id;
   },
 
   getManyAdmins: async ({

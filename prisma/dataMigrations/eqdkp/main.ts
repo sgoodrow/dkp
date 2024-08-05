@@ -4,13 +4,15 @@ import { ingestEqdkpCharacters } from "prisma/dataMigrations/eqdkp/ingestEqdkpCh
 
 const logger = createLogger("Ingesting EQ DKP data");
 
-const BATCH_SIZE = 1000;
-
-export const eqdkpDataMigration = async () => {
+export const eqdkpDataMigration = async ({
+  lastVisitedAt,
+}: {
+  lastVisitedAt?: Date;
+}) => {
   logger.info("Started workflow.");
   logger.info(`Targeting ${ENV.POSTGRES_DATABASE} database`);
 
-  await ingestEqdkpCharacters();
+  await ingestEqdkpCharacters({ lastVisitedAt });
   // await ingestEqdkpRaidActivities();
   // await ingestEqdkpRaidAttendance();
   // await ingestEqdkpAdjustments();

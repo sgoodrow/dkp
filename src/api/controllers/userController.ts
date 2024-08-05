@@ -6,8 +6,13 @@ import { discordController } from "@/api/controllers/discordController";
 import { walletController } from "@/api/controllers/walletController";
 
 export const userController = (p?: PrismaTransactionClient) => ({
-  upsert: async ({ email }: { email: string }) => {
+  upsertSystemUser: async () => {
+    return userRepository(p).upsertSystemUser();
+  },
+
+  upsert: async ({ name, email }: { name: string; email: string }) => {
     const user = await userRepository(p).upsert({
+      name,
       email,
     });
     const wallet = await walletController(p).upsert({ userId: user.id });
@@ -36,6 +41,10 @@ export const userController = (p?: PrismaTransactionClient) => ({
   isAdmin: async ({ userId }: { userId: string }) => {
     const isAdmin = await userRepository(p).isAdmin({ userId });
     return !!isAdmin;
+  },
+
+  getSystemUserId: async () => {
+    return userRepository(p).getSystemUserId();
   },
 
   getManyAdmins: async (agTable: AgGrid) => {

@@ -40,11 +40,17 @@ export const eqdkpController = (p?: EqDkpPlusPrismaTransactionClient) => ({
   getManyMigrationCharacters: async ({
     skip,
     take,
+    lastVisitedAt,
   }: {
     skip: number;
     take: number;
+    lastVisitedAt?: Date;
   }) => {
-    const users = await eqdkpRepository(p).getManyUsers({ skip, take });
+    const users = await eqdkpRepository(p).getManyUsers({
+      skip,
+      take,
+      lastVisitedAt,
+    });
     if (users.length === 0) {
       return null;
     }
@@ -54,6 +60,7 @@ export const eqdkpController = (p?: EqDkpPlusPrismaTransactionClient) => ({
 
     return users.reduce<
       {
+        username: string;
         userId: number;
         characterName: string;
         classId?: number;
@@ -67,6 +74,7 @@ export const eqdkpController = (p?: EqDkpPlusPrismaTransactionClient) => ({
           const raceId = raceMap[attributes.race]?.id;
           const classId = classMap[attributes.class]?.id;
           return {
+            username: user.username,
             userId: user.user_id,
             characterName,
             classId,

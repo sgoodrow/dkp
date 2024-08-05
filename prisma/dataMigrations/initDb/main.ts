@@ -1,5 +1,5 @@
 import { ENV } from "@/api/env";
-import { ingestAdminUser } from "prisma/dataMigrations/initDb/ingestAdminUser";
+import { ingestSystemUser } from "prisma/dataMigrations/initDb/ingestSystemUser";
 import { ingestClasses } from "prisma/dataMigrations/initDb/ingestClasses";
 import { ingestDiscordMetadata } from "prisma/dataMigrations/initDb/ingestDiscordMetadata";
 import { ingestItems } from "prisma/dataMigrations/initDb/ingestItems";
@@ -13,7 +13,7 @@ export const initDbDataMigration = async () => {
 
   logger.info(`Targeting ${ENV.POSTGRES_DATABASE} database`);
 
-  const user = await ingestAdminUser();
+  const user = await ingestSystemUser();
 
   await ingestItems();
   await ingestRaces();

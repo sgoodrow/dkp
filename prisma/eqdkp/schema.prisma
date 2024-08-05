@@ -10,9 +10,9 @@ generator client {
 
 model eqdkp_User {
     // Properties
-    user_id    Int    @id
-    username   String
-    user_email String // This field is encrypted 
+    user_id        Int    @id
+    username       String
+    user_lastvisit Int
 
     // Relationships
     user_characters eqdkp_UserCharacter[]

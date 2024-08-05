@@ -10,7 +10,11 @@ const logger = createLogger("Ingesting EQ DKP characters");
 
 const BATCH_SIZE = 1000;
 
-export const ingestEqdkpCharacters = async () => {
+export const ingestEqdkpCharacters = async ({
+  lastVisitedAt,
+}: {
+  lastVisitedAt?: Date;
+}) => {
   logger.info("Started workflow.");
 
   const emails: Record<number, string> = {};
@@ -18,6 +22,7 @@ export const ingestEqdkpCharacters = async () => {
   let skip = 0;
   do {
     const characters = await eqdkpController().getManyMigrationCharacters({
+      lastVisitedAt,
       skip,
       take: BATCH_SIZE,
     });
@@ -28,10 +33,7 @@ export const ingestEqdkpCharacters = async () => {
     skip += BATCH_SIZE;
 
     for (const c of characters) {
-      const { userId, characterName, raceId, classId } = c;
-      // TODO: consider skipping users with no earned or spent DKP.
-      // TODO: consider skipping users who haven't been active in a long time (input option)
-
+      const { username, userId, characterName, raceId, classId } = c;
       await prisma.$transaction(async (p) => {
         // Get the user email
         if (emails[userId] === undefined) {
@@ -41,6 +43,7 @@ export const ingestEqdkpCharacters = async () => {
 
         // Upsert the user
         const user = await userController(p).upsert({
+          name: username,
           email: emails[userId],
         });
 

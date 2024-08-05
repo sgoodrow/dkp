@@ -10,10 +10,10 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
-import { startCase } from "lodash";
+import { lowerCase, startCase } from "lodash";
 
 const normalizeName = (name: string) => {
-  return startCase(name);
+  return startCase(lowerCase(name));
 };
 
 export const characterRepository = (p: PrismaTransactionClient = prisma) => ({

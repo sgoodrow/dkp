@@ -34,8 +34,24 @@ export const eqdkpRepository = (
     });
   },
 
-  getManyUsers: async ({ take, skip }: { take: number; skip: number }) => {
+  getManyUsers: async ({
+    take,
+    skip,
+    lastVisitedAt,
+  }: {
+    take: number;
+    skip: number;
+    lastVisitedAt?: Date;
+  }) => {
     return p.eqdkp_User.findMany({
+      where:
+        lastVisitedAt !== undefined
+          ? {
+              user_lastvisit: {
+                gt: Math.floor(lastVisitedAt.getTime() / 1000),
+              },
+            }
+          : undefined,
       orderBy: {
         user_id: "asc",
       },

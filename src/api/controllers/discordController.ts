@@ -115,7 +115,7 @@ export const discordController = (p?: PrismaTransactionClient) => ({
       });
 
       await discordRepository(p).createSyncEvent({
-        userId: userId,
+        userId: userId || (await userController(p).getSystemUserId()),
       });
     });
   },
