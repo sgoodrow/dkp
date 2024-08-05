@@ -14,7 +14,7 @@ help:
 	@echo " * db-init                  initialize a database"
 	@echo " * db-clear                 clears the non-user tables of a database"
 	@echo " * db-testdata              seed a database with test data"
-	@echo " * db-drop-local            drop the local database and start again
+	@echo " * db-drop-local            drop the local database and start again"
 	@echo " * db-migrate               migrate the local database"
 	@echo " * db-browse                open prisma studio"
 	@echo
