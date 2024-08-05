@@ -45,7 +45,7 @@ export const ingestCharacters = async ({ userId }: { userId: string }) => {
 
   await Promise.all(
     knownCharacters.map(async (c) =>
-      characterController().create({
+      characterController().upsert({
         name: c.name,
         classId: await characterController().getClassIdByName({
           name: c.class,
@@ -58,7 +58,7 @@ export const ingestCharacters = async ({ userId }: { userId: string }) => {
 
   await Promise.all(
     botCharacters.map(async (c) =>
-      characterController().create({
+      characterController().upsert({
         name: c.name,
         classId: await characterController().getClassIdByName({
           name: c.class,

@@ -64,6 +64,8 @@ After the migration process, the system will have the following state:
 3. **Created Transactions**
    - One cleared adjustment transaction is created for each character.
 
+**Important Note: EQ DKP Plus does not have a concept of a bot character (a character without a default pilot) and characters will be created by this migration that need to be disconnected from a user to mark them as a bot character.**
+
 ## Post-Migration User Onboarding
 
 When a user signs in with Discord:

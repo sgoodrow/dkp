@@ -48,22 +48,9 @@ model eqdkp_Character {
     profiledata Json
 
     // Relationships
-    wallet        eqdkp_Wallet?
     userCharacter eqdkp_UserCharacter?
 
     @@map("eqdkp23_members")
-}
-
-model eqdkp_Wallet {
-    // Properties
-    id        Int   @id
-    member_id Int   @unique
-    current   Float
-
-    // Relationships
-    character eqdkp_Character @relation(fields: [member_id], references: [member_id])
-
-    @@map("eqdkp23_member_points")
 }
 
 model eqdkp_CharacterAttribute {
@@ -98,3 +85,8 @@ model eqdkp_CharacterAttribute {
 
     @@map("eqdkp23_member_profilefields")
 }
+
+// eqdkp23_adjustments
+// eqdkp23_items
+// eqdkp23_raids
+// eqdkp23_raid_attendees

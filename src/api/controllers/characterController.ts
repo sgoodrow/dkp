@@ -15,10 +15,8 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     return characterRepository(p).createMany({ characters });
   },
 
-  create: async (character: CreateCharacter) => {
-    return characterController(p).createMany({
-      characters: [character],
-    });
+  upsert: async (character: CreateCharacter) => {
+    return characterRepository(p).upsert(character);
   },
 
   createClass: async ({

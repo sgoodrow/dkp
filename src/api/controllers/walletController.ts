@@ -68,8 +68,8 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     });
   },
 
-  create: async ({ userId }: { userId: string }) => {
-    return walletRepository(p).create({ userId });
+  upsert: async ({ userId }: { userId: string }) => {
+    return walletRepository(p).upsert({ userId });
   },
 
   createManyAttendants: async ({

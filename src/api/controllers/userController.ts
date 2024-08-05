@@ -3,8 +3,17 @@ import { apiKeyController } from "@/api/controllers/apiKeyController";
 import { userRepository } from "@/api/repositories/userRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { discordController } from "@/api/controllers/discordController";
+import { walletController } from "@/api/controllers/walletController";
 
 export const userController = (p?: PrismaTransactionClient) => ({
+  upsert: async ({ email }: { email: string }) => {
+    const user = await userRepository(p).upsert({
+      email,
+    });
+    const wallet = await walletController(p).upsert({ userId: user.id });
+    return { ...user, wallet };
+  },
+
   addDisplayName: <
     T extends {
       name: string | null;

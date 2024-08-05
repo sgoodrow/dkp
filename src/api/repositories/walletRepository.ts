@@ -135,11 +135,15 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  create: async ({ userId }: { userId: string }) => {
-    return p.wallet.create({
-      data: {
+  upsert: async ({ userId }: { userId: string }) => {
+    return p.wallet.upsert({
+      where: {
         userId,
       },
+      create: {
+        userId,
+      },
+      update: {},
     });
   },
 

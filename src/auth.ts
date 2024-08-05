@@ -25,7 +25,7 @@ export const { handlers, auth } = NextAuth({
       if (user.id === undefined) {
         throw new Error("User ID is undefined during createUser event.");
       }
-      await walletController().create({
+      await walletController().upsert({
         userId: user.id,
       });
     },

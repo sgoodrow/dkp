@@ -15,7 +15,7 @@ export const characterApiRoutes = createRoutes({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      return characterController().create({
+      return characterController().upsert({
         name: input.name,
         raceId: input.raceId,
         classId: input.classId,

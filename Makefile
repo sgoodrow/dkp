@@ -81,7 +81,8 @@ local-db-reset-total:
 pre-commit:
 	@yarn run concurrently --group --kill-others-on-fail --prefix command --prefix-colors auto \
 		"next lint" \
-		"prisma validate" \
+		"prisma validate --schema=./prisma/schema/schema.prisma" \
+		"prisma validate --schema=./prisma/eqdkp/schema.prisma" \
 		"prettier --write --check ." \
 		"prisma format" \
 		"tsc --noEmit"

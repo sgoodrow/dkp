@@ -1,145 +1,69 @@
-import { characterController } from "@/api/controllers/characterController";
+import { prisma } from "@/api/repositories/shared/prisma";
 import { eqdkpController } from "prisma/dataMigrations/eqdkp/eqdkpController";
-import {
-  ClassMap,
-  RaceMap,
-} from "prisma/dataMigrations/eqdkp/getCharacterAttributesMap";
 import { createLogger } from "prisma/dataMigrations/util/log";
-import { z } from "zod";
-
-const BATCH_SIZE = 1000;
+import { eqdkpService } from "prisma/dataMigrations/eqdkp/eqdkpService";
+import { userController } from "@/api/controllers/userController";
+import { characterController } from "@/api/controllers/characterController";
 
 const logger = createLogger("Ingesting EQ DKP characters");
 
-const profiledataSchema = z.object({
-  race: z.union([z.string(), z.number()]),
-  class: z.union([z.string(), z.number()]),
-});
+const BATCH_SIZE = 1000;
 
-const logIgnored = ({
-  ignored,
-  reason,
-}: {
-  ignored: {
-    wallet: {
-      current: number;
-    } | null;
-  } & {
-    member_name: string;
-    profiledata: any;
-  };
-  reason: string;
-}) => {
-  logger.warn(
-    `Ignoring ${ignored.member_name} (dkp: ${ignored.wallet?.current}): ${reason}.`,
-  );
-  return null;
-};
-
-type CharacterToIngest = {
-  characterName: string;
-  pilotCharacterName: string;
-  amount: number;
-  classId: number;
-  raceId: number;
-};
-
-export const ingestEqdkpCharacters = async ({
-  classMap,
-  raceMap,
-}: {
-  classMap: ClassMap;
-  raceMap: RaceMap;
-}) => {
+export const ingestEqdkpCharacters = async () => {
   logger.info("Started workflow.");
+
+  const emails: Record<number, string> = {};
 
   let skip = 0;
   do {
-    const eqdkpUsers = await eqdkpController().getManyUsers({
+    const characters = await eqdkpController().getManyMigrationCharacters({
       skip,
       take: BATCH_SIZE,
     });
 
-    if (eqdkpUsers.length === 0) {
+    if (characters === null) {
       break;
     }
-
-    // TODO: can we merge characters w/ the same name if they also have the same race/class?
-    // TODO: can we default unknown race and class to some default combination?
-    const names = new Set<string>();
-
-    // ingest the user's characters, wallets (single adjustment), etc
-    // create a transaction where the pilot character name is the eqdkp user name, and the character is the character, and the amount is the amount
-    // then someone can claim that character and transaction becomes theirs, and we can verify by comparing the pilot character name to their discord name
-    const transactions = eqdkpUsers.reduce<(CharacterToIngest | null)[]>(
-      (acc, user) => {
-        const characters = user.user_characters.map(({ character }) => {
-          const attributes = profiledataSchema.parse(character.profiledata);
-          const characterName = character.member_name.split(" ")[0];
-          if (names.has(characterName)) {
-            return logIgnored({
-              ignored: character,
-              reason: "character name is not unique",
-            });
-          }
-          if (!/^[a-zA-Z]*$/.test(characterName)) {
-            return logIgnored({
-              ignored: character,
-              reason: "character name is not all alphabetic characters",
-            });
-          }
-          const classId = classMap[attributes.class]?.id;
-          if (classId === undefined) {
-            return logIgnored({
-              ignored: character,
-              reason: "no class found for character",
-            });
-          }
-          const raceId = raceMap[attributes.race]?.id;
-          if (raceId === undefined) {
-            return logIgnored({
-              ignored: character,
-              reason: "no race found for character",
-            });
-          }
-          const amount = character.wallet?.current;
-          if (amount === undefined) {
-            return logIgnored({
-              ignored: character,
-              reason: "no wallet found for character",
-            });
-          }
-          names.add(characterName);
-          return {
-            characterName,
-            pilotCharacterName: user.username,
-            amount,
-            classId,
-            raceId,
-          };
-        });
-        return acc.concat(characters);
-      },
-      [],
-    );
-
-    const cleaned = transactions.reduce<CharacterToIngest[]>((acc, c) => {
-      if (c !== null) {
-        acc.push(c);
-      }
-      return acc;
-    }, []);
-
-    characterController().createMany({
-      characters: cleaned.map((t) => ({
-        name: t.characterName,
-        defaultPilotId: undefined,
-        classId: t.classId,
-        raceId: t.raceId,
-      })),
-    });
-
     skip += BATCH_SIZE;
+
+    for (const c of characters) {
+      const { userId, characterName, raceId, classId } = c;
+      // TODO: consider skipping users with no earned or spent DKP.
+      // TODO: consider skipping users who haven't been active in a long time (input option)
+
+      await prisma.$transaction(async (p) => {
+        // Get the user email
+        if (emails[userId] === undefined) {
+          const user = await eqdkpService.getUserById({ userId });
+          emails[userId] = user.email;
+        }
+
+        // Upsert the user
+        const user = await userController(p).upsert({
+          email: emails[userId],
+        });
+
+        // Check if the character name is valid
+        const isNameValid = /^[a-zA-Z]*$/.test(characterName);
+
+        // Create the character if its well-defined
+        if (raceId !== undefined && classId !== undefined && isNameValid) {
+          const character = await characterController(p).upsert({
+            name: characterName,
+            raceId,
+            classId,
+            defaultPilotId: user.id,
+          });
+          logger.info(
+            `Upserted character ${character.name} for user ${user.email}`,
+          );
+        } else {
+          logger.warn(
+            `Could not create character because it is not well-defined: ${JSON.stringify(c)}`,
+          );
+        }
+      });
+    }
   } while (true);
 
   logger.info("Finished workflow.");
