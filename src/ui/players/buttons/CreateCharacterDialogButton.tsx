@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import { FC, useState } from "react";
 import { useForm } from "@tanstack/react-form";
+import { character } from "@/shared/utils/character";
 
 const DIALOG_TITLE_ID = "create-character-dialog-title";
 
@@ -104,7 +105,7 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                     if (value.length < 4) {
                       return "Name must be at least 3 characters long";
                     }
-                    if (!/^[a-zA-Z]*$/.test(value)) {
+                    if (!character.isValidName(value)) {
                       return "Name can only contain letters";
                     }
                   },

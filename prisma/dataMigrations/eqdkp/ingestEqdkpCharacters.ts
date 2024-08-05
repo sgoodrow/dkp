@@ -4,6 +4,7 @@ import { createLogger } from "prisma/dataMigrations/util/log";
 import { eqdkpService } from "prisma/dataMigrations/eqdkp/eqdkpService";
 import { userController } from "@/api/controllers/userController";
 import { characterController } from "@/api/controllers/characterController";
+import { character } from "@/shared/utils/character";
 
 const logger = createLogger("Ingesting EQ DKP characters");
 
@@ -44,7 +45,7 @@ export const ingestEqdkpCharacters = async () => {
         });
 
         // Check if the character name is valid
-        const isNameValid = /^[a-zA-Z]*$/.test(characterName);
+        const isNameValid = character.isValidName(characterName);
 
         // Create the character if its well-defined
         if (raceId !== undefined && classId !== undefined && isNameValid) {

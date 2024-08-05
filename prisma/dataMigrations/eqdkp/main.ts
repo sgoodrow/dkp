@@ -1,10 +1,5 @@
-import { prisma } from "@/api/repositories/shared/prisma";
 import { ENV } from "@/api/env";
-import { eqdkpController } from "prisma/dataMigrations/eqdkp/eqdkpController";
 import { createLogger } from "prisma/dataMigrations/util/log";
-import { eqdkpService } from "prisma/dataMigrations/eqdkp/eqdkpService";
-import { userController } from "@/api/controllers/userController";
-import { characterController } from "@/api/controllers/characterController";
 import { ingestEqdkpCharacters } from "prisma/dataMigrations/eqdkp/ingestEqdkpCharacters";
 
 const logger = createLogger("Ingesting EQ DKP data");
