@@ -52,10 +52,16 @@ make local-run
 
 The application will be available at [localhost:3000](http://localhost:3000).
 
-After logging in, you may want to seed the database with some useful defaults by running:
+After logging in, you may want to seed the database with some useful test characters and raid activities by running:
 
 ```bash
 make db-testdata
+```
+
+Or, you can start an EQ DKP Plus migration by running:
+
+```bash
+make db-etl-eqdkp
 ```
 
 ### Debugging the app

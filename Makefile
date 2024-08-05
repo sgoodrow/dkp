@@ -9,19 +9,18 @@ help:
 	@echo "--- Developing ---"
 	@echo " * local-setup              install the local server dependencies"
 	@echo " * local-run                run local server"
-	@echo " * local-db-reset-total     reset all tables of the local database"
-	@echo " * pre-commit               run pre-commit hooks"
 	@echo
-	@echo "--- Data Migrations ---"
+	@echo "--- Database ---"
 	@echo " * db-init                  initialize a database"
-	@echo " * db-reset                 reset the non-user tables of a database"
+	@echo " * db-clear                 clears the non-user tables of a database"
 	@echo " * db-testdata              seed a database with test data"
-	@echo " * db-reset-testdata        reset the non-user tables of a database and seed with test data"
-	@echo
-	@echo "--- Utilities ---"
+	@echo " * db-drop-local            drop the local database and start again
 	@echo " * db-migrate               migrate the local database"
 	@echo " * db-browse                open prisma studio"
+	@echo
+	@echo "--- Utilities ---"
 	@echo " * app-version              get project version"
+	@echo " * pre-commit               run pre-commit hooks"
 	@echo
 	@echo "--- Testing ---"
 	@echo " * test                     run tests with interactive CLI"
@@ -61,7 +60,7 @@ local-setup:
 	@docker-compose up -d
 	@docker-compose run --rm wait-for-postgres
 	@make db-migrate
-	@make db-reset
+	@make db-init
 
 local-run:
 	@docker-compose up -d
@@ -71,35 +70,21 @@ local-run:
 		"prisma generate --watch --schema=./prisma/eqdkp/schema.prisma" \
 		"next dev --turbo" \
 
-local-db-reset-total:
+# ---- Data Migrations ----
+db-drop-local:
 	@docker-compose down
 	@docker volume rm dkp_postgres_data
 	@docker-compose up -d
 	@make db-migrate
-	@make db-init
 
-pre-commit:
-	@yarn run concurrently --group --kill-others-on-fail --prefix command --prefix-colors auto \
-		"next lint" \
-		"prisma validate --schema=./prisma/schema" \
-		"prisma validate --schema=./prisma/eqdkp/schema.prisma" \
-		"prettier --write --check ." \
-		"prisma format" \
-		"tsc --noEmit"
-
-# ---- Data Migrations ----
 db-init:
 	@yarn run dotenv tsx ./prisma/dataMigrations/initDb/run.ts
 
-db-reset:
-	@yarn run dotenv tsx ./prisma/dataMigrations/resetDb/run.ts
+db-clear:
+	@yarn run dotenv tsx ./prisma/dataMigrations/clearDb/run.ts
 
 db-testdata:
 	@yarn run dotenv tsx ./prisma/dataMigrations/testdata/run.ts
-
-db-reset-testdata:
-	@make db-reset
-	@make db-testdata
 
 db-etl-eqdkp:
 	@yarn run dotenv tsx ./prisma/dataMigrations/eqdkp/run.ts
@@ -109,13 +94,20 @@ db-etl-eqdkp:
 db-migrate:
 	@yarn prisma migrate dev
 
-
 db-browse:
 	@npx prisma studio
 
 app-version:
 	@./bin/get-version.sh
 
+pre-commit:
+	@yarn run concurrently --group --kill-others-on-fail --prefix command --prefix-colors auto \
+		"next lint" \
+		"prisma validate --schema=./prisma/schema" \
+		"prisma validate --schema=./prisma/eqdkp/schema.prisma" \
+		"prettier --write --check ." \
+		"prisma format" \
+		"tsc --noEmit"
 # --- Testing ---
 
 test:
