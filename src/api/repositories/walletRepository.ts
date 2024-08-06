@@ -263,6 +263,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
           pilotCharacterName,
           itemName,
           walletId,
+          characterId,
           itemId,
           raidActivityId,
           createdById,
