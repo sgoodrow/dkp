@@ -124,7 +124,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
             characterMap.get(p.pilotCharacterName)?.defaultWalletId ||
             characterMap.get(p.characterName)?.defaultWalletId ||
             null,
-          itemId: itemMap.get(p.itemName),
+          itemId: itemMap.get(p.itemName).id,
         })),
         raidActivityId: raidActivity.id,
         createdById,

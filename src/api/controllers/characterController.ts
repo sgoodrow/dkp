@@ -169,12 +169,8 @@ export const characterController = (p?: PrismaTransactionClient) => ({
   }: {
     characterNames: string[];
   }) => {
-    const map = await characterRepository(p).getCharacterNameMap({
+    return characterRepository(p).getCharacterNameMap({
       characterNames,
     });
-    return {
-      get: (characterName?: string) =>
-        characterName === undefined ? null : map[characterName] || null,
-    };
   },
 });

@@ -32,9 +32,6 @@ export const itemController = (p?: PrismaTransactionClient) => ({
   },
 
   getItemMap: async ({ itemNames }: { itemNames: string[] }) => {
-    const map = await itemRepository(p).getItemMap({ itemNames });
-    return {
-      get: (itemName: string) => map[normalizeItemName(itemName)] || null,
-    };
+    return itemRepository(p).getItemMap({ itemNames });
   },
 });

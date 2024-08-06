@@ -335,22 +335,20 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
         },
       },
     });
-    return characters.reduce<
-      Record<
-        string,
-        {
-          name: string;
-          id: number;
-          defaultWalletId: number | null;
-        }
-      >
+
+    const map = characters.reduce<
+      Record<string, { id: number; defaultWalletId: number | null }>
     >((acc, c) => {
       acc[c.name] = {
-        name: c.name,
         id: c.id,
         defaultWalletId: c.defaultPilot?.wallet?.id || null,
       };
       return acc;
     }, {});
+
+    return {
+      get: (name?: string) =>
+        name === undefined ? null : map[normalizeName(name)] || null,
+    };
   },
 });
