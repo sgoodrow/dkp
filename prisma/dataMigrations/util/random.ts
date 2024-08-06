@@ -1,11 +1,11 @@
 import { YEARS } from "@/shared/constants/time";
 import { random, range, sample, sampleSize } from "lodash";
-import { items } from "prisma/dataMigrations/initDb/ingestItems";
+import { items } from "prisma/dataMigrations/initDb/eq/ingestItems";
 import {
   knownCharacterNames,
   unknownCharacterNames,
   botCharacterNames,
-} from "prisma/dataMigrations/testdata/ingestCharacters";
+} from "prisma/dataMigrations/testdata/ingestTestCharacters";
 
 const randomString = (minLength: number, maxLength: number) => {
   const length = random(minLength, maxLength);

@@ -11,26 +11,41 @@ type CreateCharacter = {
 };
 
 export const characterController = (p?: PrismaTransactionClient) => ({
-  createMany: async ({ characters }: { characters: CreateCharacter[] }) => {
-    return characterRepository(p).createMany({ characters });
+  createMany: async ({
+    characters,
+    guildId,
+  }: {
+    characters: CreateCharacter[];
+    guildId: number;
+  }) => {
+    return characterRepository(p).createMany({ characters, guildId });
   },
 
-  upsert: async (character: CreateCharacter) => {
-    return characterRepository(p).upsert(character);
+  upsert: async ({
+    character,
+    guildId,
+  }: {
+    character: CreateCharacter;
+    guildId: number;
+  }) => {
+    return characterRepository(p).upsert({ character, guildId });
   },
 
   createClass: async ({
+    gameId,
     name,
     colorHexLight,
     colorHexDark,
     allowedRaces,
   }: {
+    gameId: number;
     name: string;
     colorHexLight: string;
     colorHexDark: string;
     allowedRaces: string[];
   }) => {
     return characterRepository(p).createClass({
+      gameId,
       name,
       colorHexLight,
       colorHexDark,
@@ -38,8 +53,8 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     });
   },
 
-  createRace: async ({ name }: { name: string }) => {
-    return characterRepository(p).createRace({ name });
+  createRace: async ({ gameId, name }: { gameId: number; name: string }) => {
+    return characterRepository(p).createRace({ gameId, name });
   },
 
   isNameAvailable: async ({ name }: { name: string }) => {
@@ -166,11 +181,14 @@ export const characterController = (p?: PrismaTransactionClient) => ({
 
   getCharacterNameMap: async ({
     characterNames,
+    guildId,
   }: {
     characterNames: string[];
+    guildId: number;
   }) => {
     return characterRepository(p).getCharacterNameMap({
       characterNames,
+      guildId,
     });
   },
 });

@@ -26,12 +26,13 @@ export const ingestEqdkpRaidActivityTypes = async ({
     skip += BATCH_SIZE;
 
     for (const { event_name, event_value } of raidActivityTypes) {
-      await raidActivityController().upsertType({
+      const raidActivityTyoe = await raidActivityController().upsertType({
         name: event_name,
         defaultPayout: event_value,
         createdById: userId,
         updatedById: userId,
       });
+      logger.info(`Upserted raid activity type: ${raidActivityTyoe.name}`);
     }
   } while (true);
 

@@ -1,7 +1,7 @@
 import { characterController } from "@/api/controllers/characterController";
 import { createLogger } from "prisma/dataMigrations/util/log";
 
-const logger = createLogger("Ingesting characters");
+const logger = createLogger("Ingesting dev characters");
 
 const knownCharacters = [
   { name: "Magus", class: "Magician", race: "Human" },
@@ -40,7 +40,7 @@ export const unknownCharacterNames = ["Squid", "Bob", "Edwina"];
 
 export const botCharacterNames = botCharacters.map((c) => c.name);
 
-export const ingestCharacters = async ({ userId }: { userId: string }) => {
+export const ingestTestCharacters = async ({ userId }: { userId: string }) => {
   logger.info("Started workflow.");
 
   await Promise.all(

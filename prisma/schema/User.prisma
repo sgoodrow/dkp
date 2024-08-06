@@ -9,20 +9,12 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // Relationships
-  accounts                 Account[]
-  sessions                 Session[]
-  Authenticator            Authenticator[]
-  apiKeys                  ApiKey[]
-  characters               Character[]
-  wallet                   Wallet?
-  createdTransactions      WalletTransaction[]  @relation("WalletTransactionCreator")
-  updatedTransactions      WalletTransaction[]  @relation("WalletTransactionLatestUpdater")
-  createdRaidActivities    RaidActivity[]       @relation("RaidActivityCreator")
-  createdRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeCreator")
-  updatedRaidActivities    RaidActivity[]       @relation("RaidActivityLatestUpdater")
-  updatedRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeLatestUpdater")
-  discordSyncEvents        DiscordSyncEvent[]   @relation("DiscordSyncEventCreator")
-  discordMetadata          DiscordUserMetadata?
+  accounts         Account[]
+  sessions         Session[]
+  Authenticator    Authenticator[]
+  guildMemberships GuildMember[]
+  createdGuilds    Guild[]         @relation("GuildCreator")
+  updatedGuilds    Guild[]         @relation("GuildLatestUpdater")
 }
 
 model Account {
@@ -68,22 +60,6 @@ model VerificationToken {
 
   // Constraints
   @@id([identifier, token])
-}
-
-model ApiKey {
-  // Columns
-  id           Int      @id @default(autoincrement())
-  name         String
-  hashedApiKey String   @unique
-  expires      DateTime
-  scopes       String[]
-
-  // Relationships
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Constraints
-  @@unique([userId, name])
 }
 
 model Authenticator {

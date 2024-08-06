@@ -1,0 +1,15 @@
+model ApiKey {
+    // Columns
+    id           Int      @id @default(autoincrement())
+    name         String
+    hashedApiKey String   @unique
+    expires      DateTime
+    scopes       String[]
+
+    // Relationships
+    guildMemberId Int
+    guildMember   GuildMember @relation(fields: [guildMemberId], references: [id])
+
+    // Constraints
+    @@unique([guildMemberId, name])
+}

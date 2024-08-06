@@ -1,10 +1,10 @@
-import { ENV } from "@/api/env";
+import { DEVENV } from "prisma/dataMigrations/testdata/devenv";
 import { PrismaClient } from "prisma/eqdkp/client";
 
 export const prismaEqdkp = new PrismaClient({
   datasources: {
     db: {
-      url: ENV.EQ_DKP_PLUS_DB_URL,
+      url: DEVENV.DEV_EQ_DKP_PLUS_DB_URL,
     },
   },
 });

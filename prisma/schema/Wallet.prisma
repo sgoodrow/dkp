@@ -5,8 +5,8 @@ model Wallet {
   updatedAt DateTime @updatedAt
 
   // Relationships
-  userId       String              @unique
-  user         User                @relation(fields: [userId], references: [id])
+  memberId     Int                 @unique
+  member       GuildMember         @relation(fields: [memberId], references: [id])
   transactions WalletTransaction[]
 }
 
@@ -34,16 +34,16 @@ model WalletTransaction {
   itemName             String?
 
   // Relationships
-  walletId       Int?
-  wallet         Wallet?       @relation(fields: [walletId], references: [id])
-  characterId    Int?
-  character      Character?    @relation(fields: [characterId], references: [id])
-  itemId         Int?
-  item           Item?         @relation(fields: [itemId], references: [id])
-  raidActivityId Int?
-  raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
-  createdById    String
-  createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
-  updatedById    String
-  updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
+  walletId        Int
+  wallet          Wallet       @relation(fields: [walletId], references: [id])
+  characterId     Int?
+  character       Character?   @relation(fields: [characterId], references: [id])
+  itemId          Int?
+  item            Item?        @relation(fields: [itemId], references: [id])
+  raidActivityId  Int
+  raidActivity    RaidActivity @relation(fields: [raidActivityId], references: [id])
+  createdById     Int
+  createdByMember GuildMember  @relation("WalletTransactionCreator", fields: [createdById], references: [id])
+  updatedById     Int
+  updatedByMember GuildMember  @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
 }

@@ -16,11 +16,11 @@ export const eqdkpDataMigration = async ({
 
   const userId = await userController().getSystemUserId();
 
-  // TODO: Add some upfront validation that will fail the job:
+  // TODO: Add some upfront validation:
   // 1. Characters with no race/class
   // 2. Characters with invalid first names
   // 3. Duplicate character names
-  // 4. Duplicate type names
+  // 4. Duplicate raid activity type names
 
   await ingestEqdkpRaidActivityTypes({ userId });
   await ingestEqdkpCharacters({ lastVisitedAt });

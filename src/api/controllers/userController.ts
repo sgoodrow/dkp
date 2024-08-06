@@ -10,7 +10,7 @@ export const userController = (p?: PrismaTransactionClient) => ({
     return userRepository(p).upsertSystemUser();
   },
 
-  upsert: async ({ name, email }: { name: string; email: string }) => {
+  upsert: async ({ name, email }: { name?: string; email: string }) => {
     const user = await userRepository(p).upsert({
       name,
       email,

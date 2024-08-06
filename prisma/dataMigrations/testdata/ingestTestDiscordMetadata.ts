@@ -3,7 +3,11 @@ import { createLogger } from "prisma/dataMigrations/util/log";
 
 const logger = createLogger("Ingesting discord metadata");
 
-export const ingestDiscordMetadata = async ({ userId }: { userId: string }) => {
+export const ingestTestDiscordMetadata = async ({
+  userId,
+}: {
+  userId: string;
+}) => {
   logger.info("Started workflow.");
 
   discordController().sync({ userId });

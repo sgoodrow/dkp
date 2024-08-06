@@ -1,20 +1,20 @@
-import { ENV } from "@/api/env";
 import { SECONDS } from "@/shared/constants/time";
 import ky from "ky";
 import PromiseQueue from "p-queue";
+import { DEVENV } from "prisma/dataMigrations/testdata/devenv";
 
 const queue = new PromiseQueue({
   interval: 1 * SECONDS,
   intervalCap: 10,
 });
 
-if (ENV.EQ_DKP_PLUS_BASE_URL === undefined) {
+if (DEVENV.DEV_EQ_DKP_PLUS_BASE_URL === undefined) {
   throw new Error("Cannot use eqdkpService without a base URL.");
 }
-if (ENV.EQ_DKP_PLUS_DB_URL === undefined) {
+if (DEVENV.DEV_EQ_DKP_PLUS_DB_URL === undefined) {
   throw new Error("Cannot use eqdkpService without a DB URL.");
 }
-if (ENV.EQ_DKP_PLUS_API_KEY === undefined) {
+if (DEVENV.DEV_EQ_DKP_PLUS_API_KEY === undefined) {
   throw new Error("Cannot use eqdkpService without an API key.");
 }
 
@@ -58,6 +58,6 @@ const createEqdkpService = ({
 };
 
 export const eqdkpService = createEqdkpService({
-  baseUrl: ENV.EQ_DKP_PLUS_BASE_URL,
-  apiKey: ENV.EQ_DKP_PLUS_API_KEY,
+  baseUrl: DEVENV.DEV_EQ_DKP_PLUS_BASE_URL,
+  apiKey: DEVENV.DEV_EQ_DKP_PLUS_API_KEY,
 });

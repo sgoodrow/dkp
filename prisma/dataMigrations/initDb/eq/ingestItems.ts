@@ -15,12 +15,12 @@ export const items = schema.parse(data);
 
 const logger = createLogger("Ingesting items");
 
-export const ingestItems = async () => {
+export const ingestItems = async ({ gameId }: { gameId: number }) => {
   logger.info("Started workflow.");
 
   await processBatch(
     items,
-    (batch) => itemController().createMany({ items: batch }),
+    (batch) => itemController().createMany({ items: batch, gameId }),
     (batchNumber, totalBatches) => {
       logger.info(`Ingested batch ${batchNumber} of ${totalBatches}`);
     },

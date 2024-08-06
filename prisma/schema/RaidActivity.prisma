@@ -8,13 +8,13 @@ model RaidActivity {
   note String?
 
   // Relationships
-  transactions  WalletTransaction[]
-  typeId        Int
-  type          RaidActivityType    @relation(fields: [typeId], references: [id])
-  createdById   String
-  createdByUser User                @relation("RaidActivityCreator", fields: [createdById], references: [id])
-  updatedById   String
-  updatedByUser User                @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
+  transactions    WalletTransaction[]
+  typeId          Int
+  type            RaidActivityType    @relation(fields: [typeId], references: [id])
+  createdById     Int
+  createdByMember GuildMember         @relation("RaidActivityCreator", fields: [createdById], references: [id])
+  updatedById     Int
+  updatedByMember GuildMember         @relation("RaidActivityLatestUpdater", fields: [updatedById], references: [id])
 }
 
 model RaidActivityType {
@@ -28,9 +28,11 @@ model RaidActivityType {
   defaultPayout Float
 
   // Relationships
-  raidActivities RaidActivity[]
-  createdById    String
-  createdByUser  User           @relation("RaidActivityTypeCreator", fields: [createdById], references: [id])
-  updatedById    String
-  updatedByUser  User           @relation("RaidActivityTypeLatestUpdater", fields: [updatedById], references: [id])
+  guildId         Int
+  guild           Guild          @relation(fields: [guildId], references: [id])
+  raidActivities  RaidActivity[]
+  createdById     Int
+  createdByMember GuildMember    @relation("RaidActivityTypeCreator", fields: [createdById], references: [id])
+  updatedById     Int
+  updatedByMember GuildMember    @relation("RaidActivityTypeLatestUpdater", fields: [updatedById], references: [id])
 }

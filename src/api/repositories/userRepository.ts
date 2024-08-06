@@ -28,7 +28,7 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  upsert: ({ name, email }: { name: string; email: string }) => {
+  upsert: ({ name, email }: { name?: string; email: string }) => {
     return p.user.upsert({
       where: {
         email,

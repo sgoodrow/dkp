@@ -12,7 +12,11 @@ const logger = createLogger("Ingesting raid activities");
 
 const NUM_ACTIVITIES = 10;
 
-export const ingestRaidActivities = async ({ userId }: { userId: string }) => {
+export const ingestTestRaidActivities = async ({
+  userId,
+}: {
+  userId: string;
+}) => {
   logger.info("Started workflow.");
 
   const raidActivityTypes = await Promise.all(

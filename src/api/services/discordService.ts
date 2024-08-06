@@ -1,12 +1,14 @@
 import { API } from "@discordjs/core/http-only";
 import { REST } from "@discordjs/rest";
-import { ENV } from "@/api/env";
 import { guild } from "@/shared/constants/guild";
 import { APIGuildMember } from "@discordjs/core/http-only";
 import color from "color";
 import { max } from "lodash";
+import { DEVENV } from "prisma/dataMigrations/testdata/devenv";
 
-const rest = new REST({ version: "10" }).setToken(ENV.DISCORD_CLIENT_TOKEN!);
+const rest = new REST({ version: "10" }).setToken(
+  DEVENV.DEV_DISCORD_CLIENT_TOKEN!,
+);
 
 const client = new API(rest);
 
