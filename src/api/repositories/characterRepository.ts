@@ -10,10 +10,18 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
-import { upperFirst } from "lodash";
+import { startCase, upperFirst } from "lodash";
 
 const normalizeName = (name: string) => {
   return upperFirst(name.toLowerCase());
+};
+
+const normalizeRace = (race: string) => {
+  return startCase(race.toLowerCase());
+};
+
+const normalizeClass = (c: string) => {
+  return startCase(c.toLowerCase());
 };
 
 export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
@@ -82,7 +90,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   }) => {
     return p.characterClass.create({
       data: {
-        name: normalizeName(name),
+        name: normalizeClass(name),
         colorHexLight,
         colorHexDark,
         raceClassCombinations: {
@@ -90,7 +98,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
             return {
               race: {
                 connect: {
-                  name: normalizeName(raceName),
+                  name: normalizeRace(raceName),
                 },
               },
             };
@@ -103,7 +111,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   createRace: async ({ name }: { name: string }) => {
     return p.characterRace.create({
       data: {
-        name: normalizeName(name),
+        name: normalizeRace(name),
       },
     });
   },
@@ -255,7 +263,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   getClassByName: async ({ name }: { name: string }) => {
     return p.characterClass.findUniqueOrThrow({
       where: {
-        name: normalizeName(name),
+        name: normalizeClass(name),
       },
     });
   },
@@ -275,7 +283,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   getRaceByName: async ({ name }: { name: string }) => {
     return p.characterRace.findUniqueOrThrow({
       where: {
-        name: normalizeName(name),
+        name: normalizeRace(name),
       },
     });
   },
