@@ -6,8 +6,6 @@ type CreateItem = {
   wikiSlug: string;
 };
 
-const normalizeItemName = (name: string) => name.toLowerCase();
-
 export const itemController = (p?: PrismaTransactionClient) => ({
   createMany: async ({ items }: { items: CreateItem[] }) => {
     return itemRepository(p).createMany({ items });

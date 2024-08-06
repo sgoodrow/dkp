@@ -41,6 +41,13 @@ export const RaidActivitySummaryCard: FC<{ id: number }> = ({ id }) => {
     (t) => t.amount,
   );
 
+  const change =
+    earned === undefined || spent === undefined
+      ? undefined
+      : earned !== null && spent !== null
+        ? earned.sum - spent.sum
+        : null;
+
   return (
     <LabeledCard title="Summary" labelId="raid-activity-label">
       <OverflowTooltipTypography width={1}>
@@ -52,7 +59,7 @@ export const RaidActivitySummaryCard: FC<{ id: number }> = ({ id }) => {
         <Unstable_Grid2 container spacing={1}>
           <Unstable_Grid2 xs={6} sm={4}>
             <StatCard
-              label="DKP Earned"
+              label="DKP earned"
               value={
                 <TransactionAmountTypography
                   amount={earned ? earned.sum : earned}
@@ -63,7 +70,7 @@ export const RaidActivitySummaryCard: FC<{ id: number }> = ({ id }) => {
           </Unstable_Grid2>
           <Unstable_Grid2 xs={6} sm={4}>
             <StatCard
-              label="DKP Spent"
+              label="DKP spent"
               value={
                 <TransactionAmountTypography
                   amount={spent ? spent.sum : spent}
@@ -74,14 +81,12 @@ export const RaidActivitySummaryCard: FC<{ id: number }> = ({ id }) => {
           </Unstable_Grid2>
           <Unstable_Grid2 xs={6} sm={4}>
             <StatCard
-              label="DKP Change"
+              label="DKP change"
               value={
                 <TransactionAmountTypography
-                  amount={
-                    !earned ? earned : !spent ? spent : earned.sum - spent.sum
-                  }
+                  amount={change}
                   positive={
-                    earned && spent ? earned.sum - spent.sum >= 0 : true
+                    change === undefined || change === null ? true : change >= 0
                   }
                 />
               }
@@ -97,12 +102,15 @@ export const RaidActivitySummaryCard: FC<{ id: number }> = ({ id }) => {
             <StatCard
               label="Attendees"
               value={
-                <>
-                  {clearedAttendane?.length}{" "}
-                  {attendance?.length ? (
-                    <>({meanBy(attendance, (t) => t.amount)} DKP each)</>
-                  ) : null}
-                </>
+                clearedAttendane === undefined ||
+                attendance === undefined ? undefined : (
+                  <>
+                    {clearedAttendane.length}{" "}
+                    {attendance.length ? (
+                      <>({meanBy(attendance, (t) => t.amount)} DKP each)</>
+                    ) : null}
+                  </>
+                )
               }
             />
           </Unstable_Grid2>

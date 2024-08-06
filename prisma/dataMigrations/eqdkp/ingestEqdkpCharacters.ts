@@ -59,7 +59,7 @@ export const ingestEqdkpCharacters = async ({
             defaultPilotId: user.id,
           });
           logger.info(
-            `Upserted character ${character.name} for user ${user.email}`,
+            `Upserted character ${character.name} from ${characterName} for user ${user.email}`,
           );
         } else {
           logger.warn(

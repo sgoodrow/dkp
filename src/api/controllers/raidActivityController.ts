@@ -4,7 +4,7 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
-import { flatMap, uniq } from "lodash";
+import { difference, flatMap, uniq, uniqBy } from "lodash";
 import { itemController } from "@/api/controllers/itemController";
 import { characterController } from "@/api/controllers/characterController";
 import { AgGrid } from "@/api/shared/agGridUtils/table";

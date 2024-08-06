@@ -34,6 +34,22 @@ export const eqdkpRepository = (
     });
   },
 
+  getManyRaidActivityTypes: async ({
+    take,
+    skip,
+  }: {
+    take: number;
+    skip: number;
+  }) => {
+    return p.eqdkp_RaidActivityType.findMany({
+      orderBy: {
+        event_id: "asc",
+      },
+      take,
+      skip,
+    });
+  },
+
   getManyUsers: async ({
     take,
     skip,

@@ -86,6 +86,14 @@ model eqdkp_CharacterAttribute {
     @@map("eqdkp23_member_profilefields")
 }
 
+model eqdkp_RaidActivityType {
+    event_id    Int    @id
+    event_name  String
+    event_value Float
+
+    @@map("eqdkp23_events")
+}
+
 // eqdkp23_adjustments
 // eqdkp23_items
 // eqdkp23_raids

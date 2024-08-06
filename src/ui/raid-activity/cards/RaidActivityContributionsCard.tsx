@@ -43,6 +43,13 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
     (t) => t.amount,
   );
 
+  const change =
+    earned === undefined || spent === undefined
+      ? undefined
+      : earned !== null && spent !== null
+        ? earned.sum - spent.sum
+        : null;
+
   const characters = cleared?.reduce<
     { name: string; id: number; defaultPilotId: string | null }[]
   >((acc, t) => {
@@ -58,7 +65,6 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
     }
     return acc;
   }, []);
-  console.log(mine);
 
   return (
     <LabeledCard
@@ -78,7 +84,7 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
             <Unstable_Grid2 container spacing={1}>
               <Unstable_Grid2 xs={6} sm={4}>
                 <StatCard
-                  label="DKP Earned"
+                  label="DKP earned"
                   value={
                     <TransactionAmountTypography
                       amount={earned ? earned.sum : earned}
@@ -89,7 +95,7 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
               </Unstable_Grid2>
               <Unstable_Grid2 xs={6} sm={4}>
                 <StatCard
-                  label="DKP Spent"
+                  label="DKP spent"
                   value={
                     <TransactionAmountTypography
                       amount={spent ? spent.sum : spent}
@@ -100,18 +106,14 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
               </Unstable_Grid2>
               <Unstable_Grid2 xs={6} sm={4}>
                 <StatCard
-                  label="DKP Change"
+                  label="DKP change"
                   value={
                     <TransactionAmountTypography
-                      amount={
-                        !earned
-                          ? earned
-                          : !spent
-                            ? spent
-                            : earned.sum - spent.sum
-                      }
+                      amount={change}
                       positive={
-                        earned && spent ? earned.sum - spent.sum >= 0 : true
+                        change === undefined || change === null
+                          ? true
+                          : change >= 0
                       }
                     />
                   }

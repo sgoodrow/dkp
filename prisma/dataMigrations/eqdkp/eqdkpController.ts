@@ -1,6 +1,5 @@
 import { characterController } from "@/api/controllers/characterController";
 import { CharacterClass, CharacterRace } from "@prisma/client";
-import { lowerCase } from "lodash";
 import { eqdkpRepository } from "prisma/dataMigrations/eqdkp/eqdkpRepository";
 import { EqDkpPlusPrismaTransactionClient } from "prisma/dataMigrations/eqdkp/prismaEqdkp";
 import { z } from "zod";
@@ -18,7 +17,7 @@ export const eqdkpController = (p?: EqDkpPlusPrismaTransactionClient) => ({
     return eqdkpRaces.reduce<{
       [eqdkpId: string]: CharacterRace | null;
     }>((acc, { id, name }) => {
-      const r = races.find((r) => lowerCase(r.name) === lowerCase(name));
+      const r = races.find((r) => r.name.toLowerCase() === name.toLowerCase());
       acc[id] = r || null;
       return acc;
     }, {});
@@ -31,10 +30,29 @@ export const eqdkpController = (p?: EqDkpPlusPrismaTransactionClient) => ({
     return eqdkpClasses.reduce<{
       [eqdkpId: string]: CharacterClass | null;
     }>((acc, { id, name }) => {
-      const c = classes.find((c) => lowerCase(c.name) === lowerCase(name));
+      const c = classes.find(
+        (c) => c.name.toLowerCase() === name.toLowerCase(),
+      );
       acc[id] = c || null;
       return acc;
     }, {});
+  },
+
+  getManyRaidActivityTypes: async ({
+    skip,
+    take,
+  }: {
+    skip: number;
+    take: number;
+  }) => {
+    const activityTypes = await eqdkpRepository(p).getManyRaidActivityTypes({
+      skip,
+      take,
+    });
+    if (activityTypes.length === 0) {
+      return null;
+    }
+    return activityTypes;
   },
 
   getManyMigrationCharacters: async ({

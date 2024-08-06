@@ -1,6 +1,8 @@
 import { ENV } from "@/api/env";
 import { createLogger } from "prisma/dataMigrations/util/log";
 import { ingestEqdkpCharacters } from "prisma/dataMigrations/eqdkp/ingestEqdkpCharacters";
+import { userController } from "@/api/controllers/userController";
+import { ingestEqdkpRaidActivityTypes } from "prisma/dataMigrations/eqdkp/ingestEqdkpRaidActivityTypes";
 
 const logger = createLogger("Ingesting EQ DKP data");
 
@@ -12,6 +14,15 @@ export const eqdkpDataMigration = async ({
   logger.info("Started workflow.");
   logger.info(`Targeting ${ENV.POSTGRES_DATABASE} database`);
 
+  const userId = await userController().getSystemUserId();
+
+  // TODO: Add some upfront validation that will fail the job:
+  // 1. Characters with no race/class
+  // 2. Characters with invalid first names
+  // 3. Duplicate character names
+  // 4. Duplicate type names
+
+  await ingestEqdkpRaidActivityTypes({ userId });
   await ingestEqdkpCharacters({ lastVisitedAt });
   // await ingestEqdkpRaidActivities();
   // await ingestEqdkpRaidAttendance();
