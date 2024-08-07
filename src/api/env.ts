@@ -25,6 +25,11 @@ const schema = z.object({
   POSTGRES_HOST: z.string(),
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DATABASE: z.string(),
+
+  // Discord
+  DISCORD_CLIENT_TOKEN: z.string(),
+  DISCORD_AUTH_CLIENT_ID: z.string(),
+  DISCORD_AUTH_CLIENT_SECRET: z.string(),
 });
 
 export const ENV = schema.parse({

@@ -7,7 +7,5 @@ model Item {
   wikiSlug String
 
   // Relationships
-  gameId    Int
-  game      Game                @relation(fields: [gameId], references: [id])
   purchases WalletTransaction[]
 }

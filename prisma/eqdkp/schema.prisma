@@ -1,6 +1,6 @@
 datasource db {
     provider = "mysql"
-    url      = env("EQ_DKP_PLUS_DB_URL")
+    url      = env("DEV_EQ_DKP_PLUS_DB_URL")
 }
 
 generator client {

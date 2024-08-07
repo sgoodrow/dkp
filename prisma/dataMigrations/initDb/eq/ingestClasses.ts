@@ -16,11 +16,11 @@ const classes = schema.parse(data);
 
 const logger = createLogger("Ingesting classes");
 
-export const ingestClasses = async ({ gameId }: { gameId: number }) => {
+export const ingestClasses = async () => {
   logger.info("Started workflow.");
 
   for (const c of classes) {
-    await characterController().createClass({ ...c, gameId });
+    await characterController().createClass(c);
   }
 
   logger.info("Finished workflow.");

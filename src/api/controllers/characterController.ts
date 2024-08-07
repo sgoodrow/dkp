@@ -3,49 +3,38 @@ import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 
-type CreateCharacter = {
-  name: string;
-  raceId: number;
-  classId: number;
-  defaultPilotId?: string;
-};
-
 export const characterController = (p?: PrismaTransactionClient) => ({
-  createMany: async ({
-    characters,
-    guildId,
-  }: {
-    characters: CreateCharacter[];
-    guildId: number;
-  }) => {
-    return characterRepository(p).createMany({ characters, guildId });
-  },
-
   upsert: async ({
-    character,
-    guildId,
+    name,
+    raceId,
+    classId,
+    defaultPilotId,
   }: {
-    character: CreateCharacter;
-    guildId: number;
+    name: string;
+    raceId: number;
+    classId: number;
+    defaultPilotId?: string;
   }) => {
-    return characterRepository(p).upsert({ character, guildId });
+    return characterRepository(p).upsert({
+      name,
+      raceId,
+      classId,
+      defaultPilotId,
+    });
   },
 
   createClass: async ({
-    gameId,
     name,
     colorHexLight,
     colorHexDark,
     allowedRaces,
   }: {
-    gameId: number;
     name: string;
     colorHexLight: string;
     colorHexDark: string;
     allowedRaces: string[];
   }) => {
     return characterRepository(p).createClass({
-      gameId,
       name,
       colorHexLight,
       colorHexDark,
@@ -53,8 +42,8 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     });
   },
 
-  createRace: async ({ gameId, name }: { gameId: number; name: string }) => {
-    return characterRepository(p).createRace({ gameId, name });
+  createRace: async ({ name }: { name: string }) => {
+    return characterRepository(p).createRace({ name });
   },
 
   isNameAvailable: async ({ name }: { name: string }) => {
@@ -181,14 +170,11 @@ export const characterController = (p?: PrismaTransactionClient) => ({
 
   getCharacterNameMap: async ({
     characterNames,
-    guildId,
   }: {
     characterNames: string[];
-    guildId: number;
   }) => {
     return characterRepository(p).getCharacterNameMap({
       characterNames,
-      guildId,
     });
   },
 });

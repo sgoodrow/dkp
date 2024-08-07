@@ -8,15 +8,12 @@ const normalizeName = (name: string) => name.toLowerCase();
 export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
   createMany: async ({
     items,
-    gameId,
   }: {
     items: { name: string; wikiSlug: string }[];
-    gameId: number;
   }) => {
     return p.item.createMany({
       data: items.map((i) => {
         return {
-          gameId,
           name: normalizeName(i.name),
           wikiSlug: i.wikiSlug,
         };

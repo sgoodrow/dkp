@@ -4,6 +4,7 @@ import { userRepository } from "@/api/repositories/userRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { discordController } from "@/api/controllers/discordController";
 import { walletController } from "@/api/controllers/walletController";
+import { guildController } from "@/api/controllers/guildController";
 
 export const userController = (p?: PrismaTransactionClient) => ({
   upsertSystemUser: async () => {
@@ -39,7 +40,11 @@ export const userController = (p?: PrismaTransactionClient) => ({
   },
 
   isAdmin: async ({ userId }: { userId: string }) => {
-    const isAdmin = await userRepository(p).isAdmin({ userId });
+    const guild = await guildController(p).get();
+    const isAdmin = await userRepository(p).isAdmin({
+      userId,
+      discordAdminRoleId: guild.discordAdminRoleId,
+    });
     return !!isAdmin;
   },
 
@@ -48,9 +53,16 @@ export const userController = (p?: PrismaTransactionClient) => ({
   },
 
   getManyAdmins: async (agTable: AgGrid) => {
-    const rows = await userRepository(p).getManyAdmins(agTable);
+    const guild = await guildController(p).get();
+    const rows = await userRepository(p).getManyAdmins({
+      ...agTable,
+      discordAdminRoleId: guild.discordAdminRoleId,
+    });
     return {
-      totalRowCount: await userRepository(p).countAdmins(agTable),
+      totalRowCount: await userRepository(p).countAdmins({
+        ...agTable,
+        discordAdminRoleId: guild.discordAdminRoleId,
+      }),
       rows: rows.map((user) => userController(p).addDisplayName({ user })),
     };
   },

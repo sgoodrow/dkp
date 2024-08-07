@@ -4,11 +4,17 @@ import {
 } from "@/api/repositories/shared/prisma";
 
 export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
-  create: async ({
+  get: async () => {
+    return p.guild.findUniqueOrThrow({
+      where: {
+        id: 1,
+      },
+    });
+  },
+
+  upsert: async ({
     name,
-    gameId,
     discordServerId,
-    discordClientId,
     discordAdminRoleId,
     discordInviteLink,
     rulesLink,
@@ -16,25 +22,32 @@ export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
     updatedById,
   }: {
     name: string;
-    gameId: number;
     discordServerId: string;
-    discordClientId: string;
     discordAdminRoleId: string;
     discordInviteLink: string;
     rulesLink: string;
     createdById: string;
     updatedById: string;
   }) => {
-    return p.guild.create({
-      data: {
+    return p.guild.upsert({
+      where: {
+        id: 1,
+      },
+      create: {
         name,
-        gameId,
         discordServerId,
-        discordClientId,
         discordAdminRoleId,
         discordInviteLink,
         rulesLink,
         createdById,
+        updatedById,
+      },
+      update: {
+        name,
+        discordServerId,
+        discordAdminRoleId,
+        discordInviteLink,
+        rulesLink,
         updatedById,
       },
     });

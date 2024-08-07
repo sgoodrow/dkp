@@ -1,3 +1,4 @@
+import { guildController } from "@/api/controllers/guildController";
 import { userController } from "@/api/controllers/userController";
 import { discordRepository } from "@/api/repositories/discordRepository";
 import {
@@ -7,8 +8,14 @@ import {
 import { discordService } from "@/api/services/discordService";
 import { difference } from "lodash";
 
-const cleanupOldUserMetadata = async () => {
-  const desired = await discordService.getAllMemberDetails();
+const cleanupOldUserMetadata = async ({
+  discordServerId,
+}: {
+  discordServerId: string;
+}) => {
+  const desired = await discordService.getAllMemberDetails({
+    discordServerId,
+  });
   const current = await discordRepository().getAllUserMetadata();
 
   await discordRepository().deleteUserMetadataByMemberIds({
@@ -21,8 +28,12 @@ const cleanupOldUserMetadata = async () => {
   return desired;
 };
 
-const cleanupOldRoles = async () => {
-  const desired = await discordService.getAllRoles();
+const cleanupOldRoles = async ({
+  discordServerId,
+}: {
+  discordServerId: string;
+}) => {
+  const desired = await discordService.getAllRoles({ discordServerId });
   const current = await discordRepository().getAllRoles();
 
   await discordRepository().deleteRolesByRoleIds({
@@ -37,10 +48,13 @@ const cleanupOldRoles = async () => {
 
 export const discordController = (p?: PrismaTransactionClient) => ({
   getSummary: async () => {
+    const guild = await guildController(p).get();
     return {
       memberCount: await discordRepository(p).countMembers(),
       roleCount: await discordRepository(p).countRoles(),
-      adminCount: await discordRepository(p).countAdmins(),
+      adminCount: await discordRepository(p).countAdmins({
+        discordAdminRoleId: guild.discordAdminRoleId,
+      }),
     };
   },
 
@@ -63,9 +77,9 @@ export const discordController = (p?: PrismaTransactionClient) => ({
     return event
       ? {
           ...event,
-          createdByUser: event.createdByUser
+          createdBy: event.createdBy
             ? userController(p).addDisplayName({
-                user: event.createdByUser,
+                user: event.createdBy,
               })
             : null,
         }
@@ -73,11 +87,13 @@ export const discordController = (p?: PrismaTransactionClient) => ({
   },
 
   upsertUserMetadata: async ({ userId }: { userId: string }) => {
+    const guild = await guildController(p).get();
     const memberId = await userController(p).getProviderUserId({
       userId,
       provider: "discord",
     });
     const metadata = await discordService.getMemberDetailsByMemberId({
+      discordServerId: guild.discordServerId,
       memberId,
     });
     return discordRepository(p).upsertManyUserMetadata({
@@ -91,8 +107,9 @@ export const discordController = (p?: PrismaTransactionClient) => ({
   },
 
   sync: async ({ userId }: { userId: string | null }) => {
-    const desiredMembers = await cleanupOldUserMetadata();
-    const desiredRoles = await cleanupOldRoles();
+    const { discordServerId } = await guildController(p).get();
+    const desiredMembers = await cleanupOldUserMetadata({ discordServerId });
+    const roles = await cleanupOldRoles({ discordServerId });
 
     // We need to relate discord user metadata to our users so we get a lookup table.
     const userIdsByMemberId = await userController(
@@ -102,16 +119,20 @@ export const discordController = (p?: PrismaTransactionClient) => ({
       providerAccountIds: desiredMembers.map((m) => m.memberId),
     });
 
+    const metadata = desiredMembers
+      .filter((m) => userIdsByMemberId[m.memberId] !== undefined)
+      .map((m) => ({
+        ...m,
+        userId: userIdsByMemberId[m.memberId],
+      }));
+
     return prisma.$transaction(async (p) => {
       await discordRepository(p).upsertManyUserMetadata({
-        metadata: desiredMembers.map((m) => ({
-          ...m,
-          userId: userIdsByMemberId[m.memberId] || null,
-        })),
+        metadata,
       });
 
       await discordRepository(p).upsertManyRoles({
-        roles: desiredRoles,
+        roles,
       });
 
       await discordRepository(p).createSyncEvent({

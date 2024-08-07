@@ -1,5 +1,5 @@
 import { ClientProviders } from "@/ui/shared/contexts/ClientProviders";
-import { Metadata } from "next";
+import { Metadata, ResolvingMetadata } from "next";
 import { font } from "@/ui/theme/font";
 import { Box } from "@mui/material";
 import { auth } from "@/auth";
@@ -7,11 +7,21 @@ import { pathname } from "next-extra/pathname";
 import { RedirectType, redirect } from "next/navigation";
 import { uiRoutes } from "@/app/uiRoutes";
 import { app } from "@/shared/constants/app";
+import { generateMetadataTitle } from "@/ui/shared/utils/generateMetadataTitle";
 
-export const metadata: Metadata = {
-  title: app.title,
-  applicationName: app.title,
-  description: app.description,
+export const generateMetadata = async (
+  _: unknown,
+  parent: ResolvingMetadata,
+): Promise<Metadata> => {
+  const { title } = await generateMetadataTitle(
+    uiRoutes.raidActivities.name,
+    parent,
+  );
+  return {
+    title,
+    applicationName: app.name,
+    description: app.description,
+  };
 };
 
 export default async function RootLayout({

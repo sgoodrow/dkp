@@ -79,14 +79,14 @@ export const RaidActivityTypesTable: FC<{}> = ({}) => {
       },
       {
         headerName: "Updated By",
-        field: "updatedByUser",
+        field: "updatedBy",
         suppressNavigable: true,
         cellRenderer: (props) =>
           props.data === undefined ? (
             <LoadingCell />
           ) : (
             <CellLayout>
-              <PlayerLink user={props.data.updatedByUser} />
+              <PlayerLink user={props.data.updatedBy} />
             </CellLayout>
           ),
       },

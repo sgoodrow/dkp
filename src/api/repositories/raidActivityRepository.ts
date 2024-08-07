@@ -252,7 +252,7 @@ export const raidActivityRepository = (
             raidActivities: true,
           },
         },
-        updatedByUser: {
+        updatedBy: {
           include: {
             discordMetadata: true,
           },

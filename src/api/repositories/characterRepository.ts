@@ -26,16 +26,15 @@ const normalizeClass = (c: string) => {
 
 export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   upsert: async ({
-    character: { name, raceId, classId, defaultPilotId },
-    guildId,
+    name,
+    raceId,
+    classId,
+    defaultPilotId,
   }: {
-    character: {
-      name: string;
-      raceId: number;
-      classId: number;
-      defaultPilotId?: string;
-    };
-    guildId: number;
+    name: string;
+    raceId: number;
+    classId: number;
+    defaultPilotId?: string;
   }) => {
     const normalizedName = normalizeName(name);
     return p.character.upsert({
@@ -44,7 +43,6 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
       },
       create: {
         name: normalizedName,
-        guildId,
         raceId,
         classId,
         defaultPilotId,
@@ -59,7 +57,6 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
 
   createMany: async ({
     characters,
-    guildId,
   }: {
     characters: {
       name: string;
@@ -67,13 +64,11 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
       classId: number;
       defaultPilotId?: string;
     }[];
-    guildId: number;
   }) => {
     return p.character.createMany({
       data: characters.map((c) => {
         return {
           name: normalizeName(c.name),
-          guildId,
           raceId: c.raceId,
           classId: c.classId,
           defaultPilotId: c.defaultPilotId,
@@ -83,13 +78,11 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   createClass: async ({
-    gameId,
     name,
     colorHexLight,
     colorHexDark,
     allowedRaces,
   }: {
-    gameId: number;
     name: string;
     colorHexLight: string;
     colorHexDark: string;
@@ -97,7 +90,6 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   }) => {
     return p.characterClass.create({
       data: {
-        gameId,
         name: normalizeClass(name),
         colorHexLight,
         colorHexDark,
@@ -116,10 +108,9 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  createRace: async ({ gameId, name }: { gameId: number; name: string }) => {
+  createRace: async ({ name }: { name: string }) => {
     return p.characterRace.create({
       data: {
-        gameId,
         name: normalizeRace(name),
       },
     });
@@ -329,14 +320,11 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
 
   getCharacterNameMap: async ({
     characterNames,
-    guildId,
   }: {
     characterNames: string[];
-    guildId: number;
   }) => {
     const characters = await p.character.findMany({
       where: {
-        guildId,
         name: {
           in: characterNames.map((n) => normalizeName(n)),
         },
@@ -346,14 +334,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
         id: true,
         defaultPilot: {
           select: {
-            wallets: {
-              where: {
-                guildId,
-              },
-              select: {
-                id: true,
-              },
-            },
+            wallet: true,
           },
         },
       },
@@ -364,7 +345,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     >((acc, c) => {
       acc[c.name] = {
         id: c.id,
-        defaultWalletId: c.defaultPilot?.wallets?.[0]?.id || null,
+        defaultWalletId: c.defaultPilot?.wallet?.id || null,
       };
       return acc;
     }, {});

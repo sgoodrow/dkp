@@ -13,11 +13,11 @@ const races = schema.parse(data);
 
 const logger = createLogger("Ingesting races");
 
-export const ingestRaces = async ({ gameId }: { gameId: number }) => {
+export const ingestRaces = async () => {
   logger.info("Started workflow.");
 
   for (const r of races) {
-    await characterController().createRace({ ...r, gameId });
+    await characterController().createRace(r);
   }
 
   logger.info("Finished workflow.");

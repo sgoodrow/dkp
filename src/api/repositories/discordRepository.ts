@@ -2,7 +2,6 @@ import {
   prisma,
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
-import { guild } from "@/shared/constants/guild";
 
 export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
   countMembers: async () => {
@@ -13,11 +12,13 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.discordRole.count();
   },
 
-  countAdmins: async () => {
+  countAdmins: async ({
+    discordAdminRoleId,
+  }: { discordAdminRoleId?: string } = {}) => {
     return p.discordUserMetadata.count({
       where: {
         roleIds: {
-          has: guild.discordAdminRoleId,
+          has: discordAdminRoleId,
         },
       },
     });
@@ -29,7 +30,7 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
         id: "desc",
       },
       include: {
-        createdByUser: {
+        createdBy: {
           select: {
             id: true,
             name: true,
@@ -92,7 +93,7 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
     metadata,
   }: {
     metadata: {
-      userId: string | null;
+      userId: string;
       memberId: string;
       displayName: string;
       roleIds: string[];
@@ -140,7 +141,7 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
   createSyncEvent: async ({ userId }: { userId: string | null }) => {
     return p.discordSyncEvent.create({
       data: {
-        createdByUserId: userId,
+        createdById: userId,
       },
     });
   },

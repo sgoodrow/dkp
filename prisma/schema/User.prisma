@@ -9,12 +9,22 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   // Relationships
-  accounts         Account[]
-  sessions         Session[]
-  Authenticator    Authenticator[]
-  guildMemberships GuildMember[]
-  createdGuilds    Guild[]         @relation("GuildCreator")
-  updatedGuilds    Guild[]         @relation("GuildLatestUpdater")
+  accounts                 Account[]
+  sessions                 Session[]
+  Authenticator            Authenticator[]
+  wallet                   Wallet?
+  discordMetadata          DiscordUserMetadata?
+  discordSyncEvents        DiscordSyncEvent[]
+  apiKeys                  ApiKey[]
+  characters               Character[]
+  createdTransactions      WalletTransaction[]  @relation("WalletTransactionCreator")
+  updatedTransactions      WalletTransaction[]  @relation("WalletTransactionLatestUpdater")
+  createdRaidActivities    RaidActivity[]       @relation("RaidActivityCreator")
+  createdRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeCreator")
+  updatedRaidActivities    RaidActivity[]       @relation("RaidActivityLatestUpdater")
+  updatedRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeLatestUpdater")
+  createdGuild             Guild?               @relation("GuildCreator")
+  updatedGuild             Guild?               @relation("GuildLatestUpdater")
 }
 
 model Account {

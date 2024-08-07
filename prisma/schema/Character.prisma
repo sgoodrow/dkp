@@ -8,10 +8,8 @@ model Character {
   name String @unique
 
   // Relationships
-  defaultPilotId Int?
-  defaultPilot   GuildMember?        @relation(fields: [defaultPilotId], references: [id])
-  guildId        Int
-  guild          Guild               @relation(fields: [guildId], references: [id])
+  defaultPilotId String?
+  defaultPilot   User?               @relation(fields: [defaultPilotId], references: [id])
   classId        Int
   class          CharacterClass      @relation(fields: [classId], references: [id])
   raceId         Int
@@ -20,7 +18,6 @@ model Character {
 
   // Indexes
   @@index([defaultPilotId])
-  @@index([guildId])
   @@index([classId])
   @@index([raceId])
 }
@@ -35,8 +32,6 @@ model CharacterClass {
   colorHexLight String
 
   // Relationships
-  gameId                Int
-  game                  Game                   @relation(fields: [gameId], references: [id])
   characters            Character[]
   raceClassCombinations RaceClassCombination[]
 }
@@ -49,8 +44,6 @@ model CharacterRace {
   name String @unique
 
   // Relationships
-  gameId                Int
-  game                  Game                   @relation(fields: [gameId], references: [id])
   characters            Character[]
   raceClassCombinations RaceClassCombination[]
 }

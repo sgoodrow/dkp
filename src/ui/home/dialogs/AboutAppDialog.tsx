@@ -1,9 +1,8 @@
-import { guild } from "@/shared/constants/guild";
+"use client";
+
 import { MaintainerLink } from "@/ui/shared/components/links/MaintainerLink";
 import { SourceCodeLink } from "@/ui/shared/components/links/SourceCodeLink";
-import { SupportLink } from "@/ui/shared/components/links/SupportLink";
 import { BulletList } from "@/ui/shared/components/lists/BulletList";
-import { app } from "@/shared/constants/app";
 import { Close } from "@mui/icons-material";
 import {
   AppBar,
@@ -11,12 +10,14 @@ import {
   DialogContent,
   DialogContentText,
   IconButton,
+  Skeleton,
   Slide,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { TransitionProps } from "notistack";
 import { FC, forwardRef, Ref } from "react";
+import { trpc } from "@/api/views/trpc/trpc";
 
 const TITLE_ID = "about-app-dialog-title";
 const DESCRIPTION_ID = "about-app-dialog-description";
@@ -35,6 +36,7 @@ export const AboutAppDialog: FC<{
   onClose: () => void;
   fullScreen: boolean;
 }> = ({ open, onClose, fullScreen }) => {
+  const { data: guild } = trpc.guild.get.useQuery();
   const handleClose = () => onClose();
   return (
     <Dialog
@@ -56,15 +58,16 @@ export const AboutAppDialog: FC<{
             <Close />
           </IconButton>
           <Typography sx={{ ml: 2 }} variant="h4">
-            Welcome to {app.title} 👋
+            Welcome 👋
           </Typography>
         </Toolbar>
       </AppBar>
       <DialogContent>
         <DialogContentText id={DESCRIPTION_ID}>
-          This app is used by the {guild.name} guild to manage the currency
-          earned through their players&apos; contributions called{" "}
-          <strong>DKP</strong> (&ldquo;Dragon Kill Points&rdquo;).
+          This app is used by the {guild?.name || <Skeleton width="200px" />}{" "}
+          guild to manage the currency earned through their players&apos;
+          contributions called <strong>DKP</strong> (&ldquo;Dragon Kill
+          Points&rdquo;).
           <br />
           <br />
           On it, you can:
@@ -77,10 +80,6 @@ export const AboutAppDialog: FC<{
               "Observe item price history.",
             ]}
           />
-          <br />
-          <strong>
-            If you need help, please reach out in <SupportLink />.
-          </strong>
           <br />
           <br />
           The app is maintained by <MaintainerLink /> and open source on{" "}

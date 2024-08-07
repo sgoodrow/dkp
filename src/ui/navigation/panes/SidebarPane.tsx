@@ -2,7 +2,6 @@
 
 import { trpc } from "@/api/views/trpc/trpc";
 import { uiRoutes } from "@/app/uiRoutes";
-import { guild } from "@/shared/constants/guild";
 import { BackButton } from "@/ui/navigation/buttons/BackButton";
 import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
 import { SignOutButton } from "@/ui/navigation/buttons/SignOutButton";
@@ -42,6 +41,7 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
   children,
 }) => {
   const path = usePathname();
+  const { data: guild } = trpc.guild.get.useQuery();
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
   const { data: dkp } = trpc.wallet.getUserDkp.useQuery();
   const { data: unclearedTransactionsCount } =
@@ -181,14 +181,14 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
               dataMonitoringId={monitoringIds.GOTO_RULES}
               icon={<GoogleDriveDocumentsIcon />}
               label="Rules"
-              href={guild.rulesLink}
+              href={guild?.rulesLink}
               hideLabel={isMobile}
             />
             <SideBarButton
               dataMonitoringId={monitoringIds.GOTO_DISCORD}
               icon={<DiscordIcon />}
               label="Discord"
-              href={guild.discordInviteLink}
+              href={guild?.discordInviteLink}
               hideLabel={isMobile}
             />
             <SignOutButton isMobile={isMobile} />

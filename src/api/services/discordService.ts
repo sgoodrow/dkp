@@ -1,22 +1,22 @@
 import { API } from "@discordjs/core/http-only";
 import { REST } from "@discordjs/rest";
-import { guild } from "@/shared/constants/guild";
 import { APIGuildMember } from "@discordjs/core/http-only";
 import color from "color";
 import { max } from "lodash";
-import { DEVENV } from "prisma/dataMigrations/testdata/devenv";
+import { ENV } from "@/api/env";
 
-const rest = new REST({ version: "10" }).setToken(
-  DEVENV.DEV_DISCORD_CLIENT_TOKEN!,
-);
-
+const rest = new REST({ version: "10" }).setToken(ENV.DISCORD_CLIENT_TOKEN);
 const client = new API(rest);
 
-const getAllMembers = async () => {
+const getAllMembers = async ({
+  discordServerId,
+}: {
+  discordServerId: string;
+}) => {
   let members: APIGuildMember[] = [];
   let after = undefined;
   do {
-    const batch = await client.guilds.getMembers(guild.discordServerId, {
+    const batch = await client.guilds.getMembers(discordServerId, {
       limit: 1000,
       after,
     });
@@ -39,18 +39,27 @@ const getMemberDetails = ({ member }: { member: APIGuildMember }) => {
 };
 
 export const discordService = {
-  getMemberDetailsByMemberId: async ({ memberId }: { memberId: string }) => {
-    const member = await client.guilds.getMember(
-      guild.discordServerId,
-      memberId,
-    );
+  getMemberDetailsByMemberId: async ({
+    memberId,
+    discordServerId,
+  }: {
+    memberId: string;
+    discordServerId: string;
+  }) => {
+    const member = await client.guilds.getMember(discordServerId, memberId);
     return getMemberDetails({
       member,
     });
   },
 
-  getAllMemberDetails: async () => {
-    const members = await getAllMembers();
+  getAllMemberDetails: async ({
+    discordServerId,
+  }: {
+    discordServerId: string;
+  }) => {
+    const members = await getAllMembers({
+      discordServerId,
+    });
     return members.reduce<
       {
         memberId: string;
@@ -65,8 +74,8 @@ export const discordService = {
     }, []);
   },
 
-  getAllRoles: async () => {
-    const roles = await client.guilds.getRoles(guild.discordServerId);
+  getAllRoles: async ({ discordServerId }: { discordServerId: string }) => {
+    const roles = await client.guilds.getRoles(discordServerId);
     const maxPosition = max(roles.map((r) => r.position)) || 0;
     return roles.map((r) => ({
       name: r.name,

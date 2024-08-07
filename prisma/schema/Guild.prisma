@@ -1,50 +1,19 @@
 model Guild {
-    // Common
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    // Properties
-    name               String
-    discordServerId    String @unique
-    discordClientId    String
-    discordAdminRoleId String
-    discordInviteLink  String
-    rulesLink          String
+  // Properties
+  name               String
+  discordServerId    String @unique
+  discordAdminRoleId String
+  discordInviteLink  String
+  rulesLink          String
 
-    // Relationships
-    gameId            Int
-    game              Game               @relation(fields: [gameId], references: [id])
-    createdById       String
-    createdByUser     User               @relation("GuildCreator", fields: [createdById], references: [id])
-    updatedById       String
-    updatedByUser     User               @relation("GuildLatestUpdater", fields: [updatedById], references: [id])
-    characters        Character[]
-    members           GuildMember[]
-    raidActivityTypes RaidActivityType[]
-}
-
-model GuildMember {
-    // Common
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-
-    // Properties
-
-    // Relationships
-    guildId                  Int
-    guild                    Guild                  @relation(fields: [guildId], references: [id])
-    userId                   String
-    user                     User                   @relation(fields: [userId], references: [id])
-    wallet                   Wallet?
-    discordMetadata          DiscordMemberMetadata?
-    discordSyncEvents        DiscordSyncEvent[]
-    apiKeys                  ApiKey[]
-    characters               Character[]
-    createdTransactions      WalletTransaction[]    @relation("WalletTransactionCreator")
-    updatedTransactions      WalletTransaction[]    @relation("WalletTransactionLatestUpdater")
-    createdRaidActivities    RaidActivity[]         @relation("RaidActivityCreator")
-    createdRaidActivityTypes RaidActivityType[]     @relation("RaidActivityTypeCreator")
-    updatedRaidActivities    RaidActivity[]         @relation("RaidActivityLatestUpdater")
-    updatedRaidActivityTypes RaidActivityType[]     @relation("RaidActivityTypeLatestUpdater")
+  // Relationships
+  createdById String @unique
+  createdBy   User   @relation("GuildCreator", fields: [createdById], references: [id])
+  updatedById String @unique
+  updatedBy   User   @relation("GuildLatestUpdater", fields: [updatedById], references: [id])
 }

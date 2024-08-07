@@ -6,28 +6,28 @@
 //
 // Additionally, they avoid cascading deletions since upserts happen via delete+create transactions.
 
-model DiscordMemberMetadata {
+model DiscordUserMetadata {
   // Common
   id Int @id @default(autoincrement())
 
   // Properties
-  discordId   String   @unique
+  memberId    String   @unique
   displayName String
   roleIds     String[]
 
   // Relationships
-  memberId Int         @unique
-  member   GuildMember @relation(fields: [memberId], references: [id])
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model DiscordSyncEvent {
   // Common
-  id              Int          @id @default(autoincrement())
-  createdAt       DateTime     @default(now())
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
   // Usually the entity that gets created 2nd has a required ID in its FK, but we want to preserve sync events
   // if a member is removed from a guild, so the ID must be nullable.
-  createdById     Int?
-  createdByMember GuildMember? @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 model DiscordRole {

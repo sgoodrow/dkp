@@ -7,14 +7,8 @@ type CreateItem = {
 };
 
 export const itemController = (p?: PrismaTransactionClient) => ({
-  createMany: async ({
-    items,
-    gameId,
-  }: {
-    items: CreateItem[];
-    gameId: number;
-  }) => {
-    return itemRepository(p).createMany({ items, gameId });
+  createMany: async ({ items }: { items: CreateItem[] }) => {
+    return itemRepository(p).createMany({ items });
   },
 
   getByNameMatch: async ({ search }: { search: string }) => {
