@@ -7,8 +7,6 @@ declare global {
 
 export const prisma = global.prisma || new PrismaClient();
 
-// TODO: Figure out how to limit the schema exposed by this client to ignore the EQ DKP Plus schema
-
 export type PrismaTransactionClient = Parameters<
   Parameters<typeof prisma.$transaction>[0]
 >[0];

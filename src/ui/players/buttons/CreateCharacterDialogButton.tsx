@@ -97,57 +97,53 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
             spacing={2}
             mt={1}
           >
-            {
-              <Field
-                name="name"
-                validators={{
-                  onChange: ({ value }) => {
-                    if (value.length < 4) {
-                      return "Name must be at least 3 characters long";
-                    }
-                    if (!character.isValidName(value)) {
-                      return "Name can only contain letters";
-                    }
-                  },
-                  onChangeAsyncDebounceMs: 300,
-                  onChangeAsync: async ({ value }) => {
-                    const isNameAvailable =
-                      await utils.character.isNameAvailable.fetch({
-                        name: value,
-                      });
-                    if (!isNameAvailable) {
-                      return "Name already in use";
-                    }
-                  },
-                }}
-                // eslint-disable-next-line react/no-children-prop
-                children={(field) => {
-                  return (
-                    <TextField
-                      value={field.state.value}
-                      onChange={(e) => {
-                        e.stopPropagation();
-                        field.handleChange(e.target.value);
-                      }}
-                      required
-                      label="Name"
-                      autoFocus
-                      fullWidth
-                      error={
-                        field.state.meta.isTouched &&
-                        field.state.meta.errors.length > 0
-                      }
-                      helperText={
-                        field.state.meta.isTouched &&
-                        field.state.meta.errors.length > 0
-                          ? field.state.meta.errors.join(",")
-                          : "Enter the first name of the character"
-                      }
-                    />
-                  );
-                }}
-              />
-            }
+            <Field
+              name="name"
+              validators={{
+                onChange: ({ value }) => {
+                  if (value.length < 4) {
+                    return "Name must be at least 3 characters long";
+                  }
+                  if (!character.isValidName(value)) {
+                    return "Name can only contain letters";
+                  }
+                },
+                onChangeAsyncDebounceMs: 300,
+                onChangeAsync: async ({ value }) => {
+                  const isNameAvailable =
+                    await utils.character.isNameAvailable.fetch({
+                      name: value,
+                    });
+                  if (!isNameAvailable) {
+                    return "Name already in use";
+                  }
+                },
+              }}
+              // eslint-disable-next-line react/no-children-prop
+              children={(field) => (
+                <TextField
+                  value={field.state.value}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    field.handleChange(e.target.value);
+                  }}
+                  required
+                  label="Name"
+                  autoFocus
+                  fullWidth
+                  error={
+                    field.state.meta.isTouched &&
+                    field.state.meta.errors.length > 0
+                  }
+                  helperText={
+                    field.state.meta.isTouched &&
+                    field.state.meta.errors.length > 0
+                      ? field.state.meta.errors.join(",")
+                      : "Enter the first name of the character"
+                  }
+                />
+              )}
+            />
             <Field
               name="raceId"
               // eslint-disable-next-line react/no-children-prop

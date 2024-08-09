@@ -6,6 +6,7 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
 import { discordService } from "@/api/services/discordService";
+import { RESTAPIPartialCurrentUserGuild } from "@discordjs/core/http-only";
 import { difference } from "lodash";
 
 const cleanupOldUserMetadata = async ({
@@ -47,6 +48,25 @@ const cleanupOldRoles = async ({
 };
 
 export const discordController = (p?: PrismaTransactionClient) => ({
+  getUserServers: async ({ userId }: { userId: string }) => {
+    const memberId = await userController(p).getProviderUserId({
+      userId,
+      provider: "discord",
+    });
+    const servers = await discordService.getAllServers();
+    let filtered: { id: string; name: string }[] = [];
+    for (const guild of servers) {
+      const isMember = await discordService.isMemberInServer({
+        discordServerId: guild.id,
+        memberId,
+      });
+      if (isMember) {
+        filtered.push(guild);
+      }
+    }
+    return filtered;
+  },
+
   getSummary: async () => {
     const guild = await guildController(p).get();
     return {
@@ -66,6 +86,12 @@ export const discordController = (p?: PrismaTransactionClient) => ({
         .filter((r) => r.color !== null)
         .find((r) => roleIds.includes(r.roleId))?.color,
     };
+  },
+
+  getServerRoles: async ({ discordServerId }: { discordServerId: string }) => {
+    return discordService.getAllRoles({
+      discordServerId,
+    });
   },
 
   getRole: async ({ roleId }: { roleId: string }) => {

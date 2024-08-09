@@ -4,19 +4,24 @@ const schema = z.object({
   // Base
   NODE_ENV: z.enum(["development", "test", "production"]),
 
-  // AuthJS
-  AUTH_SECRET: z.string(),
-
   // Encryption
-  JWT_SECRET: z.string(),
+  SECRET: z.string(),
 
-  // Vercel
-  CRON_SECRET: z.string(),
+  // Activation
+  ACTIVATION_KEY: z.string(),
 
   // CORS
   CORS_ALLOW_ORIGIN: z.string(),
 
-  // DB
+  // Discord
+  DISCORD_CLIENT_TOKEN: z.string(),
+  DISCORD_AUTH_CLIENT_ID: z.string(),
+  DISCORD_AUTH_CLIENT_SECRET: z.string(),
+
+  // Vercel-ingested cron secret
+  CRON_SECRET: z.string(),
+
+  // Vercel-ingested DB vars
   POSTGRES_URL: z.string(),
   POSTGRES_PRISMA_URL: z.string(),
   POSTGRES_URL_NO_SSL: z.string(),
@@ -25,11 +30,6 @@ const schema = z.object({
   POSTGRES_HOST: z.string(),
   POSTGRES_PASSWORD: z.string(),
   POSTGRES_DATABASE: z.string(),
-
-  // Discord
-  DISCORD_CLIENT_TOKEN: z.string(),
-  DISCORD_AUTH_CLIENT_ID: z.string(),
-  DISCORD_AUTH_CLIENT_SECRET: z.string(),
 });
 
 export const ENV = schema.parse({

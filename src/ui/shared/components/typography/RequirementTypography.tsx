@@ -2,9 +2,9 @@ import { Check, CheckBoxOutlineBlank } from "@mui/icons-material";
 import { Stack, Typography } from "@mui/material";
 import { FC } from "react";
 
-export const RequirementTooltip: FC<{
+export const RequirementTypography: FC<{
   label: string;
-  satisfied: boolean;
+  satisfied: boolean | null;
   hidden?: boolean;
 }> = ({ label, satisfied, hidden }) => {
   return hidden ? null : (

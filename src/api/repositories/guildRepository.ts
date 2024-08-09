@@ -3,41 +3,53 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
 
+// Only one guild is allower per deployment, so we can hardcode the id.
+const id = 1;
+
 export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
+  getName: async () => {
+    const guild = await p.guild.findUnique({
+      where: {
+        id,
+      },
+    });
+    return guild === null ? null : guild.name;
+  },
+
   get: async () => {
     return p.guild.findUniqueOrThrow({
       where: {
-        id: 1,
+        id,
       },
     });
   },
 
-  upsert: async ({
+  create: async ({
     name,
     discordServerId,
+    discordOwnerRoleId,
     discordAdminRoleId,
-    discordInviteLink,
     rulesLink,
     createdById,
     updatedById,
   }: {
     name: string;
     discordServerId: string;
+    discordOwnerRoleId: string;
     discordAdminRoleId: string;
-    discordInviteLink: string;
     rulesLink: string;
     createdById: string;
     updatedById: string;
   }) => {
     return p.guild.upsert({
       where: {
-        id: 1,
+        id,
       },
       create: {
         name,
         discordServerId,
+        discordOwnerRoleId,
         discordAdminRoleId,
-        discordInviteLink,
         rulesLink,
         createdById,
         updatedById,
@@ -45,8 +57,8 @@ export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
       update: {
         name,
         discordServerId,
+        discordOwnerRoleId,
         discordAdminRoleId,
-        discordInviteLink,
         rulesLink,
         updatedById,
       },

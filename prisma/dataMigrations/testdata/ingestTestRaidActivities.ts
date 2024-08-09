@@ -2,7 +2,6 @@ import { raidActivityController } from "@/api/controllers/raidActivityController
 import { random, range } from "lodash";
 import { createLogger } from "prisma/dataMigrations/util/log";
 import {
-  getRandomPurchases,
   getRandomAdjustments,
   getRandomAttendees,
   getRandomRaidActivity,
@@ -45,9 +44,7 @@ export const ingestTestRaidActivities = async ({
       attendees: getRandomAttendees({
         count: random(40, 115),
       }),
-      purchases: getRandomPurchases({
-        count: random(5, 700),
-      }),
+      purchases: [],
       createdById: userId,
       updatedById: userId,
     });

@@ -23,7 +23,7 @@ export const theme = experimental_extendTheme({
   typography: {
     fontFamily: font.style.fontFamily,
     h1: {
-      fontSize: "2rem",
+      fontSize: "2.6rem",
       fontWeight: 600,
       lineHeight: 1.2,
     },
@@ -150,6 +150,7 @@ export const theme = experimental_extendTheme({
     MuiTextField: {
       defaultProps: {
         size: "small",
+        autoComplete: "off",
         InputLabelProps: { shrink: true },
       },
     },

@@ -1,6 +1,5 @@
 import { YEARS } from "@/shared/constants/time";
 import { random, range, sample, sampleSize } from "lodash";
-import { items } from "prisma/dataMigrations/initDb/eq/ingestItems";
 import {
   knownCharacterNames,
   unknownCharacterNames,
@@ -74,20 +73,6 @@ const getRandomCharacterNames = () => {
   };
 };
 
-const getRandomItemName = () => {
-  const roll = Math.random();
-  if (roll < 0.1) {
-    return getSample([
-      "Not a real item name",
-      "Another fake item name",
-      "One more fake item name",
-      "The final fake item name",
-    ]);
-  }
-
-  return getSample(items).name;
-};
-
 export const getRandomAdjustments = ({ count }: { count: number }) => {
   return range(count).map(() => ({
     amount: random(1, 5),
@@ -98,14 +83,6 @@ export const getRandomAdjustments = ({ count }: { count: number }) => {
 
 export const getRandomAttendees = ({ count }: { count: number }) => {
   return range(count).map(() => ({
-    ...getRandomCharacterNames(),
-  }));
-};
-
-export const getRandomPurchases = ({ count }: { count: number }) => {
-  return range(count).map(() => ({
-    amount: random(1, 5),
-    itemName: getRandomItemName(),
     ...getRandomCharacterNames(),
   }));
 };

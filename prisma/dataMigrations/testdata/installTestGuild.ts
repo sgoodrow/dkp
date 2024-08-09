@@ -1,17 +1,18 @@
-import { guildController } from "@/api/controllers/guildController";
+import { installController } from "@/api/controllers/installController";
 import { DEVENV } from "prisma/dataMigrations/testdata/devenv";
 import { createLogger } from "prisma/dataMigrations/util/log";
 
-const logger = createLogger("Ingesting dev guild");
+const logger = createLogger("Install");
 
-export const ingestTestGuild = async ({ userId }: { userId: string }) => {
+export const installTestGuild = async ({ userId }: { userId: string }) => {
   logger.info("Started workflow.");
 
-  await guildController().create({
+  await installController().start({
+    activationKey: DEVENV.DEV_GUILD_ACTIVATION_KEY,
     name: DEVENV.DEV_GUILD_NAME,
     discordServerId: DEVENV.DEV_GUILD_DISCORD_SERVER_ID,
+    discordOwnerRoleId: DEVENV.DEV_GUILD_DISCORD_OWNER_ROLE_ID,
     discordAdminRoleId: DEVENV.DEV_GUILD_DISCORD_ADMIN_ROLE_ID,
-    discordInviteLink: DEVENV.DEV_GUILD_DISCORD_INVITE_LINK,
     rulesLink: DEVENV.DEV_GUILD_RULES_LINK,
     createdById: userId,
     updatedById: userId,

@@ -36,7 +36,7 @@ const DESKTOP_WIDTH = "210px";
 
 const PROFILE_IMAGE_SIZE = 24;
 
-export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
+export const SidebarLayout: FCWithChildren<{ isMobile: boolean }> = ({
   isMobile,
   children,
 }) => {
@@ -177,20 +177,15 @@ export const SidebarPane: FCWithChildren<{ isMobile: boolean }> = ({
               fullScreenDialog={isMobile}
             />
             <ThemeModeButton hideLabel={isMobile} />
-            <SideBarButton
-              dataMonitoringId={monitoringIds.GOTO_RULES}
-              icon={<GoogleDriveDocumentsIcon />}
-              label="Rules"
-              href={guild?.rulesLink}
-              hideLabel={isMobile}
-            />
-            <SideBarButton
-              dataMonitoringId={monitoringIds.GOTO_DISCORD}
-              icon={<DiscordIcon />}
-              label="Discord"
-              href={guild?.discordInviteLink}
-              hideLabel={isMobile}
-            />
+            {guild?.rulesLink !== null && (
+              <SideBarButton
+                dataMonitoringId={monitoringIds.GOTO_RULES}
+                icon={<GoogleDriveDocumentsIcon />}
+                label="Rules"
+                href={guild?.rulesLink}
+                hideLabel={isMobile}
+              />
+            )}
             <SignOutButton isMobile={isMobile} />
           </Stack>
         </Stack>

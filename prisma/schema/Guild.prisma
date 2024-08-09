@@ -6,10 +6,10 @@ model Guild {
 
   // Properties
   name               String
-  discordServerId    String @unique
+  rulesLink          String?
+  discordServerId    String  @unique
+  discordOwnerRoleId String
   discordAdminRoleId String
-  discordInviteLink  String
-  rulesLink          String
 
   // Relationships
   createdById String @unique

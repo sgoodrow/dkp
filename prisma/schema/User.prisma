@@ -25,6 +25,7 @@ model User {
   updatedRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeLatestUpdater")
   createdGuild             Guild?               @relation("GuildCreator")
   updatedGuild             Guild?               @relation("GuildLatestUpdater")
+  installAttempts          InstallAttempt[]
 }
 
 model Account {
@@ -50,6 +51,7 @@ model Account {
   @@id([provider, providerAccountId])
 }
 
+// TODO: Can we delete this? We use JWT session strategy and this is misleading
 model Session {
   // Columns
   sessionToken String   @unique
