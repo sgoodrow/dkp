@@ -1,0 +1,19 @@
+model Guild {
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Properties
+  name               String
+  rulesLink          String?
+  discordServerId    String  @unique
+  discordOwnerRoleId String
+  discordAdminRoleId String
+
+  // Relationships
+  createdById String @unique
+  createdBy   User   @relation("GuildCreator", fields: [createdById], references: [id])
+  updatedById String @unique
+  updatedBy   User   @relation("GuildLatestUpdater", fields: [updatedById], references: [id])
+}

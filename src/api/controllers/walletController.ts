@@ -113,7 +113,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       walletId: number | null;
       characterId: number | null;
     }[];
-    raidActivityId?: number;
+    raidActivityId: number;
     createdById: string;
     updatedById: string;
   }) => {
@@ -140,7 +140,7 @@ export const walletController = (p?: PrismaTransactionClient) => ({
       characterId: number | null;
       itemId: number | null;
     }[];
-    raidActivityId?: number;
+    raidActivityId: number;
     createdById: string;
     updatedById: string;
   }) => {

@@ -20,6 +20,10 @@ export const uiRoutes = {
   root: {
     href: () => "/" as const,
   },
+  install: {
+    href: () => "/install" as const,
+    name: "Install",
+  },
   private: {
     href: () => "/private" as const,
   },

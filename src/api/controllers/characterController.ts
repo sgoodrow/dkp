@@ -3,43 +3,53 @@ import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 
-type CreateCharacter = {
-  name: string;
-  raceId: number;
-  classId: number;
-  defaultPilotId?: string;
-};
-
 export const characterController = (p?: PrismaTransactionClient) => ({
-  createMany: async ({ characters }: { characters: CreateCharacter[] }) => {
-    return characterRepository(p).createMany({ characters });
-  },
-
-  upsert: async (character: CreateCharacter) => {
-    return characterRepository(p).upsert(character);
-  },
-
-  createClass: async ({
+  upsert: async ({
     name,
-    colorHexLight,
-    colorHexDark,
-    allowedRaces,
+    raceId,
+    classId,
+    defaultPilotId,
   }: {
     name: string;
-    colorHexLight: string;
-    colorHexDark: string;
-    allowedRaces: string[];
+    raceId: number;
+    classId: number;
+    defaultPilotId?: string;
   }) => {
-    return characterRepository(p).createClass({
+    return characterRepository(p).upsert({
       name,
-      colorHexLight,
-      colorHexDark,
-      allowedRaces,
+      raceId,
+      classId,
+      defaultPilotId,
     });
   },
 
-  createRace: async ({ name }: { name: string }) => {
-    return characterRepository(p).createRace({ name });
+  createClasses: async ({
+    classes,
+  }: {
+    classes: {
+      name: string;
+      colorHexLight: string;
+      colorHexDark: string;
+    }[];
+  }) => {
+    return characterRepository(p).createClasses({ classes });
+  },
+
+  createRaces: async ({ races }: { races: { name: string }[] }) => {
+    await characterRepository(p).createRaces(races);
+  },
+
+  createRaceClassCombos: async ({
+    classCombos,
+  }: {
+    classCombos: {
+      name: string;
+      allowedRaces: string[];
+    }[];
+  }) => {
+    return characterRepository(p).createRaceClassCombos({
+      classCombos,
+    });
   },
 
   isNameAvailable: async ({ name }: { name: string }) => {

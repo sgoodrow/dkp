@@ -10,6 +10,7 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
+import { CharacterRace } from "@prisma/client";
 import { startCase, upperFirst } from "lodash";
 
 const normalizeName = (name: string) => {
@@ -77,42 +78,63 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  createClass: async ({
-    name,
-    colorHexLight,
-    colorHexDark,
-    allowedRaces,
+  createClasses: async ({
+    classes,
   }: {
-    name: string;
-    colorHexLight: string;
-    colorHexDark: string;
-    allowedRaces: string[];
+    classes: {
+      name: string;
+      colorHexLight: string;
+      colorHexDark: string;
+    }[];
   }) => {
-    return p.characterClass.create({
-      data: {
-        name: normalizeClass(name),
-        colorHexLight,
-        colorHexDark,
-        raceClassCombinations: {
-          create: allowedRaces.map((raceName) => {
-            return {
-              race: {
-                connect: {
-                  name: normalizeRace(raceName),
-                },
-              },
-            };
-          }),
-        },
-      },
+    return p.characterClass.createMany({
+      data: classes.map((c) => {
+        return {
+          name: normalizeClass(c.name),
+          colorHexLight: c.colorHexLight,
+          colorHexDark: c.colorHexDark,
+        };
+      }),
     });
   },
 
-  createRace: async ({ name }: { name: string }) => {
-    return p.characterRace.create({
-      data: {
-        name: normalizeRace(name),
-      },
+  createRaces: async (races: { name: string }[]) => {
+    await p.characterRace.createMany({
+      data: races.map((r) => {
+        return {
+          name: normalizeRace(r.name),
+        };
+      }),
+    });
+  },
+
+  createRaceClassCombos: async ({
+    classCombos,
+  }: {
+    classCombos: {
+      name: string;
+      allowedRaces: string[];
+    }[];
+  }) => {
+    const classes = await characterRepository(p).getClasses({});
+    const races = await characterRepository(p).getRaces({});
+
+    const data = classes.flatMap((c) => {
+      const match = classCombos.find(({ name }) => name === c.name);
+      if (!match) {
+        return [];
+      }
+
+      return races
+        .filter((r) => match.allowedRaces.includes(r.name))
+        .map((r) => ({
+          classId: c.id,
+          raceId: r.id,
+        }));
+    });
+
+    return p.raceClassCombination.createMany({
+      data,
     });
   },
 
@@ -334,11 +356,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
         id: true,
         defaultPilot: {
           select: {
-            wallet: {
-              select: {
-                id: true,
-              },
-            },
+            wallet: true,
           },
         },
       },

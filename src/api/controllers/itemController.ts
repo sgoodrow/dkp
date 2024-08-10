@@ -11,10 +11,6 @@ export const itemController = (p?: PrismaTransactionClient) => ({
     return itemRepository(p).createMany({ items });
   },
 
-  create: async (item: CreateItem) => {
-    return itemController(p).createMany({ items: [item] });
-  },
-
   getByNameMatch: async ({ search }: { search: string }) => {
     return itemRepository(p).getByNameMatch({ search });
   },

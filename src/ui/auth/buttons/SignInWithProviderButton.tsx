@@ -7,11 +7,10 @@ import { FC, ReactNode } from "react";
 import { uiRoutes } from "@/app/uiRoutes";
 
 export const SignInWithProviderButton: FC<{
-  providerTitle: string;
   providerName: string;
   monitoringId: MonitoringId;
   providerIcon: ReactNode;
-}> = ({ providerTitle, providerName, providerIcon, monitoringId }) => {
+}> = ({ providerName, providerIcon, monitoringId }) => {
   return (
     <Button
       startIcon={providerIcon}
@@ -20,7 +19,7 @@ export const SignInWithProviderButton: FC<{
       variant="contained"
       onClick={() => signIn(providerName, { redirectTo: uiRoutes.home.href() })}
     >
-      Sign in
+      Sign In
     </Button>
   );
 };

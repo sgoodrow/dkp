@@ -61,6 +61,8 @@ export const monitoringIds = keysAreSameAsValuesCheck({
 
   GOTO_RULES: "GOTO_RULES",
 
+  ADD_BOT_TO_DISCORD: "ADD_BOT_TO_DISCORD",
+
   // Copy actions
   COPY_CURRENT_LINK_TO_CLIPBOARD: "COPY_CURRENT_LINK_TO_CLIPBOARD",
 

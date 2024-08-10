@@ -11,6 +11,12 @@ export const discordApiRoutes = createRoutes({
     return discordController().sync({ userId: ctx.userId });
   }),
 
+  getUserServers: protectedProcedure.query(async ({ ctx }) => {
+    return discordController().getUserServers({
+      userId: ctx.userId,
+    });
+  }),
+
   getSummary: protectedProcedure.query(async () => {
     return discordController().getSummary();
   }),
@@ -37,5 +43,17 @@ export const discordApiRoutes = createRoutes({
     )
     .query(async ({ input }) => {
       return discordController().getRole({ roleId: input.roleId });
+    }),
+
+  getServerRoles: protectedProcedure
+    .input(
+      z.object({
+        discordServerId: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      return discordController().getServerRoles({
+        discordServerId: input.discordServerId,
+      });
     }),
 });

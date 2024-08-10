@@ -6,6 +6,9 @@
   "license": "UNLICENSED",
   "main": "index.js",
   "private": true,
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "build": "make build",
     "prepare": "husky"
@@ -35,6 +38,7 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.4.0",
     "@types/php-serialize": "^3.0.4",
+    "@vercel/functions": "^1.4.0",
     "ag-grid-react": "^32.0.2",
     "color": "^4.2.3",
     "csstype": "^3",

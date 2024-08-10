@@ -1,0 +1,26 @@
+enum InstallAttemptStatus {
+  IN_PROGRESS
+  FAIL
+  SUCCESS
+}
+
+model InstallAttempt {
+  // Common
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Properties
+  status                   InstallAttemptStatus
+  error                    String?
+  installedRaces           Boolean?             @default(false)
+  installedClasses         Boolean?             @default(false)
+  installedRaceClassCombos Boolean?             @default(false)
+  installedItems           Boolean?             @default(false)
+  installedGuild           Boolean?             @default(false)
+  syncedDiscordMetadata    Boolean?             @default(false)
+
+  // Relationships
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+}

@@ -64,7 +64,7 @@ export const walletApiRoutes = createRoutes({
       });
     }),
 
-  countUnclearedTransactions: adminProcedure.query(async ({}) => {
+  countUnclearedTransactions: protectedProcedure.query(async ({}) => {
     return walletController().countUnclearedTransactions();
   }),
 

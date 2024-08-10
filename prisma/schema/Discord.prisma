@@ -16,16 +16,18 @@ model DiscordUserMetadata {
   roleIds     String[]
 
   // Relationships
-  userId String? @unique
-  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model DiscordSyncEvent {
   // Common
-  id              Int      @id @default(autoincrement())
-  createdAt       DateTime @default(now())
-  createdByUserId String?
-  createdByUser   User?    @relation("DiscordSyncEventCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now())
+  // Usually the entity that gets created 2nd has a required ID in its FK, but we want to preserve sync events
+  // if a member is removed from a guild, so the ID must be nullable.
+  createdById String?
+  createdBy   User?    @relation(fields: [createdById], references: [id], onDelete: SetNull)
 }
 
 model DiscordRole {

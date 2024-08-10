@@ -4,7 +4,7 @@ import {
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
 import { raidActivityRepository } from "@/api/repositories/raidActivityRepository";
-import { difference, flatMap, uniq, uniqBy } from "lodash";
+import { flatMap, uniq } from "lodash";
 import { itemController } from "@/api/controllers/itemController";
 import { characterController } from "@/api/controllers/characterController";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
@@ -225,8 +225,8 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
       }),
       rows: rows.map((r) => ({
         ...r,
-        updatedByUser: userController(p).addDisplayName({
-          user: r.updatedByUser,
+        updatedBy: userController(p).addDisplayName({
+          user: r.updatedBy,
         }),
       })),
     };

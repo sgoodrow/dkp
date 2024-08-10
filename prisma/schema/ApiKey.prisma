@@ -1,0 +1,15 @@
+model ApiKey {
+  // Columns
+  id           Int      @id @default(autoincrement())
+  name         String
+  hashedApiKey String   @unique
+  expires      DateTime
+  scopes       String[]
+
+  // Relationships
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Constraints
+  @@unique([userId, name])
+}

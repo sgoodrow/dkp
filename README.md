@@ -1,11 +1,11 @@
-# [Castle DKP][prod]
+# [DKP][prod]
 
 A web application for DKP, built with React, NextJS, TypeScript and Material UI.
 
-- [Castle DKP](#castle-dkp)
+- [DKP](#dkp)
+  - [Deployment](#deployment)
   - [Development](#development)
-    - [Contributing guidelines](#contributing-guidelines)
-    - [Local development environment](#local-development-environment)
+    - [Setup](#setup)
     - [Running the app](#running-the-app)
     - [Debugging the app](#debugging-the-app)
     - [Running the tests](#running-the-tests)
@@ -13,18 +13,19 @@ A web application for DKP, built with React, NextJS, TypeScript and Material UI.
     - [Dependency management](#dependency-management)
     - [Migrations](#migrations)
     - [Secrets](#secrets)
-  - [Deployment](#deployment)
   - [Technologies](#technologies)
+
+## Deployment
+
+Each instance of this project is deployed to Vercel.
+
+If you'd like help deploying an instance for your guild, please [open an issue](https://github.com/sgoodrow/dkp/issues/new) and we'll be happy to help.
 
 ## Development
 
-The majority of commands or scripts you may need to invoke should be available from the project's Makefile. To see a list of available commands, run `make help`.
+Managing a local development environment is done via the Makefile, see `make help` for more details.
 
-### Contributing guidelines
-
-This project makes an effort to follow a number of conventions to facilitate development and maintenance. See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for more info.
-
-### Local development environment
+### Setup
 
 To initialize your development environment:
 
@@ -52,13 +53,13 @@ make local-run
 
 The application will be available at [localhost:3000](http://localhost:3000).
 
-After logging in, you may want to seed the database with some useful test characters and raid activities by running:
+You can seed the local database with some useful test characters and raid activities by running:
 
 ```bash
 make db-testdata
 ```
 
-Or, you can start an EQ DKP Plus migration by running:
+If you use EQ DKP Plus, you can import data from that system by running:
 
 ```bash
 make db-etl-eqdkp
@@ -75,11 +76,7 @@ There are two easy ways to run the app with an attached debugger.
 
 TODO: Write some tests.
 
-Playwright is used for browser-based tests.
-
-```bash
-make test
-```
+Playwright will be used for browser-based tests.
 
 ### Linting, formatting and pre-commit checks
 
@@ -100,12 +97,6 @@ To generate a migration, add, remove or edit model files in `prisma/schema` and 
 ### Secrets
 
 To run locally, the app requires some secrets to be injected from environment variables. Specify them in `.env` file. See the `.env.example` file for details.
-
-## Deployment
-
-This project is deployed via Vercel.
-
-Deployment configuration is [here][deploy].
 
 ## Technologies
 
@@ -130,5 +121,4 @@ The core technologies used in this application are:
 [nvmsh]: https://github.com/nvm-sh/nvm#deeper-shell-integration
 [husky]: https://typicode.github.io/husky/
 [prisma]: https://www.prisma.io/
-[deploy]: https://vercel.com/sgoodrows-projects/castledkp
 [trpc]: https://trpc.io/

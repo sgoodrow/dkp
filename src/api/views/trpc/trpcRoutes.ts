@@ -16,9 +16,13 @@ import { raidActivityApiRoutes } from "@/api/views/apiRoutes/raidActivityApiRout
 import { walletApiRoutes } from "@/api/views/apiRoutes/walletApiRoutes";
 import { discordApiRoutes } from "@/api/views/apiRoutes/discordApiRoutes";
 import { itemApiRoutes } from "@/api/views/apiRoutes/itemApiRoutes";
+import { guildApiRoutes } from "@/api/views/apiRoutes/guildApiRoutes";
+import { installApiRoutes } from "@/api/views/apiRoutes/installApiRoutes";
 
 export const trpcRoutes = createRoutes({
   health: healthApiRoutes,
+  install: installApiRoutes,
+  guild: guildApiRoutes,
   user: userApiRoutes,
   apiKey: apiKeyApiRoutes,
   character: characterApiRoutes,

@@ -1,13 +1,12 @@
-import { SidebarPane } from "@/ui/navigation/panes/SidebarPane";
+import { SidebarLayout } from "@/ui/navigation/layouts/SidebarLayout";
 import { Container } from "@mui/material";
-import { headers } from "next/headers";
 
-export const PrivateRouteLayout: FCWithChildren<{}> = ({ children }) => {
-  const headersList = headers();
-  const userAgent = headersList.get("user-agent") || "";
-  const isMobile = /mobile/i.test(userAgent);
+export const PrivateRouteLayout: FCWithChildren<{ isMobile: boolean }> = ({
+  isMobile,
+  children,
+}) => {
   return (
-    <SidebarPane isMobile={isMobile}>
+    <SidebarLayout isMobile={isMobile}>
       <Container
         maxWidth="xl"
         sx={{
@@ -18,6 +17,6 @@ export const PrivateRouteLayout: FCWithChildren<{}> = ({ children }) => {
       >
         {children}
       </Container>
-    </SidebarPane>
+    </SidebarLayout>
   );
 };
