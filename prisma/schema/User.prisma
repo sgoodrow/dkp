@@ -10,19 +10,22 @@ model User {
 
   // Relationships
   accounts                 Account[]
-  sessions                 Session[]
   Authenticator            Authenticator[]
+  wallet                   Wallet?
+  discordMetadata          DiscordUserMetadata?
+  discordSyncEvents        DiscordSyncEvent[]
   apiKeys                  ApiKey[]
   characters               Character[]
-  wallet                   Wallet?
   createdTransactions      WalletTransaction[]  @relation("WalletTransactionCreator")
   updatedTransactions      WalletTransaction[]  @relation("WalletTransactionLatestUpdater")
   createdRaidActivities    RaidActivity[]       @relation("RaidActivityCreator")
   createdRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeCreator")
   updatedRaidActivities    RaidActivity[]       @relation("RaidActivityLatestUpdater")
   updatedRaidActivityTypes RaidActivityType[]   @relation("RaidActivityTypeLatestUpdater")
-  discordSyncEvents        DiscordSyncEvent[]   @relation("DiscordSyncEventCreator")
-  discordMetadata          DiscordUserMetadata?
+  createdGuild             Guild?               @relation("GuildCreator")
+  updatedGuild             Guild?               @relation("GuildLatestUpdater")
+  installAttempts          InstallAttempt[]
+  migrateAttempts          MigrateAttempt[]
 }
 
 model Account {
@@ -48,18 +51,6 @@ model Account {
   @@id([provider, providerAccountId])
 }
 
-model Session {
-  // Columns
-  sessionToken String   @unique
-  expires      DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  // Relationships
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model VerificationToken {
   // Columns
   identifier String
@@ -68,22 +59,6 @@ model VerificationToken {
 
   // Constraints
   @@id([identifier, token])
-}
-
-model ApiKey {
-  // Columns
-  id           Int      @id @default(autoincrement())
-  name         String
-  hashedApiKey String   @unique
-  expires      DateTime
-  scopes       String[]
-
-  // Relationships
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Constraints
-  @@unique([userId, name])
 }
 
 model Authenticator {

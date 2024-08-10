@@ -35,15 +35,15 @@ model WalletTransaction {
 
   // Relationships
   walletId       Int?
-  wallet         Wallet?       @relation(fields: [walletId], references: [id])
+  wallet         Wallet?      @relation(fields: [walletId], references: [id])
   characterId    Int?
-  character      Character?    @relation(fields: [characterId], references: [id])
+  character      Character?   @relation(fields: [characterId], references: [id])
   itemId         Int?
-  item           Item?         @relation(fields: [itemId], references: [id])
-  raidActivityId Int?
-  raidActivity   RaidActivity? @relation(fields: [raidActivityId], references: [id])
+  item           Item?        @relation(fields: [itemId], references: [id])
+  raidActivityId Int
+  raidActivity   RaidActivity @relation(fields: [raidActivityId], references: [id])
   createdById    String
-  createdByUser  User          @relation("WalletTransactionCreator", fields: [createdById], references: [id])
+  createdBy      User         @relation("WalletTransactionCreator", fields: [createdById], references: [id])
   updatedById    String
-  updatedByUser  User          @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
+  updatedBy      User         @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
 }

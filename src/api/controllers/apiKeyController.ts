@@ -8,7 +8,7 @@ import { JwtPayload, sign, verify } from "jsonwebtoken";
 import * as uuid from "uuid";
 
 const JWT_ALGORITHM = "HS256";
-const JWT_SECRET = ENV.JWT_SECRET;
+const JWT_SECRET = ENV.SECRET;
 const AUTHORIZATION_HEADER_JWT_REGEXP = /^Bearer\s+(\S+\.\S+\.\S+)$/;
 
 export const apiKeyController = (p?: PrismaTransactionClient) => ({

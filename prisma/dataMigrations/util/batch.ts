@@ -1,4 +1,4 @@
-const BATCH_SIZE = 1000;
+const BATCH_SIZE = 5000;
 
 export const processBatch = async <T, R>(
   list: T[],

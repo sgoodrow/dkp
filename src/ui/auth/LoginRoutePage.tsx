@@ -1,48 +1,42 @@
-import { GradientBox } from "@/ui/auth/boxes/GradientBox";
-import { ParticlesBox } from "@/ui/auth/boxes/ParticlesBox";
+import { app } from "@/shared/constants/app";
 import { SignInWithProviderButton } from "@/ui/auth/buttons/SignInWithProviderButton";
+import { GradientBox } from "@/ui/shared/components/boxes/GradientBox";
+import { ParticlesBox } from "@/ui/shared/components/boxes/ParticlesBox";
 import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
-import { AppTitle } from "@/ui/shared/components/static/AppTitle";
+import { ContainerCardLayout } from "@/ui/shared/components/layouts/ContainerCardLayout";
 import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { Security } from "@mui/icons-material";
-import { Paper, Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 
 export const LoginRoutePage = () => {
   return (
     <GradientBox>
       <ParticlesBox />
-      <Stack
-        spacing={3}
-        alignItems="center"
-        display="flex"
-        justifyContent="center"
-        flexDirection="column"
-        height={1}
-        maxWidth="xs"
-      >
-        <Stack
-          zIndex={1}
-          component={Paper}
-          elevation={2}
-          spacing={3}
-          p={3}
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
+      <ContainerCardLayout maxWidth="xs">
+        <Security
           sx={{
-            boxShadow: 8,
+            fontSize: "160px",
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            opacity: 0.1,
           }}
-        >
-          <AppTitle subtitle />
-          <Security sx={{ fontSize: "48px" }} />
+        />
+        <Stack alignItems="center">
+          <Typography variant="h1">
+            {app.name} {app.icon}
+          </Typography>
+          <Typography variant="subtitle1" sx={{ pb: 3 }}>
+            {app.description}
+          </Typography>
           <SignInWithProviderButton
-            providerTitle="Discord"
             providerName="discord"
             providerIcon={<DiscordIcon />}
             monitoringId={monitoringIds.SIGN_IN_DISCORD}
           />
         </Stack>
-      </Stack>
+      </ContainerCardLayout>
     </GradientBox>
   );
 };

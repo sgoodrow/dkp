@@ -2,7 +2,7 @@ import { transaction } from "@/shared/utils/transaction";
 import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 import { Column } from "@/ui/shared/components/tables/InfiniteTable";
 import { LoadingCell } from "@/ui/shared/components/tables/LoadingCell";
-import { RequirementTooltip } from "@/ui/shared/components/tooltips/RequirementTooltip";
+import { RequirementTypography } from "@/ui/shared/components/typography/RequirementTypography";
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { Block, CheckCircleOutline } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
@@ -30,20 +30,20 @@ export const getTransactionClearedColumn = (): Column<TransactionRow> => ({
             placement="left"
             title={
               <>
-                <RequirementTooltip
+                <RequirementTypography
                   label="Pilot"
                   satisfied={data.walletId !== null}
                 />
-                <RequirementTooltip
+                <RequirementTypography
                   label="Charater"
                   satisfied={data.characterId !== null}
                 />
-                <RequirementTooltip
+                <RequirementTypography
                   label="Item"
                   satisfied={data.itemName !== null && data.itemId !== null}
                   hidden={data.itemName === null}
                 />
-                <RequirementTooltip
+                <RequirementTypography
                   label="Not rejected"
                   satisfied={!data.rejected}
                 />

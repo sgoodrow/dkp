@@ -78,15 +78,14 @@ export const apiKeyRepository = (p: PrismaTransactionClient = prisma) => ({
 
   getApiKeyUser: async ({ apiKey }: { apiKey: string }) => {
     const hashedApiKey = getHashedApiKey(apiKey);
-    return p.apiKey
-      .findUniqueOrThrow({
-        where: {
-          hashedApiKey,
-        },
-        include: {
-          user: true,
-        },
-      })
-      .then(({ user }) => user);
+    const { user } = await p.apiKey.findUniqueOrThrow({
+      where: {
+        hashedApiKey,
+      },
+      include: {
+        user: true,
+      },
+    });
+    return user;
   },
 });

@@ -1,5 +1,4 @@
 import { ClientProviders } from "@/ui/shared/contexts/ClientProviders";
-import { Metadata } from "next";
 import { font } from "@/ui/theme/font";
 import { Box } from "@mui/material";
 import { auth } from "@/auth";
@@ -7,10 +6,11 @@ import { pathname } from "next-extra/pathname";
 import { RedirectType, redirect } from "next/navigation";
 import { uiRoutes } from "@/app/uiRoutes";
 import { app } from "@/shared/constants/app";
+import { installController } from "@/api/controllers/installController";
 
-export const metadata: Metadata = {
-  title: app.title,
-  applicationName: app.title,
+export const metadata = {
+  title: app.name,
+  applicationName: app.name,
   description: app.description,
 };
 
@@ -22,11 +22,21 @@ export default async function RootLayout({
   // See: https://github.com/prisma/prisma/issues/21310 and
   //      https://github.com/prisma/prisma/issues/24430
   const session = await auth();
+  const isInstalled = await installController().isInstalled();
   const currentPathname = pathname();
-  if (!session && currentPathname !== uiRoutes.login.href()) {
+  const login = uiRoutes.login.href();
+  const install = uiRoutes.install.href();
+  if (!session && currentPathname !== login) {
     redirect(uiRoutes.login.href(), RedirectType.replace);
   }
-  if (session && currentPathname === uiRoutes.login.href()) {
+  if (session && !isInstalled && currentPathname !== install) {
+    redirect(uiRoutes.install.href(), RedirectType.replace);
+  }
+  if (
+    session &&
+    isInstalled &&
+    (currentPathname === login || currentPathname === install)
+  ) {
     redirect(uiRoutes.home.href(), RedirectType.replace);
   }
 

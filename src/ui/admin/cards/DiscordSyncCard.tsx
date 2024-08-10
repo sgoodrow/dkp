@@ -9,10 +9,10 @@ import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { Sync } from "@mui/icons-material";
 import dayjs from "dayjs";
 import { DiscordRoleTypography } from "@/ui/shared/components/typography/DiscordRoleTypography";
-import { guild } from "@/shared/constants/guild";
 
 export const DiscordSyncCard: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
+  const { data: guild } = trpc.guild.get.useQuery();
   const { mutate, isPending } = trpc.discord.sync.useMutation({
     onSuccess: () => {
       enqueueSnackbar("Discord metadata synced.", { variant: "success" });
@@ -40,7 +40,7 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
         <br />
         This is useful if a change has been made in Discord that you want to be
         reflected here immediately, such as the removal of the{" "}
-        <DiscordRoleTypography roleId={guild.discordAdminRoleId} /> role from a
+        <DiscordRoleTypography roleId={guild?.discordAdminRoleId} /> role from a
         member.
       </Box>
       <Stack direction="row" spacing={1}>
@@ -72,8 +72,8 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
         ) : (
           <Typography variant="body2" color="text.secondary">
             {dayjs(latestSyncEvent.createdAt).fromNow()} by{" "}
-            {latestSyncEvent.createdByUser !== null ? (
-              <PlayerLink inheritSize user={latestSyncEvent.createdByUser} />
+            {latestSyncEvent.createdBy !== null ? (
+              <PlayerLink inheritSize user={latestSyncEvent.createdBy} />
             ) : (
               "Nightly runner"
             )}

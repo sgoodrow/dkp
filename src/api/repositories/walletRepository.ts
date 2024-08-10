@@ -197,7 +197,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       walletId: number | null;
       characterId: number | null;
     }[];
-    raidActivityId?: number;
+    raidActivityId: number;
     createdById: string;
     updatedById: string;
   }) => {
@@ -242,7 +242,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       itemId: number | null;
       characterId: number | null;
     }[];
-    raidActivityId?: number;
+    raidActivityId: number;
     createdById: string;
     updatedById: string;
   }) => {
@@ -397,7 +397,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
         },
       },
       include: {
-        createdByUser: true,
+        createdBy: true,
         item: true,
         character: true,
         wallet: {
@@ -414,7 +414,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
             type: true,
           },
         },
-        updatedByUser: true,
+        updatedBy: true,
       },
       skip: startRow,
       take: endRow - startRow,

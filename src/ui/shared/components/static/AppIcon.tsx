@@ -17,7 +17,7 @@ export const AppIcon: FC<{}> = ({}) => {
         },
       }}
     >
-      <EmojiIcon emoji={app.titleIcon} />
+      <EmojiIcon emoji={app.icon} />
     </IconButton>
   );
 };

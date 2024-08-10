@@ -12,7 +12,6 @@ help:
 	@echo
 	@echo "--- Database ---"
 	@echo " * db-clear                 clears the non-user tables of a database"
-	@echo " * db-init                  initialize a database"
 	@echo " * db-testdata              seed a database with test data"
 	@echo " * db-drop-local            drop the local database and start again"
 	@echo " * db-migrate               apply schema migrations to a database"
@@ -61,7 +60,6 @@ local-setup:
 	@docker-compose up -d
 	@docker-compose run --rm wait-for-postgres
 	@make db-migrate
-	@make db-init
 
 local-run:
 	@docker-compose up -d
@@ -78,11 +76,8 @@ db-drop-local:
 	@docker-compose up -d
 	@make db-migrate
 
-db-init:
-	@yarn run dotenv tsx ./prisma/dataMigrations/initDb/run.ts
-
 db-clear:
-	@yarn run dotenv tsx ./prisma/dataMigrations/clearDb/run.ts
+	@yarn run dotenv tsx ./prisma/dataMigrations/clear/run.ts
 
 db-testdata:
 	@yarn run dotenv tsx ./prisma/dataMigrations/testdata/run.ts
