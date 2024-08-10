@@ -22,7 +22,7 @@ export const InstallFormPane: FC<{
       rulesLink: string;
       discordServerId: string;
       discordOwnerRoleId: string;
-      discordAdminRoleId: string;
+      discordHelperRoleId: string;
     },
     undefined
   >;
@@ -178,22 +178,22 @@ export const InstallFormPane: FC<{
             )}
           />
           <Field
-            name="discordAdminRoleId"
-            key="discordAdminRoleId"
+            name="discordHelperRoleId"
+            key="discordHelperRoleId"
             validators={{
               onChangeListenTo: ["discordServerId"],
             }}
             // eslint-disable-next-line react/no-children-prop
             children={(field) => (
               <DiscordRolesAutocomplete
-                label="Discord admin role"
+                label="Discord helper role"
                 discordServerId={field.form.state.values.discordServerId}
                 onChange={(newValue) => {
                   field.handleChange(newValue);
                 }}
                 required
                 fullWidth
-                helperText="Admins can create and modify records in the application"
+                helperText="Helpers are a class of administrators that can verify and reconcile records"
               />
             )}
           />

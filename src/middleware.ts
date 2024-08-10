@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ENV } from "@/api/env";
 
 const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": ENV.CORS_ALLOW_ORIGIN,
+  "Access-Control-Allow-Origin": ENV.CORS_ALLOW_ORIGIN || "",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Credentials": "true",

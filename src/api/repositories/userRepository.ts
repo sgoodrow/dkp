@@ -42,20 +42,12 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  isAdmin: ({
-    userId,
-    discordOwnerRoleId,
-    discordAdminRoleId,
-  }: {
-    userId: string;
-    discordOwnerRoleId: string;
-    discordAdminRoleId: string;
-  }) => {
+  hasRole: ({ userId, roleIds }: { userId: string; roleIds: string[] }) => {
     return p.discordUserMetadata.findFirst({
       where: {
         AND: {
           roleIds: {
-            hasSome: [discordOwnerRoleId, discordAdminRoleId],
+            hasSome: roleIds,
           },
           userId,
         },
@@ -65,12 +57,12 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
 
   countAdmins: async ({
     discordOwnerRoleId,
-    discordAdminRoleId,
+    discordHelperRoleId,
     filterModel,
     sortModel,
   }: {
     discordOwnerRoleId: string;
-    discordAdminRoleId: string;
+    discordHelperRoleId: string;
     filterModel?: AgFilterModel;
     sortModel?: AgSortModel;
   }) => {
@@ -79,7 +71,7 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
         ...agFilterModelToPrismaWhere(filterModel),
         discordMetadata: {
           roleIds: {
-            hasSome: [discordOwnerRoleId, discordAdminRoleId],
+            hasSome: [discordOwnerRoleId, discordHelperRoleId],
           },
         },
       },
@@ -97,11 +89,13 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   getManyAdmins: async ({
-    discordAdminRoleId,
+    discordHelperRoleId,
+    discordOwnerRoleId,
     filterModel,
     sortModel,
   }: {
-    discordAdminRoleId: string;
+    discordHelperRoleId: string;
+    discordOwnerRoleId: string;
     filterModel?: AgFilterModel;
     sortModel?: AgSortModel;
   }) => {
@@ -110,7 +104,7 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
         ...agFilterModelToPrismaWhere(filterModel),
         discordMetadata: {
           roleIds: {
-            hasSome: [discordAdminRoleId],
+            hasSome: [discordHelperRoleId, discordOwnerRoleId],
           },
         },
       },

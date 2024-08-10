@@ -7,11 +7,15 @@ import {
 import { z } from "zod";
 
 export const userApiRoutes = createRoutes({
+  isOwner: protectedProcedure.query(async ({ ctx }) => {
+    return userController().isOwner({ userId: ctx.userId });
+  }),
+
   isAdmin: protectedProcedure.query(async ({ ctx }) => {
     return userController().isAdmin({ userId: ctx.userId });
   }),
 
-  getAdmins: agFetchProcedure.query(async ({ input }) => {
+  getManyAdmins: agFetchProcedure.query(async ({ input }) => {
     return userController().getManyAdmins(input);
   }),
 

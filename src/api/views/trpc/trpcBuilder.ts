@@ -81,6 +81,21 @@ export const protectedProcedure = t.procedure.use(
 
 export const agFetchProcedure = protectedProcedure.input(agGridSchema);
 
+export const ownerProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+  const isOwner = await userController().isOwner({
+    userId: ctx.userId,
+  });
+
+  if (!isOwner) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "You do not have access to this resource.",
+    });
+  }
+
+  return next();
+});
+
 export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
   const isAdmin = await userController().isAdmin({
     userId: ctx.userId,

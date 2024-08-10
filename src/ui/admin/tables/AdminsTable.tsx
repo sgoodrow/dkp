@@ -12,7 +12,7 @@ import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
 import { DateCell } from "@/ui/shared/components/tables/DateCell";
 import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 
-type Row = TrpcRouteOutputs["user"]["getAdmins"]["rows"][number];
+type Row = TrpcRouteOutputs["user"]["getManyAdmins"]["rows"][number];
 
 export const AdminsTable: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
@@ -59,7 +59,7 @@ export const AdminsTable: FC<{}> = ({}) => {
   return (
     <InfiniteTable
       rowHeight={64}
-      getRows={utils.user.getAdmins.fetch}
+      getRows={utils.user.getManyAdmins.fetch}
       columnDefs={columnDef}
     />
   );

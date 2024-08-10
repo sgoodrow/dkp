@@ -37,7 +37,7 @@ export const installApiRoutes = createRoutes({
         rulesLink: z.string(),
         discordServerId: z.string(),
         discordOwnerRoleId: z.string(),
-        discordAdminRoleId: z.string(),
+        discordHelperRoleId: z.string(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -47,7 +47,7 @@ export const installApiRoutes = createRoutes({
         rulesLink: input.rulesLink,
         discordServerId: input.discordServerId,
         discordOwnerRoleId: input.discordOwnerRoleId,
-        discordAdminRoleId: input.discordAdminRoleId,
+        discordHelperRoleId: input.discordHelperRoleId,
         userId: ctx.userId,
       });
     }),

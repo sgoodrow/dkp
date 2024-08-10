@@ -5,11 +5,11 @@ model Guild {
   updatedAt DateTime @updatedAt
 
   // Properties
-  name               String
-  rulesLink          String?
-  discordServerId    String  @unique
-  discordOwnerRoleId String
-  discordAdminRoleId String
+  name                String
+  rulesLink           String?
+  discordServerId     String  @unique
+  discordOwnerRoleId  String
+  discordHelperRoleId String
 
   // Relationships
   createdById String @unique

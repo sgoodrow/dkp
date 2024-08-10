@@ -12,8 +12,8 @@ export const AdminsCard: FC<{}> = ({}) => {
       labelId="admins-list-label"
       titleInfo={
         <>
-          This table only shows players who have the admin role and have logged
-          into the application at least once.
+          This table only shows players who have one of the admin roles and have
+          logged into the application at least once.
         </>
       }
       titleAvatar={<People />}

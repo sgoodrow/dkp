@@ -1,7 +1,7 @@
 import { userController } from "@/api/controllers/userController";
 import { createLogger } from "prisma/dataMigrations/util/log";
 
-const logger = createLogger("Ingesting admin user");
+const logger = createLogger("Ingesting system user");
 
 export const ingestSystemUser = async () => {
   logger.info("Started workflow.");

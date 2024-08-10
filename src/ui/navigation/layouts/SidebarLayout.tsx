@@ -7,7 +7,6 @@ import { SideBarButton } from "@/ui/navigation/buttons/SidebarButton";
 import { SignOutButton } from "@/ui/navigation/buttons/SignOutButton";
 import { ThemeModeButton } from "@/ui/navigation/buttons/ThemeModeButton";
 import { WelcomeDialogButton } from "@/ui/navigation/buttons/WelcomeDialogButton";
-import { DiscordIcon } from "@/ui/shared/components/icons/DiscordIcon";
 import { GoogleDriveDocumentsIcon } from "@/ui/shared/components/icons/GoogleDriveDocumentsIcon";
 import { ProfileIcon } from "@/ui/shared/components/icons/ProfileIcon";
 import {

@@ -11,7 +11,7 @@ const schema = z.object({
   ACTIVATION_KEY: z.string(),
 
   // CORS
-  CORS_ALLOW_ORIGIN: z.string(),
+  CORS_ALLOW_ORIGIN: z.string().optional(),
 
   // Discord
   DISCORD_CLIENT_TOKEN: z.string(),

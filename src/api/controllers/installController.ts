@@ -100,7 +100,7 @@ export const installController = (p?: PrismaTransactionClient) => ({
     name,
     discordServerId,
     discordOwnerRoleId,
-    discordAdminRoleId,
+    discordHelperRoleId,
     rulesLink,
     userId,
   }: {
@@ -108,7 +108,7 @@ export const installController = (p?: PrismaTransactionClient) => ({
     name: string;
     discordServerId: string;
     discordOwnerRoleId: string;
-    discordAdminRoleId: string;
+    discordHelperRoleId: string;
     rulesLink: string;
     userId: string;
   }) => {
@@ -159,7 +159,7 @@ export const installController = (p?: PrismaTransactionClient) => ({
           name,
           discordServerId,
           discordOwnerRoleId,
-          discordAdminRoleId,
+          discordHelperRoleId,
           rulesLink,
           createdById: userId,
           updatedById: userId,

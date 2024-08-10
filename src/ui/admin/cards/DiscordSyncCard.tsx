@@ -39,8 +39,8 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
         <br />
         <br />
         This is useful if a change has been made in Discord that you want to be
-        reflected here immediately, such as the removal of the{" "}
-        <DiscordRoleTypography roleId={guild?.discordAdminRoleId} /> role from a
+        reflected here immediately, such as the addition of the{" "}
+        <DiscordRoleTypography roleId={guild?.discordHelperRoleId} /> role to a
         member.
       </Box>
       <Stack direction="row" spacing={1}>

@@ -39,13 +39,21 @@ export const userController = (p?: PrismaTransactionClient) => ({
     };
   },
 
-  isAdmin: async ({ userId }: { userId: string }) => {
-    const { discordOwnerRoleId, discordAdminRoleId } =
-      await guildController(p).get();
-    const isAdmin = await userRepository(p).isAdmin({
+  isOwner: async ({ userId }: { userId: string }) => {
+    const { discordOwnerRoleId } = await guildController(p).get();
+    const isOwner = await userRepository(p).hasRole({
       userId,
-      discordOwnerRoleId,
-      discordAdminRoleId,
+      roleIds: [discordOwnerRoleId],
+    });
+    return !!isOwner;
+  },
+
+  isAdmin: async ({ userId }: { userId: string }) => {
+    const { discordOwnerRoleId, discordHelperRoleId } =
+      await guildController(p).get();
+    const isAdmin = await userRepository(p).hasRole({
+      userId,
+      roleIds: [discordHelperRoleId, discordOwnerRoleId],
     });
     return !!isAdmin;
   },
@@ -55,17 +63,18 @@ export const userController = (p?: PrismaTransactionClient) => ({
   },
 
   getManyAdmins: async (agTable: AgGrid) => {
-    const { discordOwnerRoleId, discordAdminRoleId } =
+    const { discordOwnerRoleId, discordHelperRoleId } =
       await guildController(p).get();
     const rows = await userRepository(p).getManyAdmins({
       ...agTable,
-      discordAdminRoleId,
+      discordHelperRoleId,
+      discordOwnerRoleId,
     });
     return {
       totalRowCount: await userRepository(p).countAdmins({
         ...agTable,
         discordOwnerRoleId,
-        discordAdminRoleId,
+        discordHelperRoleId,
       }),
       rows: rows.map((user) => userController(p).addDisplayName({ user })),
     };

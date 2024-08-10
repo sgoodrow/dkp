@@ -41,7 +41,7 @@ export const InstallStepper: FC<{}> = ({}) => {
       rulesLink: "",
       discordServerId: "",
       discordOwnerRoleId: "",
-      discordAdminRoleId: "",
+      discordHelperRoleId: "",
     },
     onSubmit: async ({ value }) => {
       install({
@@ -50,7 +50,7 @@ export const InstallStepper: FC<{}> = ({}) => {
         rulesLink: value.rulesLink,
         discordServerId: value.discordServerId,
         discordOwnerRoleId: value.discordOwnerRoleId,
-        discordAdminRoleId: value.discordAdminRoleId,
+        discordHelperRoleId: value.discordHelperRoleId,
       });
     },
   });

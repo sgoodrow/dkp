@@ -12,7 +12,7 @@ export const installTestGuild = async ({ userId }: { userId: string }) => {
     name: DEVENV.DEV_GUILD_NAME,
     discordServerId: DEVENV.DEV_GUILD_DISCORD_SERVER_ID,
     discordOwnerRoleId: DEVENV.DEV_GUILD_DISCORD_OWNER_ROLE_ID,
-    discordAdminRoleId: DEVENV.DEV_GUILD_DISCORD_ADMIN_ROLE_ID,
+    discordHelperRoleId: DEVENV.DEV_GUILD_DISCORD_HELPER_ROLE_ID,
     rulesLink: DEVENV.DEV_GUILD_RULES_LINK,
     userId,
   });

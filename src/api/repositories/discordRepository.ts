@@ -12,13 +12,11 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.discordRole.count();
   },
 
-  countAdmins: async ({
-    discordAdminRoleId,
-  }: { discordAdminRoleId?: string } = {}) => {
+  countUsersWithRole: async ({ roleId }: { roleId: string }) => {
     return p.discordUserMetadata.count({
       where: {
         roleIds: {
-          has: discordAdminRoleId,
+          has: roleId,
         },
       },
     });

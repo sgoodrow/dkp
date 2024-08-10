@@ -31,15 +31,31 @@ export const DiscordMetadataCard: FC<{}> = ({}) => {
           </Unstable_Grid2>
           <Unstable_Grid2 xs={6}>
             <StatCard
-              label="Members with admin role"
-              value={discordSummary?.adminCount}
+              label="Members with owner role"
+              value={discordSummary?.ownerCount}
+            />
+          </Unstable_Grid2>
+          {/* TODO: add an owner-only edit button to this card */}
+          <Unstable_Grid2 xs={6}>
+            <StatCard
+              label="Owner role"
+              value={
+                <DiscordRoleTypography roleId={guild?.discordOwnerRoleId} />
+              }
+            />
+          </Unstable_Grid2>
+          {/* TODO: add an owner-only edit button to this card */}
+          <Unstable_Grid2 xs={6}>
+            <StatCard
+              label="Members with helper role"
+              value={discordSummary?.helperCount}
             />
           </Unstable_Grid2>
           <Unstable_Grid2 xs={6}>
             <StatCard
-              label="Admin role"
+              label="Helper role"
               value={
-                <DiscordRoleTypography roleId={guild?.discordAdminRoleId} />
+                <DiscordRoleTypography roleId={guild?.discordHelperRoleId} />
               }
             />
           </Unstable_Grid2>

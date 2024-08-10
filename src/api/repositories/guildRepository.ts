@@ -28,7 +28,7 @@ export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
     name,
     discordServerId,
     discordOwnerRoleId,
-    discordAdminRoleId,
+    discordHelperRoleId,
     rulesLink,
     createdById,
     updatedById,
@@ -36,7 +36,7 @@ export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
     name: string;
     discordServerId: string;
     discordOwnerRoleId: string;
-    discordAdminRoleId: string;
+    discordHelperRoleId: string;
     rulesLink: string;
     createdById: string;
     updatedById: string;
@@ -49,7 +49,7 @@ export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
         name,
         discordServerId,
         discordOwnerRoleId,
-        discordAdminRoleId,
+        discordHelperRoleId,
         rulesLink,
         createdById,
         updatedById,
@@ -58,7 +58,7 @@ export const guildRepository = (p: PrismaTransactionClient = prisma) => ({
         name,
         discordServerId,
         discordOwnerRoleId,
-        discordAdminRoleId,
+        discordHelperRoleId,
         rulesLink,
         updatedById,
       },

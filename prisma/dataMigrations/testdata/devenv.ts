@@ -5,7 +5,7 @@ const schema = z.object({
   DEV_GUILD_NAME: z.string(),
   DEV_GUILD_DISCORD_SERVER_ID: z.string(),
   DEV_GUILD_DISCORD_OWNER_ROLE_ID: z.string(),
-  DEV_GUILD_DISCORD_ADMIN_ROLE_ID: z.string(),
+  DEV_GUILD_DISCORD_HELPER_ROLE_ID: z.string(),
   DEV_GUILD_RULES_LINK: z.string().url(),
 
   DEV_USER_EMAIL: z.string(),

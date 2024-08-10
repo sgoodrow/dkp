@@ -71,8 +71,11 @@ export const discordController = (p?: PrismaTransactionClient) => ({
     return {
       memberCount: await discordRepository(p).countMembers(),
       roleCount: await discordRepository(p).countRoles(),
-      adminCount: await discordRepository(p).countAdmins({
-        discordAdminRoleId: guild.discordAdminRoleId,
+      helperCount: await discordRepository(p).countUsersWithRole({
+        roleId: guild.discordHelperRoleId,
+      }),
+      ownerCount: await discordRepository(p).countUsersWithRole({
+        roleId: guild.discordOwnerRoleId,
       }),
     };
   },
