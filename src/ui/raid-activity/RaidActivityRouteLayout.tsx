@@ -16,6 +16,7 @@ export const RaidActivityRouteLayout: FCWithChildren<{ id: number }> = ({
   return (
     <NestedHeaderLayout
       name={data ? uiRoutes.raidActivity.name(data) : undefined}
+      backHref={uiRoutes.raidActivities.href()}
     >
       <Tabs
         aria-label="Raid activity tabs"

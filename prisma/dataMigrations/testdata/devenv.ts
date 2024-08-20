@@ -13,6 +13,7 @@ const schema = z.object({
   DEV_EQ_DKP_PLUS_DB_URL: z.string(),
   DEV_EQ_DKP_PLUS_BASE_URL: z.string(),
   DEV_EQ_DKP_PLUS_API_KEY: z.string(),
+  DEV_EQ_DKP_PLUS_BOT_NAMES_CSV: z.string(),
 });
 
 export const DEVENV = schema.parse(process.env);

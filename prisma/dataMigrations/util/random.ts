@@ -28,6 +28,13 @@ export const getRandomRaidActivity = ({
     typeId: randomType.id,
     createdAt: getRandomDate(5).toISOString(),
     note: randomString(10, 100),
+    adjustments: getRandomAdjustments({
+      count: random(3, 5),
+    }),
+    attendees: getRandomAttendees({
+      count: random(40, 115),
+    }),
+    purchases: [],
   };
 };
 

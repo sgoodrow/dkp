@@ -4,8 +4,10 @@ import { LoadingCell } from "@/ui/shared/components/tables/LoadingCell";
 import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 import { DateTypography } from "@/ui/shared/components/typography/DateTypography";
 
-export const DateCell: FC<ICellRendererParams> = ({ data, value }) => {
-  return data === undefined ? (
+export const DateCell: FC<ICellRendererParams<{ value?: Date }>> = ({
+  value,
+}) => {
+  return value === undefined ? (
     <LoadingCell />
   ) : (
     <CellLayout>

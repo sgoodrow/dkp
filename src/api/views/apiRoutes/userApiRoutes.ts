@@ -15,13 +15,19 @@ export const userApiRoutes = createRoutes({
     return userController().isAdmin({ userId: ctx.userId });
   }),
 
+  getMany: agFetchProcedure.query(async ({ input }) => {
+    return userController().getMany(input);
+  }),
+
   getManyAdmins: agFetchProcedure.query(async ({ input }) => {
     return userController().getManyAdmins(input);
   }),
 
-  get: protectedProcedure.query(async ({ ctx }) => {
-    return userController().get({ userId: ctx.userId });
-  }),
+  get: protectedProcedure
+    .input(z.object({ id: z.string().optional() }))
+    .query(async ({ input, ctx }) => {
+      return userController().get({ id: input.id ?? ctx.userId });
+    }),
 
   getStatus: protectedProcedure.query(async ({ ctx }) => {
     return userController().getStatus({

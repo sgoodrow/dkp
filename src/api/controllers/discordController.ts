@@ -124,7 +124,7 @@ export const discordController = (p?: PrismaTransactionClient) => ({
       discordServerId: guild.discordServerId,
       memberId,
     });
-    return discordRepository(p).upsertManyUserMetadata({
+    await discordRepository(p).upsertManyUserMetadata({
       metadata: [
         {
           ...metadata,

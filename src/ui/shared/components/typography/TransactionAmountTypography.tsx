@@ -4,10 +4,9 @@ import { OverflowTooltipTypography } from "@/ui/shared/components/typography/Ove
 
 export const TransactionAmountTypography: FC<{
   amount?: number | null;
-  positive: boolean;
-}> = ({ amount, positive }) => {
+}> = ({ amount }) => {
   const theme = useTheme();
-  const sign = positive ? 1 : -1;
+  const sign = (amount || 0) >= 0 ? 1 : -1;
   const color =
     sign > 0 ? theme.palette.success.main : theme.palette.error.main;
   return amount === undefined ? (
@@ -18,8 +17,8 @@ export const TransactionAmountTypography: FC<{
       color={color}
       fontWeight="bold"
     >
-      {sign >= 0 ? "+" : "-"}
-      {amount || 0}
+      {sign >= 0 ? "+" : ""}
+      {(amount || 0).toFixed(1)}
     </OverflowTooltipTypography>
   );
 };

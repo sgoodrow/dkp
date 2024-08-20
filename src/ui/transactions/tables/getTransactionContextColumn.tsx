@@ -11,6 +11,8 @@ import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 export const getTransactionContextColumn = (): Column<TransactionRow> => ({
   headerName: "Context",
   field: "raidActivity.type.name",
+  sortable: true,
+  filter: "agTextColumnFilter",
   flex: 1,
   cellRenderer: ({ data }) => {
     return data === undefined ? (

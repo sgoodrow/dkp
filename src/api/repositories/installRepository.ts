@@ -2,7 +2,19 @@ import {
   prisma,
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
-import { InstallAttempt, InstallAttemptStatus } from "@prisma/client";
+import { InstallAttemptStatus } from "@prisma/client";
+
+export type CreateInstallAttempt = {
+  status: InstallAttemptStatus;
+  createdById: string;
+  error?: string;
+  installedRaces?: boolean;
+  installedClasses?: boolean;
+  installedRaceClassCombinations?: boolean;
+  installedItems?: boolean;
+  installedGuild?: boolean;
+  syncedDiscordMetadata?: boolean;
+};
 
 export const installRepository = (p: PrismaTransactionClient = prisma) => ({
   get: async ({ id }: { id: number }) => {
@@ -21,21 +33,20 @@ export const installRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  create: async (data: {
-    status: InstallAttemptStatus;
-    createdById: string;
-  }) => {
+  create: async (data: CreateInstallAttempt) => {
     return p.installAttempt.create({
       data,
     });
   },
 
-  update: async (data: InstallAttempt) => {
+  complete: async ({ id }: { id: number }) => {
     return p.installAttempt.update({
       where: {
-        id: data.id,
+        id,
       },
-      data,
+      data: {
+        status: InstallAttemptStatus.COMPLETE,
+      },
     });
   },
 });

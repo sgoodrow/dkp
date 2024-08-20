@@ -1,4 +1,3 @@
-import { uiRoutes } from "@/app/uiRoutes";
 import { ArrowBack } from "@mui/icons-material";
 import {
   Box,
@@ -12,13 +11,14 @@ import { ReactNode } from "react";
 
 export const NestedHeaderLayout: FCWithChildren<{
   name?: string;
+  backHref: string;
   actions?: ReactNode;
-}> = ({ name, actions, children }) => {
+}> = ({ name, backHref, actions, children }) => {
   return (
     <Stack spacing={3} flexGrow={1} width={1}>
       <Box>
         <Stack direction="row" spacing={1} alignItems="center">
-          <IconButton href={uiRoutes.raidActivities.href()}>
+          <IconButton href={backHref}>
             <ArrowBack />
           </IconButton>
           <Typography width={1} variant="h2">

@@ -2,10 +2,10 @@ import { CreateCharacterDialogButton } from "@/ui/players/buttons/CreateCharacte
 import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
 import { Stack } from "@mui/material";
 import { FC } from "react";
-import { MyCharactersTable } from "@/ui/characters/tables/MyCharactersTable";
+import { CharactersTable } from "@/ui/characters/tables/CharactersTable";
 import { cardWithTableHeight } from "@/ui/shared/constants/sizes";
 
-export const MyCharactersCard: FC<{}> = ({}) => {
+export const MyCharactersCard: FC<{ userId?: string }> = ({ userId }) => {
   return (
     <LabeledCard
       title="My Characters"
@@ -13,7 +13,7 @@ export const MyCharactersCard: FC<{}> = ({}) => {
       titleBar={<CreateCharacterDialogButton />}
     >
       <Stack height={cardWithTableHeight}>
-        <MyCharactersTable />
+        <CharactersTable userId={userId} />
       </Stack>
     </LabeledCard>
   );

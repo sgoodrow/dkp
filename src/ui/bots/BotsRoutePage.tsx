@@ -1,6 +1,10 @@
 import { FC } from "react";
-import { Stack } from "@mui/material";
+import { BotsTable } from "@/ui/bots/tables/BotsTable";
 
 export const BotsRoutePage: FC<{}> = () => {
-  return <Stack spacing={1}></Stack>;
+  return (
+    <>
+      <BotsTable />
+    </>
+  );
 };

@@ -4,7 +4,44 @@ import { walletRepository } from "@/api/repositories/walletRepository";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { WalletTransactionType } from "@prisma/client";
 
+export type CreateAttendant = {
+  createdAt?: string;
+  characterName: string;
+  pilotCharacterName?: string;
+  walletId: number | null;
+  characterId: number | null;
+  amount: number;
+  raidActivityId: number;
+};
+
+export type CreateAdjustment = {
+  createdAt?: string;
+  amount: number;
+  reason: string;
+  characterName: string;
+  pilotCharacterName?: string;
+  walletId: number | null;
+  characterId: number | null;
+  raidActivityId: number;
+};
+
+export type CreatePurchase = {
+  createdAt?: string;
+  amount: number;
+  characterName: string;
+  itemName: string;
+  pilotCharacterName?: string;
+  walletId: number | null;
+  characterId: number | null;
+  itemId: number | null;
+  raidActivityId: number;
+};
+
 export const walletController = (p?: PrismaTransactionClient) => ({
+  createMany: async ({ userIds }: { userIds: string[] }) => {
+    return walletRepository(p).createMany({ userIds });
+  },
+
   updateTransaction: async ({
     userId,
     transactionId,
@@ -33,6 +70,30 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     });
   },
 
+  assignPurchaseItem: async ({
+    userId,
+    transactionId,
+    itemId,
+    applyToAllUnassignedPurchases,
+  }: {
+    userId: string;
+    transactionId: number;
+    itemId?: number;
+    applyToAllUnassignedPurchases?: boolean;
+  }) => {
+    const { itemName } = await walletRepository(p).getTransaction({
+      transactionId,
+    });
+    const transactionIds = applyToAllUnassignedPurchases
+      ? await walletRepository(p).getUnassignedPurchaseIdsByName({ itemName })
+      : [transactionId];
+    return walletRepository(p).assignPurchasesItem({
+      userId,
+      transactionIds,
+      itemId,
+    });
+  },
+
   setRaidActivityAttendanceAmount: async ({
     userId,
     raidActivityId,
@@ -54,17 +115,20 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     before,
     includePurchases,
     includeAdjustments,
+    onlyBots,
   }: {
     userId: string;
     before: Date;
     includePurchases: boolean;
     includeAdjustments: boolean;
+    onlyBots: boolean;
   }) => {
     return walletRepository(p).rejectManyUnclearedTransactions({
       userId,
       before,
       includePurchases,
       includeAdjustments,
+      onlyBots,
     });
   },
 
@@ -74,81 +138,40 @@ export const walletController = (p?: PrismaTransactionClient) => ({
 
   createManyAttendants: async ({
     attendees,
-    payout,
-    raidActivityId,
-    createdById,
-    updatedById,
+    userId,
   }: {
-    attendees: {
-      characterName: string;
-      pilotCharacterName?: string;
-      walletId: number | null;
-      characterId: number | null;
-    }[];
-    payout: number;
-    raidActivityId: number;
-    createdById: string;
-    updatedById: string;
+    attendees: CreateAttendant[];
+    userId: string;
   }) => {
-    return walletRepository(p).createManyAttendants({
+    await walletRepository(p).createManyAttendants({
       attendees,
-      payout,
-      raidActivityId,
-      createdById,
-      updatedById,
+      userId,
     });
   },
 
   createManyAdjustments: async ({
     adjustments,
-    raidActivityId,
-    createdById,
-    updatedById,
+    userId,
   }: {
-    adjustments: {
-      amount: number;
-      reason: string;
-      characterName: string;
-      pilotCharacterName?: string;
-      walletId: number | null;
-      characterId: number | null;
-    }[];
-    raidActivityId: number;
-    createdById: string;
-    updatedById: string;
+    adjustments: CreateAdjustment[];
+    userId: string;
   }) => {
-    return walletRepository(p).createManyAdjustments({
+    await walletRepository(p).createManyAdjustments({
       adjustments,
-      raidActivityId,
-      createdById,
-      updatedById,
+      userId,
     });
   },
 
   createManyPurchases: async ({
     purchases,
-    raidActivityId,
-    createdById,
-    updatedById,
+    userId,
   }: {
-    purchases: {
-      amount: number;
-      characterName: string;
-      itemName: string;
-      pilotCharacterName?: string;
-      walletId: number | null;
-      characterId: number | null;
-      itemId: number | null;
-    }[];
-    raidActivityId: number;
-    createdById: string;
-    updatedById: string;
+    purchases: CreatePurchase[];
+    userId: string;
   }) => {
-    return walletRepository(p).createManyPurchases({
+    await walletRepository(p).createManyPurchases({
       purchases,
-      raidActivityId,
-      createdById,
-      updatedById,
+      userId,
     });
   },
 
@@ -158,6 +181,10 @@ export const walletController = (p?: PrismaTransactionClient) => ({
 
   getByUserId: async ({ userId }: { userId: string }) => {
     return walletRepository(p).getByUserId({ userId });
+  },
+
+  getDkp: async ({ id }: { id: number }) => {
+    return walletRepository(p).getWalletDkp({ walletId: id });
   },
 
   getUserDkp: async ({ userId }: { userId: string }) => {
@@ -170,33 +197,33 @@ export const walletController = (p?: PrismaTransactionClient) => ({
     endRow,
     filterModel,
     sortModel,
-    showRejected,
     showCleared,
     type,
     raidActivityId,
+    userId,
   }: {
-    showRejected?: boolean;
     showCleared?: boolean;
     type?: WalletTransactionType;
     raidActivityId?: number;
+    userId?: string;
   } & AgGrid) => {
     const rows = await walletRepository(p).getManyTransactions({
       startRow,
       endRow,
       filterModel,
       sortModel,
-      showRejected,
       showCleared,
       type,
       raidActivityId,
+      userId,
     });
     return {
       totalRowCount: await walletRepository(p).countTransactions({
-        showRejected,
         showCleared,
         type,
-        raidActivityId,
         filterModel,
+        raidActivityId,
+        userId,
       }),
       rows: rows.map((r) => ({
         ...r,

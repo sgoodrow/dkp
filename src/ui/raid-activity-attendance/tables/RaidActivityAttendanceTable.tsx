@@ -44,7 +44,6 @@ export const RaidActivityAttendanceTable: FC<{ id: number }> = ({ id }) => {
         type: WalletTransactionType.ATTENDANCE,
         raidActivityId: id,
         showCleared: true,
-        showRejected: true,
         ...params,
       }),
     [utils, id],

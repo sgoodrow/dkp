@@ -1,0 +1,7 @@
+// Make a copy of this file called scratch.ts and run make local-scratch to execute it.
+
+const main = async () => {
+  // Your code here.
+};
+
+main();

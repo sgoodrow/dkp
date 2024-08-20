@@ -11,8 +11,9 @@ export const AssignTransactionItemIconButton: FC<{
     id: number;
     name: string;
   } | null;
+  itemName: string | null;
   onAssign: () => void;
-}> = ({ transactionId, item, onAssign }) => {
+}> = ({ transactionId, item, itemName, onAssign }) => {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -33,6 +34,7 @@ export const AssignTransactionItemIconButton: FC<{
         <AssignTransactionItemDialog
           transactionId={transactionId}
           item={item}
+          itemName={itemName}
           onAssign={onAssign}
           onClose={() => setOpen(false)}
         />

@@ -1,7 +1,11 @@
 import { characterController } from "@/api/controllers/characterController";
 import { agFilterModelSchema } from "@/api/shared/agGridUtils/filter";
 import { agSortModelSchema } from "@/api/shared/agGridUtils/sort";
-import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
+import {
+  agFetchProcedure,
+  createRoutes,
+  protectedProcedure,
+} from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
 export const characterApiRoutes = createRoutes({
@@ -59,9 +63,14 @@ export const characterApiRoutes = createRoutes({
       });
     }),
 
+  getManyWithoutDefaultPilot: agFetchProcedure.query(async ({ input }) => {
+    return characterController().getManyWithoutOwner(input);
+  }),
+
   getManyByUserId: protectedProcedure
     .input(
       z.object({
+        userId: z.string().optional(),
         startRow: z.number().nonnegative().int(),
         endRow: z.number().nonnegative().int(),
         filterModel: agFilterModelSchema,
@@ -70,7 +79,7 @@ export const characterApiRoutes = createRoutes({
     )
     .query(async ({ input, ctx }) => {
       return characterController().getManyByUserId({
-        userId: ctx.userId,
+        userId: input.userId ?? ctx.userId,
         startRow: input.startRow,
         endRow: input.endRow,
         filterModel: input.filterModel,

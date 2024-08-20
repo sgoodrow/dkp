@@ -1,6 +1,7 @@
 "use client";
 
 import { trpc } from "@/api/views/trpc/trpc";
+import { BooleanColumnFilter } from "@/ui/shared/components/tables/BooleanColumnFilter";
 import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 import {
   Column,
@@ -20,8 +21,9 @@ export const getTransactionRejectedColumn = ({
   hide: !editable,
   headerName: "Rejected",
   field: "rejected",
-  width: 100,
+  width: 140,
   sortable: true,
+  filter: BooleanColumnFilter,
   editable,
   cellEditor: (props) => {
     return (

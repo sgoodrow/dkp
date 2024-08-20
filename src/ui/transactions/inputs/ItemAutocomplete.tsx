@@ -1,6 +1,7 @@
 "use client";
 
 import { trpc } from "@/api/views/trpc/trpc";
+import { item } from "@/shared/utils/item";
 import { Autocomplete, TextField } from "@mui/material";
 import { startCase } from "lodash";
 import { FC, useState } from "react";
@@ -8,9 +9,10 @@ import { useDebounceValue } from "usehooks-ts";
 
 export const ItemAutocomplete: FC<{
   label: string;
+  placeholder: string;
   onChange: (newValue: number) => void;
   defaultValue?: { id: number; label: string };
-}> = ({ label, onChange, defaultValue }) => {
+}> = ({ label, placeholder, onChange, defaultValue }) => {
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounceValue(search, 300);
 
@@ -41,9 +43,15 @@ export const ItemAutocomplete: FC<{
       fullWidth
       autoHighlight
       autoSelect
-      getOptionLabel={({ label }) => startCase(label)}
+      getOptionLabel={({ label }) => item.normalizeName(label)}
       renderInput={(params) => (
-        <TextField {...params} required autoFocus label={label} />
+        <TextField
+          {...params}
+          required
+          autoFocus
+          label={label}
+          placeholder={placeholder}
+        />
       )}
     />
   );

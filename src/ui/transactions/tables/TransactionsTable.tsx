@@ -17,15 +17,14 @@ import { getTransactionPilotColumn } from "@/ui/transactions/tables/getTransacti
 import { getTransactionTypeColumn } from "@/ui/transactions/tables/getTransactionTypeColumn";
 import { getTransactionContextColumn } from "@/ui/transactions/tables/getTransactionContextColumn";
 import { getTransactionClearedColumn } from "@/ui/transactions/tables/getTransactionClearedColumn";
-import { getCreatedAtColumn } from "@/ui/shared/components/tables/getCreatedAtColumn";
 import { getTransactionAmountColumn } from "@/ui/transactions/tables/getTransactionAmountColumn";
 import { getTransactionCharacterColumn } from "@/ui/transactions/tables/getTransactionCharacterColumn";
+import { getTransactionCreatedAtColumn } from "@/ui/transactions/tables/getTransactionCreatedAtColumn";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
 
 export const TransactionsTable: FC<{}> = ({}) => {
-  const [showRejected, setShowRejected] = useState(false);
   const [showCleared, setShowCleared] = useState(false);
 
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
@@ -34,18 +33,14 @@ export const TransactionsTable: FC<{}> = ({}) => {
 
   const getRows: GetRows<TransactionRow> = useCallback(
     (params) =>
-      utils.wallet.getManyTransactions.fetch({
-        showRejected,
-        showCleared,
-        ...params,
-      }),
-    [utils, showRejected, showCleared],
+      utils.wallet.getManyTransactions.fetch({ ...params, showCleared }),
+    [showCleared, utils.wallet.getManyTransactions],
   );
 
   const columnDefs = useMemo<Column<TransactionRow>[]>(
     () => [
       getTransactionClearedColumn(),
-      getCreatedAtColumn(),
+      getTransactionCreatedAtColumn(),
       getTransactionContextColumn(),
       getTransactionTypeColumn(),
       getTransactionAmountColumn({ editable: isAdmin }),
@@ -58,15 +53,20 @@ export const TransactionsTable: FC<{}> = ({}) => {
   );
 
   return (
-    <InfiniteTable rowHeight={64} getRows={getRows} columnDefs={columnDefs}>
-      <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
-        <SwitchCard
-          label="Show rejected"
-          description="Rejected transactions do not affect any player's wallet."
-          checked={showRejected}
-          onClick={(newValue) => setShowRejected(newValue)}
-        />
-      </Unstable_Grid2>
+    <InfiniteTable
+      rowHeight={64}
+      getRows={getRows}
+      columnDefs={columnDefs}
+      onFirstDataRendered={(params) => {
+        params.api.setFilterModel({
+          rejected: {
+            filterType: "boolean",
+            type: "equals",
+            filter: false,
+          },
+        });
+      }}
+    >
       <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
         <SwitchCard
           label="Show cleared"

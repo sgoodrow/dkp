@@ -9,6 +9,7 @@ import { useForm } from "@tanstack/react-form";
 import { trpc } from "@/api/views/trpc/trpc";
 import { useGridApi } from "@/ui/shared/components/tables/InfiniteTable";
 import { TextField } from "@mui/material";
+import { getHelperText } from "@/ui/shared/utils/formHelpers";
 
 export const SetRaidActivityAttendanceAmountDialog: FC<{
   id: number;
@@ -48,10 +49,8 @@ export const SetRaidActivityAttendanceAmountDialog: FC<{
       onSubmit={handleSubmit}
       onClose={onClose}
     >
-      <Field
-        name="amount"
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
+      <Field name="amount">
+        {(field) => (
           <TextField
             placeholder={String(amount)}
             required
@@ -62,29 +61,24 @@ export const SetRaidActivityAttendanceAmountDialog: FC<{
             inputProps={{
               step: "any",
             }}
-            error={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-            }
             onChange={(e) => field.handleChange(Number(e.target.value))}
-            helperText={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-                ? field.state.meta.errors.join(",")
-                : "Enter a non-negative amount for the transaction"
-            }
+            {...getHelperText({
+              field,
+              helperText: "Enter a non-negative amount for the transaction",
+            })}
           />
         )}
-      />
-      {/* Add switches for type inclusions, and some dialog content */}
+      </Field>
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
           isSubmitting: state.isSubmitting,
         })}
-        // eslint-disable-next-line react/no-children-prop
-        children={({ canSubmit, isSubmitting }) => (
+      >
+        {({ canSubmit, isSubmitting }) => (
           <FormDialogButton label="Set" disabled={!canSubmit || isSubmitting} />
         )}
-      />
+      </Subscribe>
     </FormDialog>
   );
 };

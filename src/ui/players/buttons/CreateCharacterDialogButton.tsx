@@ -21,6 +21,7 @@ import {
 import { FC, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { character } from "@/shared/utils/character";
+import { getHelperText } from "@/ui/shared/utils/formHelpers";
 
 const DIALOG_TITLE_ID = "create-character-dialog-title";
 
@@ -119,8 +120,8 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                   }
                 },
               }}
-              // eslint-disable-next-line react/no-children-prop
-              children={(field) => (
+            >
+              {(field) => (
                 <TextField
                   value={field.state.value}
                   onChange={(e) => {
@@ -131,23 +132,15 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                   label="Name"
                   autoFocus
                   fullWidth
-                  error={
-                    field.state.meta.isTouched &&
-                    field.state.meta.errors.length > 0
-                  }
-                  helperText={
-                    field.state.meta.isTouched &&
-                    field.state.meta.errors.length > 0
-                      ? field.state.meta.errors.join(",")
-                      : "Enter the first name of the character"
-                  }
+                  {...getHelperText({
+                    field,
+                    helperText: "Enter the first name of the character",
+                  })}
                 />
               )}
-            />
-            <Field
-              name="raceId"
-              // eslint-disable-next-line react/no-children-prop
-              children={(field) => (
+            </Field>
+            <Field name="raceId">
+              {(field) => (
                 <Autocomplete
                   value={races?.find(({ id }) => id === field.state.value)}
                   onChange={(e, newValue) => {
@@ -165,11 +158,9 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                   )}
                 />
               )}
-            />
-            <Field
-              name="classId"
-              // eslint-disable-next-line react/no-children-prop
-              children={(field) => (
+            </Field>
+            <Field name="classId">
+              {(field) => (
                 <Autocomplete
                   value={classes?.find(({ id }) => id === field.state.value)}
                   onChange={(e, newValue) => {
@@ -187,7 +178,7 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                   )}
                 />
               )}
-            />
+            </Field>
             {isAdmin && (
               <FormGroup>
                 <FormLabel component="legend">Admin only options</FormLabel>
@@ -211,21 +202,19 @@ export const CreateCharacterDialogButton: FC<{}> = ({}) => {
                 canSubmit: state.canSubmit,
                 isSubmitting: state.isSubmitting,
               })}
-              // eslint-disable-next-line react/no-children-prop
-              children={({ canSubmit, isSubmitting }) => {
-                return (
-                  <Button
-                    variant="contained"
-                    type="submit"
-                    color="primary"
-                    disabled={!canSubmit || isSubmitting}
-                    fullWidth
-                  >
-                    Create
-                  </Button>
-                );
-              }}
-            />
+            >
+              {({ canSubmit, isSubmitting }) => (
+                <Button
+                  variant="contained"
+                  type="submit"
+                  color="primary"
+                  disabled={!canSubmit || isSubmitting}
+                  fullWidth
+                >
+                  Create
+                </Button>
+              )}
+            </Subscribe>
           </Stack>
         </DialogContent>
       </Dialog>

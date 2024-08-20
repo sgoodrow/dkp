@@ -71,22 +71,20 @@ export const raidActivityRepository = (
     typeId,
     note,
     createdAt,
-    createdById,
-    updatedById,
+    userId,
   }: {
     typeId: number;
     note?: string;
     createdAt?: Date;
-    createdById: string;
-    updatedById: string;
+    userId: string;
   }) => {
     return p.raidActivity.create({
       data: {
         typeId,
         note,
         createdAt,
-        createdById,
-        updatedById,
+        createdById: userId,
+        updatedById: userId,
       },
     });
   },
@@ -112,27 +110,44 @@ export const raidActivityRepository = (
     });
   },
 
+  createManyTypes: async ({
+    types,
+    createdById,
+  }: {
+    types: { name: string; defaultPayout: number }[];
+    createdById: string;
+  }) => {
+    await p.raidActivityType.createMany({
+      data: types.map(({ name, defaultPayout }) => {
+        return {
+          name,
+          defaultPayout,
+          createdById,
+          updatedById: createdById,
+        };
+      }),
+    });
+  },
+
   createMany: async ({
     activities,
-    createdById,
-    updatedById,
+    userId,
   }: {
     activities: {
       typeId: number;
-      createdAt?: Date;
+      createdAt: string;
       note?: string;
     }[];
-    createdById: string;
-    updatedById: string;
+    userId: string;
   }) => {
-    return p.raidActivity.createMany({
+    return p.raidActivity.createManyAndReturn({
       data: activities.map((a) => {
         return {
           typeId: a.typeId,
           note: a.note || null,
           createdAt: a.createdAt,
-          createdById,
-          updatedById,
+          createdById: userId,
+          updatedById: userId,
         };
       }),
     });
@@ -204,6 +219,16 @@ export const raidActivityRepository = (
     });
   },
 
+  getManyTypesByName: async ({ names }: { names: string[] }) => {
+    return p.raidActivityType.findMany({
+      where: {
+        name: {
+          in: names,
+        },
+      },
+    });
+  },
+
   getTypeByName: async ({ name }: { name: string }) => {
     return p.raidActivityType.findUnique({
       where: {
@@ -215,7 +240,7 @@ export const raidActivityRepository = (
   getMany: async ({ startRow, endRow, filterModel, sortModel }: AgGrid) => {
     return p.raidActivity.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
-        id: "desc",
+        createdAt: "desc",
       },
       where: agFilterModelToPrismaWhere(filterModel),
       include: {
@@ -243,7 +268,7 @@ export const raidActivityRepository = (
   }: AgGrid) => {
     return p.raidActivityType.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
-        id: "desc",
+        createdAt: "desc",
       },
       where: agFilterModelToPrismaWhere(filterModel),
       include: {
@@ -259,7 +284,7 @@ export const raidActivityRepository = (
         },
         raidActivities: {
           orderBy: {
-            id: "desc",
+            createdAt: "desc",
           },
           take: 1,
           include: {

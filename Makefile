@@ -9,6 +9,7 @@ help:
 	@echo "--- Developing ---"
 	@echo " * local-setup              install the local server dependencies and setup the db"
 	@echo " * local-run                run local server"
+	@echo " * local-scratch            run the scratch file"
 	@echo
 	@echo "--- Database ---"
 	@echo " * db-clear                 clears the non-user tables of a database"
@@ -68,6 +69,9 @@ local-run:
 		"prisma generate --watch --schema=./prisma/schema" \
 		"prisma generate --watch --schema=./prisma/eqdkp/schema.prisma" \
 		"next dev --turbo" \
+
+local-scratch:
+	@yarn run dotenv tsx ./src/test/scratch.ts
 
 # ---- Data Migrations ----
 db-drop-local:

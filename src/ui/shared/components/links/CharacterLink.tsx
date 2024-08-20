@@ -21,7 +21,7 @@ export const CharacterLink: FC<{
       href={
         character?.defaultPilotId
           ? uiRoutes.character.href({
-              playerId: character.defaultPilotId,
+              userId: character.defaultPilotId,
               characterId: character.id,
             })
           : ""

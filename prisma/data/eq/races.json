@@ -11,5 +11,6 @@
   { "name": "Iksar" },
   { "name": "Ogre" },
   { "name": "Troll" },
-  { "name": "Wood Elf" }
+  { "name": "Wood Elf" },
+  { "name": "Unknown Race" }
 ]

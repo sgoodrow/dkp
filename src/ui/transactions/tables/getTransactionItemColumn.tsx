@@ -1,4 +1,5 @@
 import { app } from "@/shared/constants/app";
+import { item } from "@/shared/utils/item";
 import { ItemLink } from "@/ui/shared/components/links/ItemLink";
 import { CellLayout } from "@/ui/shared/components/tables/CellLayout";
 import {
@@ -11,9 +12,8 @@ import { OverflowTooltipTypography } from "@/ui/shared/components/typography/Ove
 import { AssignTransactionItemIconButton } from "@/ui/transactions/buttons/AssignTransactionItemIconButton";
 import { AssignTransactionItemDialog } from "@/ui/transactions/dialogs/AssignTransactionItemDialog";
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
-import { Box, Stack, Tooltip, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { WalletTransactionType } from "@prisma/client";
-import { startCase } from "lodash";
 
 export const getTransactionItemColumn = ({
   editable = false,
@@ -22,6 +22,8 @@ export const getTransactionItemColumn = ({
 }): Column<TransactionRow> => ({
   headerName: "Item",
   field: "itemName",
+  sortable: true,
+  filter: "agTextColumnFilter",
   flex: 1,
   editable: (props) =>
     editable && props.data?.type === WalletTransactionType.PURCHASE,
@@ -30,6 +32,7 @@ export const getTransactionItemColumn = ({
       <AssignTransactionItemDialog
         transactionId={props.data.id}
         item={props.data.item}
+        itemName={props.data.itemName}
         onAssign={() => handleCellEdited(props)}
         onClose={() => handleCellEditorClosed(props)}
       />
@@ -46,6 +49,7 @@ export const getTransactionItemColumn = ({
               <AssignTransactionItemIconButton
                 transactionId={data.id}
                 item={data.item}
+                itemName={data.itemName}
                 onAssign={() => api.refreshInfiniteCache()}
               />
             )}
@@ -57,18 +61,14 @@ export const getTransactionItemColumn = ({
               ) : (
                 <ItemLink item={data.item} itemName={data.itemName} />
               )}
-              <Tooltip
-                title="The name of the item that was uploaded."
+              <OverflowTooltipTypography
+                variant="body2"
+                color="text.secondary"
+                tooltip="The name of the item that was uploaded."
                 placement="left"
-                disableInteractive
               >
-                <OverflowTooltipTypography
-                  variant="body2"
-                  color="text.secondary"
-                >
-                  {startCase(data.itemName)}
-                </OverflowTooltipTypography>
-              </Tooltip>
+                {item.normalizeName(data.itemName)}
+              </OverflowTooltipTypography>
             </Box>
           </Stack>
         )}

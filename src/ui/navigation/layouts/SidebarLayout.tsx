@@ -42,12 +42,12 @@ export const SidebarLayout: FCWithChildren<{ isMobile: boolean }> = ({
   const path = usePathname();
   const { data: guild } = trpc.guild.get.useQuery();
   const { data: isAdmin } = trpc.user.isAdmin.useQuery();
-  const { data: dkp } = trpc.wallet.getUserDkp.useQuery();
+  const { data: dkp } = trpc.wallet.getUserDkp.useQuery({});
   const { data: unclearedTransactionsCount } =
     trpc.wallet.countUnclearedTransactions.useQuery(undefined, {
       enabled: isAdmin,
     });
-  const { data: user } = trpc.user.get.useQuery();
+  const { data: user } = trpc.user.get.useQuery({});
 
   const [prevPageHref, setPrevPageHref] = useState<string>(
     uiRoutes.home.href(),
@@ -123,7 +123,7 @@ export const SidebarLayout: FCWithChildren<{ isMobile: boolean }> = ({
             ) : (
               <SideBarButton
                 dataMonitoringId={uiRoutes.player.dataMonitoringId}
-                href={uiRoutes.player.href({ userId: user?.id || "" })}
+                href={uiRoutes.player.href(user?.id || "")}
                 label={user?.displayName}
                 labelColor={user?.displayRole.color}
                 icon={<ProfileIcon size={PROFILE_IMAGE_SIZE} />}

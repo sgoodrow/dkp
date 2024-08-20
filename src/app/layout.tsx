@@ -21,23 +21,34 @@ export default async function RootLayout({
   // use middleware.ts (which runs on the Edge Runtime) to manage these redirects.
   // See: https://github.com/prisma/prisma/issues/21310 and
   //      https://github.com/prisma/prisma/issues/24430
-  const session = await auth();
-  const isInstalled = await installController().isInstalled();
-  const currentPathname = pathname();
-  const login = uiRoutes.login.href();
-  const install = uiRoutes.install.href();
-  if (!session && currentPathname !== login) {
-    redirect(uiRoutes.login.href(), RedirectType.replace);
-  }
-  if (session && !isInstalled && currentPathname !== install) {
-    redirect(uiRoutes.install.href(), RedirectType.replace);
-  }
-  if (
-    session &&
-    isInstalled &&
-    (currentPathname === login || currentPathname === install)
-  ) {
-    redirect(uiRoutes.home.href(), RedirectType.replace);
+
+  // The hierarchy of redirects is Login > Install > Home
+  const isLoggedIn = await auth();
+
+  const path = pathname();
+  const loginHref = uiRoutes.login.href();
+  const setupHref = uiRoutes.setup.href();
+  const migrateHref = uiRoutes.migrate.href();
+  const homeHref = uiRoutes.home.href();
+
+  const status = await installController().getStatus();
+
+  if (!isLoggedIn) {
+    if (path !== loginHref) {
+      redirect(loginHref, RedirectType.replace);
+    }
+  } else if (status === null || status === "FAIL") {
+    if (path !== setupHref) {
+      redirect(setupHref, RedirectType.replace);
+    }
+  } else if (status === "READY_FOR_IMPORT") {
+    if (path !== migrateHref) {
+      redirect(migrateHref, RedirectType.replace);
+    }
+  } else {
+    if (path === loginHref || path === setupHref || path === migrateHref) {
+      redirect(homeHref, RedirectType.replace);
+    }
   }
 
   return (

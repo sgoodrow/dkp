@@ -61,10 +61,8 @@ export const AssignTransactionPilotDialog: FC<{
           It is currently assigned to <PlayerLink user={pilot} />.
         </DialogContentText>
       )}
-      <Field
-        name="pilotId"
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
+      <Field name="pilotId">
+        {(field) => (
           <UserAutocomplete
             label="Pilot"
             onChange={field.setValue}
@@ -73,17 +71,17 @@ export const AssignTransactionPilotDialog: FC<{
             }
           />
         )}
-      />
+      </Field>
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
           isSubmitting: state.isSubmitting,
         })}
-        // eslint-disable-next-line react/no-children-prop
-        children={({ canSubmit, isSubmitting }) => (
+      >
+        {({ canSubmit, isSubmitting }) => (
           <AssignDialogButton disabled={!canSubmit || isSubmitting} />
         )}
-      />
+      </Subscribe>
     </FormDialog>
   );
 };

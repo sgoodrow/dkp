@@ -5,6 +5,7 @@ import {
   AssignDialogButton,
   FormDialog,
 } from "@/ui/shared/components/dialogs/FormDialog";
+import { getHelperText } from "@/ui/shared/utils/formHelpers";
 import { TextField } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { FC } from "react";
@@ -59,36 +60,32 @@ export const AssignRaidActivityTypeNameDialog: FC<{
             }
           },
         }}
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
+      >
+        {(field) => (
           <TextField
             placeholder={name}
             required
             label="Name"
             autoFocus
             fullWidth
-            error={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-            }
             onChange={(e) => field.handleChange(e.target.value)}
-            helperText={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-                ? field.state.meta.errors.join(",")
-                : "Enter a unique name for the raid activity type"
-            }
+            {...getHelperText({
+              field,
+              helperText: "Enter a unique name for the raid activity type",
+            })}
           />
         )}
-      />
+      </Field>
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
           isSubmitting: state.isSubmitting,
         })}
-        // eslint-disable-next-line react/no-children-prop
-        children={({ canSubmit, isSubmitting }) => (
+      >
+        {({ canSubmit, isSubmitting }) => (
           <AssignDialogButton disabled={!canSubmit || isSubmitting} />
         )}
-      />
+      </Subscribe>
     </FormDialog>
   );
 };

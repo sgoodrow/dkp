@@ -1,14 +1,15 @@
 import { installController } from "@/api/controllers/installController";
-import { createRoutes, protectedProcedure } from "@/api/views/trpc/trpcBuilder";
+import {
+  createRoutes,
+  installProcedure,
+  protectedProcedure,
+  publicProcedure,
+} from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 
 export const installApiRoutes = createRoutes({
-  isValidActivationKey: protectedProcedure
-    .input(
-      z.object({
-        activationKey: z.string(),
-      }),
-    )
+  isValidActivationKey: publicProcedure
+    .input(z.object({ activationKey: z.string() }))
     .query(async ({ input }) => {
       return installController().isValidActivationKey({
         activationKey: input.activationKey,
@@ -29,10 +30,9 @@ export const installApiRoutes = createRoutes({
     return installController().getLatest();
   }),
 
-  start: protectedProcedure
+  start: installProcedure
     .input(
       z.object({
-        activationKey: z.string(),
         name: z.string(),
         rulesLink: z.string(),
         discordServerId: z.string(),
@@ -51,4 +51,10 @@ export const installApiRoutes = createRoutes({
         userId: ctx.userId,
       });
     }),
+
+  complete: installProcedure.mutation(async ({ input, ctx }) => {
+    return installController().complete({
+      userId: ctx.userId,
+    });
+  }),
 });

@@ -1,9 +1,5 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
-import {
-  adminProcedure,
-  createRoutes,
-  protectedApiKeyProcedure,
-} from "@/api/views/trpc/trpcBuilder";
+import { adminProcedure, createRoutes } from "@/api/views/trpc/trpcBuilder";
 import { z } from "zod";
 import { SCOPE } from "@/shared/constants/scopes";
 
@@ -31,9 +27,12 @@ export const apiKeyApiRoutes = createRoutes({
       });
     }),
 
-  delete: protectedApiKeyProcedure.mutation(async ({ input }) => {
-    return apiKeyController().delete({
-      apiKeyId: input.apiKeyId,
-    });
-  }),
+  delete: adminProcedure
+    .input(z.object({ apiKeyId: z.number().int().nonnegative() }))
+    .mutation(async ({ input, ctx }) => {
+      return apiKeyController().delete({
+        apiKeyId: input.apiKeyId,
+        userId: ctx.userId,
+      });
+    }),
 });

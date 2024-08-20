@@ -30,7 +30,6 @@ export const RaidActivityPurchasesTable: FC<{ id: number }> = ({ id }) => {
         type: WalletTransactionType.PURCHASE,
         raidActivityId: id,
         showCleared: true,
-        showRejected: true,
         ...params,
       }),
     [utils, id],

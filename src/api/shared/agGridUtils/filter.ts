@@ -21,6 +21,11 @@ import {
   enumFilterSchema,
   getEnumFilter,
 } from "@/api/shared/agGridUtils/filterTypes/enum";
+import {
+  BooleanFilter,
+  booleanFilterSchema,
+  getBooleanFilter,
+} from "@/api/shared/agGridUtils/filterTypes/boolean";
 
 export const agFilterModelSchema = z
   .record(
@@ -30,6 +35,7 @@ export const agFilterModelSchema = z
       textFilterSchema,
       dateFilterSchema,
       enumFilterSchema,
+      booleanFilterSchema,
     ]),
   )
   .optional();
@@ -37,7 +43,7 @@ export const agFilterModelSchema = z
 export type AgFilterModel = z.infer<typeof agFilterModelSchema>;
 
 const getPrismaFilter = (
-  filter: NumberFilter | TextFilter | DateFilter | EnumFilter,
+  filter: NumberFilter | TextFilter | DateFilter | EnumFilter | BooleanFilter,
 ) => {
   const { filterType } = filter;
   switch (filterType) {
@@ -49,6 +55,8 @@ const getPrismaFilter = (
       return getDateFilter(filter);
     case "enum":
       return getEnumFilter(filter);
+    case "boolean":
+      return getBooleanFilter(filter);
     default:
       return exhaustiveSwitchCheck(filterType);
   }

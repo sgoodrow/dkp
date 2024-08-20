@@ -43,3 +43,5 @@ next-env.d.ts
 # unmanaged prisma client
 prisma/eqdkp/client
 
+# scratch
+src/test/scratch.ts

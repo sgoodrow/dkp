@@ -6,8 +6,7 @@ import {
   createContext,
   useContext,
 } from "react";
-import { Box, PaletteMode, Unstable_Grid2, useTheme } from "@mui/material";
-import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
+import { Box, Unstable_Grid2 } from "@mui/material";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { isEmpty } from "lodash";
@@ -21,20 +20,8 @@ import {
   GridApi,
   GridReadyEvent,
 } from "ag-grid-community";
-import "ag-grid-community/styles/ag-grid.css";
-import "./theme.css";
 import { TypographyCell } from "@/ui/shared/components/tables/TypographyCell";
-
-const getThemeName = ({ mode }: { mode: PaletteMode }) => {
-  switch (mode) {
-    case "dark":
-      return "ag-theme-alpine-dark";
-    case "light":
-      return "ag-theme-alpine";
-    default:
-      return exhaustiveSwitchCheck(mode);
-  }
-};
+import { useGridTheme } from "@/ui/shared/components/tables/useGridTheme";
 
 type Data = {
   id: string | number;
@@ -56,15 +43,20 @@ export interface Column<TData extends Data>
   cellEditor?: (params: ICellEditorParams<TData>) => JSX.Element;
 }
 
+export type ColumnConfig = Pick<
+  Column<never>,
+  "headerName" | "width" | "sortable" | "filter"
+>;
+
 export const handleCellEdited = ({
   rowIndex,
   column,
   api,
 }: ICellEditorParams) => {
-  api.refreshInfiniteCache();
   setTimeout(() => {
     api.setFocusedCell(rowIndex, column);
   }, 0);
+  api.refreshInfiniteCache();
 };
 
 export const handleCellEditorClosed = ({
@@ -93,17 +85,17 @@ export const InfiniteTable = <TData extends Data>({
   getRows,
   columnDefs,
   onGridReady,
+  onFirstDataRendered,
   children,
 }: PropsWithChildren<{
   rowHeight?: AgGridReactProps["rowHeight"];
+  onFirstDataRendered?: AgGridReactProps["onFirstDataRendered"];
   getRows: GetRows<TData>;
   columnDefs: Column<TData>[];
   onGridReady?: (api: GridApi<TData>) => void;
 }>) => {
-  const theme = useTheme();
+  const gridTheme = useGridTheme();
   const [api, setApi] = useState<GridApi<TData>>();
-
-  const { mode } = theme.palette;
 
   const onGridReadyInternal = useCallback(
     (params: GridReadyEvent) => {
@@ -170,8 +162,9 @@ export const InfiniteTable = <TData extends Data>({
           {children}
         </Unstable_Grid2>
       </GridApiContext.Provider>
-      <Box flexGrow={1} className={getThemeName({ mode })} mt={1}>
+      <Box flexGrow={1} className={gridTheme} mt={1}>
         <AgGridReact
+          tooltipShowDelay={300}
           rowSelection="multiple"
           rowHeight={rowHeight}
           onGridReady={onGridReadyInternal}
@@ -182,6 +175,7 @@ export const InfiniteTable = <TData extends Data>({
           datasource={datasource}
           defaultColDef={defaultColDef}
           columnDefs={columnDefs}
+          onFirstDataRendered={onFirstDataRendered}
         />
       </Box>
     </Box>

@@ -2,8 +2,7 @@ import {
   prisma,
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
-
-const normalizeName = (name: string) => name.toLowerCase();
+import { item } from "@/shared/utils/item";
 
 export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
   createMany: async ({
@@ -11,10 +10,10 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
   }: {
     items: { name: string; wikiSlug: string }[];
   }) => {
-    return p.item.createMany({
+    await p.item.createMany({
       data: items.map((i) => {
         return {
-          name: normalizeName(i.name),
+          name: item.normalizeName(i.name),
           wikiSlug: i.wikiSlug,
         };
       }),
@@ -33,7 +32,7 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.item.findFirst({
       where: {
         name: {
-          contains: normalizeName(search),
+          contains: item.normalizeName(search),
         },
       },
     });
@@ -49,7 +48,7 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.item.findMany({
       where: {
         name: {
-          contains: normalizeName(search),
+          contains: item.normalizeName(search),
         },
       },
       orderBy: {
@@ -63,7 +62,7 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     const items = await p.item.findMany({
       where: {
         name: {
-          in: itemNames.map((i) => normalizeName(i)),
+          in: itemNames.map((i) => item.normalizeName(i)),
         },
       },
     });
@@ -74,7 +73,7 @@ export const itemRepository = (p: PrismaTransactionClient = prisma) => ({
     }, {});
 
     return {
-      get: (itemName: string) => map[normalizeName(itemName)] || null,
+      get: (itemName: string) => map[item.normalizeName(itemName)] || null,
     };
   },
 });
