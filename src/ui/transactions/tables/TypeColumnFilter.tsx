@@ -5,20 +5,32 @@ import { TransactionTypeIcon } from "@/ui/transactions/icons/TransactionTypeIcon
 import { CustomFilterProps } from "ag-grid-react";
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 import { EnumFilter } from "@/api/shared/agGridUtils/filterTypes/enum";
+import { FilterChangeButtons } from "@/ui/shared/components/tables/FilterChangeButtons";
 
 export const TypeColumnFilter: FC<
   CustomFilterProps<TransactionRow, any, EnumFilter>
 > = ({ model, onModelChange, api }) => {
-  const previous = model?.filterType === "enum" ? model.filter : null;
-  const [type, setType] = useState<string | null>(previous);
+  const value = model?.filterType === "enum" ? model.filter : null;
+
+  const handleModelChange = (newValue: WalletTransactionType | null) => {
+    onModelChange(
+      newValue === null
+        ? null
+        : {
+            filterType: "enum",
+            type: "equals",
+            filter: newValue,
+          },
+    );
+  };
 
   return (
     <>
       <Box className="ag-simple-filter-body-wrapper" textAlign="center">
         <ToggleButtonGroup
-          value={type}
+          value={value}
           exclusive
-          onChange={(_, newValue) => setType(newValue)}
+          onChange={(_, newValue) => handleModelChange(newValue)}
           aria-label="Transaction type filter"
           size="small"
           sx={{
@@ -39,46 +51,15 @@ export const TypeColumnFilter: FC<
           />
         </ToggleButtonGroup>
       </Box>
-      <div className="ag-filter-apply-panel">
-        <button
-          type="submit"
-          className="ag-standard-button ag-filter-apply-panel-button"
-          onClick={() => {
-            onModelChange(
-              type === null
-                ? null
-                : {
-                    filterType: "enum",
-                    type: "equals",
-                    filter: type,
-                  },
-            );
-            api.hidePopupMenu();
-          }}
-        >
-          Apply
-        </button>
-        <button
-          type="button"
-          className="ag-standard-button ag-filter-apply-panel-button"
-          onClick={() => {
-            onModelChange(null);
-            setType(null);
-            api.hidePopupMenu();
-          }}
-        >
-          Reset
-        </button>
-        <button
-          type="button"
-          className="ag-standard-button ag-filter-apply-panel-button"
-          onClick={() => {
-            api.hidePopupMenu();
-          }}
-        >
-          Cancel
-        </button>
-      </div>
+      <FilterChangeButtons
+        onClear={() => {
+          onModelChange(null);
+          api.hidePopupMenu();
+        }}
+        onCancel={() => {
+          api.hidePopupMenu();
+        }}
+      />
     </>
   );
 };

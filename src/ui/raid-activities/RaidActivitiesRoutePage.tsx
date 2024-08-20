@@ -5,7 +5,7 @@ import { RaidActivitiesTable } from "@/ui/raid-activities/tables/RaidActivitiesT
 export const RaidActivitiesRoutePage = () => {
   return (
     <HeaderLayout uiRoute={uiRoutes.raidActivities}>
-      {<RaidActivitiesTable />}
+      <RaidActivitiesTable />
     </HeaderLayout>
   );
 };

@@ -1,9 +1,12 @@
-import { Box, List, ListItem } from "@mui/material";
+import { Box, BoxProps, List, ListItem } from "@mui/material";
 import { FC, ReactNode } from "react";
 
-export const BulletList: FC<{ items: ReactNode[] }> = ({ items }) => {
+export const BulletList: FC<{
+  items: ReactNode[];
+  maxHeight?: BoxProps["maxHeight"];
+}> = ({ items, maxHeight }) => {
   return (
-    <Box>
+    <Box maxHeight={maxHeight} overflow="auto">
       <List sx={{ listStyleType: "disc", padding: "revert" }}>
         {items.map((i, index) => (
           <ListItem

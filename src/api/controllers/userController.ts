@@ -7,6 +7,18 @@ import { walletController } from "@/api/controllers/walletController";
 import { guildController } from "@/api/controllers/guildController";
 
 export const userController = (p?: PrismaTransactionClient) => ({
+  createManyStubUsers: async ({
+    users,
+  }: {
+    users: { name: string; email: string }[];
+  }) => {
+    const created = await userRepository(p).createManyStubUsers({ users });
+    const wallets = await walletController(p).createMany({
+      userIds: created.map(({ id }) => id),
+    });
+    return wallets.map((w) => ({ ...w.user, wallet: w }));
+  },
+
   upsertSystemUser: async () => {
     return userRepository(p).upsertSystemUser();
   },
@@ -62,6 +74,14 @@ export const userController = (p?: PrismaTransactionClient) => ({
     return userRepository(p).getSystemUserId();
   },
 
+  getMany: async (agTable: AgGrid) => {
+    const rows = await userRepository(p).getMany(agTable);
+    return {
+      totalRowCount: await userRepository(p).count(agTable),
+      rows: rows.map((user) => userController(p).addDisplayName({ user })),
+    };
+  },
+
   getManyAdmins: async (agTable: AgGrid) => {
     const { discordOwnerRoleId, discordHelperRoleId } =
       await guildController(p).get();
@@ -110,7 +130,7 @@ export const userController = (p?: PrismaTransactionClient) => ({
     }, {});
   },
 
-  get: async ({ userId }: { userId: string }) => {
+  get: async ({ id: userId }: { id: string }) => {
     const user = await userRepository(p).get({ userId });
 
     const displayRole = await discordController(p).getBestRole({
@@ -124,6 +144,10 @@ export const userController = (p?: PrismaTransactionClient) => ({
     return {
       numApiKeys: await apiKeyController().count({ userId }),
     };
+  },
+
+  getManyByEmails: async ({ emails }: { emails: string[] }) => {
+    return userRepository(p).getManyByEmails({ emails });
   },
 
   getByEmail: async ({ email }: { email: string }) => {

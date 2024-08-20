@@ -5,7 +5,7 @@ import {
   AssignDialogButton,
   FormDialog,
 } from "@/ui/shared/components/dialogs/FormDialog";
-import { FormControlLabel, FormHelperText, Switch } from "@mui/material";
+import { LabeledSwitch } from "@/ui/shared/components/switches/LabeledSwitch";
 import { useForm } from "@tanstack/react-form";
 import { FC } from "react";
 
@@ -45,41 +45,26 @@ export const AssignTransactionRejectedDialog: FC<{
       onSubmit={handleSubmit}
       onClose={onClose}
     >
-      <Field
-        name="rejected"
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
-          <>
-            <FormControlLabel
-              sx={{
-                ml: -1,
-                width: "100%",
-              }}
-              control={
-                <Switch
-                  autoFocus
-                  value={rejected}
-                  onChange={(e) => field.handleChange(e.target.checked)}
-                />
-              }
-              label="Rejected"
-            />
-            <FormHelperText>
-              Rejected transactions do not affect any player&apos;s wallet.
-            </FormHelperText>
-          </>
+      <Field name="rejected">
+        {(field) => (
+          <LabeledSwitch
+            switched={rejected}
+            label="Rejected"
+            onChange={(switched) => field.handleChange(switched)}
+            helperText="Rejected transactions do not affect any player's wallet."
+          />
         )}
-      />
+      </Field>
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
           isSubmitting: state.isSubmitting,
         })}
-        // eslint-disable-next-line react/no-children-prop
-        children={({ canSubmit, isSubmitting }) => (
+      >
+        {({ canSubmit, isSubmitting }) => (
           <AssignDialogButton disabled={!canSubmit || isSubmitting} />
         )}
-      />
+      </Subscribe>
     </FormDialog>
   );
 };

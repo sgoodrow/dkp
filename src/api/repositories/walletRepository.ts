@@ -10,14 +10,14 @@ import { agSortModelToPrismaOrderBy } from "@/api/shared/agGridUtils/sort";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { WalletTransactionType } from "@prisma/client";
 
-const getRejectedTransactionsPrismaWhere = (showRejected?: boolean) =>
-  showRejected ? {} : { rejected: false };
-
 const getTypeTransactionsPrismaWhere = (type?: WalletTransactionType) =>
   type ? { type } : undefined;
 
 const getRaidActivityTransactionsPrismaWhere = (raidActivityId?: number) =>
   raidActivityId ? { raidActivityId } : undefined;
+
+const getUserTransactionsPrismaWhere = (userId?: string) =>
+  userId ? { wallet: { userId } } : undefined;
 
 const UNCLEARED_PRISMA_WHERE = {
   OR: [
@@ -38,6 +38,72 @@ const getUnclearedTransactionsPrismaWhere = (showUncleared: boolean) =>
   showUncleared ? UNCLEARED_PRISMA_WHERE : undefined;
 
 export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
+  getTransaction: async ({ transactionId }: { transactionId: number }) => {
+    return p.walletTransaction.findUniqueOrThrow({
+      where: { id: transactionId },
+    });
+  },
+
+  getUnassignedPurchaseIdsByName: async ({
+    itemName,
+  }: {
+    itemName: string | null;
+  }) => {
+    if (itemName === null) {
+      throw new Error("itemName cannot be null");
+    }
+    const transactions = await p.walletTransaction.findMany({
+      where: {
+        type: WalletTransactionType.PURCHASE,
+        itemId: null,
+        itemName,
+      },
+    });
+
+    return transactions.map((transaction) => transaction.id);
+  },
+
+  getManyByUserIds: async ({ userIds }: { userIds: string[] }) => {
+    return p.wallet.findMany({
+      where: {
+        userId: {
+          in: userIds,
+        },
+      },
+    });
+  },
+
+  createMany: async ({ userIds }: { userIds: string[] }) => {
+    return p.wallet.createManyAndReturn({
+      data: userIds.map((userId) => ({ userId })),
+      include: {
+        user: true,
+      },
+    });
+  },
+
+  assignPurchasesItem: async ({
+    userId,
+    transactionIds,
+    itemId,
+  }: {
+    userId: string;
+    transactionIds: number[];
+    itemId?: number;
+  }) => {
+    return p.walletTransaction.updateMany({
+      where: {
+        id: {
+          in: transactionIds,
+        },
+      },
+      data: {
+        updatedById: userId,
+        itemId,
+      },
+    });
+  },
+
   updateTransaction: async ({
     updatedById,
     transactionId,
@@ -104,11 +170,13 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     before,
     includePurchases,
     includeAdjustments,
+    onlyBots,
   }: {
     userId: string;
     before: Date;
     includePurchases: boolean;
     includeAdjustments: boolean;
+    onlyBots: boolean;
   }) => {
     let types: WalletTransactionType[] = [WalletTransactionType.ATTENDANCE];
     if (includePurchases) {
@@ -120,6 +188,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.walletTransaction.updateMany({
       where: {
         ...UNCLEARED_PRISMA_WHERE,
+        walletId: onlyBots ? { equals: null } : undefined,
         createdAt: {
           lt: before,
         },
@@ -149,35 +218,41 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
 
   createManyAttendants: async ({
     attendees,
-    payout,
-    raidActivityId,
-    createdById,
-    updatedById,
+    userId,
   }: {
     attendees: {
+      createdAt?: string;
       characterName: string;
       pilotCharacterName?: string;
       walletId: number | null;
       characterId: number | null;
+      amount: number;
+      raidActivityId: number;
     }[];
-    payout: number;
-    raidActivityId: number;
-    createdById: string;
-    updatedById: string;
+    userId: string;
   }) => {
-    return p.walletTransaction.createMany({
+    await p.walletTransaction.createMany({
       data: attendees.map(
-        ({ characterName, pilotCharacterName, walletId, characterId }) => ({
+        ({
+          createdAt,
+          characterName,
+          pilotCharacterName,
+          walletId,
+          characterId,
+          amount,
+          raidActivityId,
+        }) => ({
           type: WalletTransactionType.ATTENDANCE,
-          amount: payout,
+          createdAt,
+          amount: Math.abs(amount),
           characterName,
           pilotCharacterName,
           walletId,
           characterId,
           itemId: null,
           raidActivityId,
-          createdById,
-          updatedById,
+          createdById: userId,
+          updatedById: userId,
         }),
       ),
     });
@@ -185,33 +260,34 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
 
   createManyAdjustments: async ({
     adjustments,
-    raidActivityId,
-    createdById,
-    updatedById,
+    userId,
   }: {
     adjustments: {
+      createdAt?: string;
       amount: number;
       reason: string;
       characterName: string;
       pilotCharacterName?: string;
       walletId: number | null;
       characterId: number | null;
+      raidActivityId: number;
     }[];
-    raidActivityId: number;
-    createdById: string;
-    updatedById: string;
+    userId: string;
   }) => {
-    return p.walletTransaction.createMany({
+    await p.walletTransaction.createMany({
       data: adjustments.map(
         ({
+          createdAt,
           amount,
           reason,
           characterName,
           pilotCharacterName,
           walletId,
           characterId,
+          raidActivityId,
         }) => ({
           type: WalletTransactionType.ADJUSTMENT,
+          createdAt,
           amount,
           reason,
           characterName,
@@ -220,8 +296,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
           characterId,
           itemId: null,
           raidActivityId,
-          createdById,
-          updatedById,
+          createdById: userId,
+          updatedById: userId,
         }),
       ),
     });
@@ -229,26 +305,25 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
 
   createManyPurchases: async ({
     purchases,
-    raidActivityId,
-    createdById,
-    updatedById,
+    userId,
   }: {
     purchases: {
+      createdAt?: string;
       amount: number;
       characterName: string;
       pilotCharacterName?: string;
       itemName: string;
       walletId: number | null;
       itemId: number | null;
+      raidActivityId: number;
       characterId: number | null;
     }[];
-    raidActivityId: number;
-    createdById: string;
-    updatedById: string;
+    userId: string;
   }) => {
-    return p.walletTransaction.createMany({
+    await p.walletTransaction.createMany({
       data: purchases.map(
         ({
+          createdAt,
           amount,
           characterName,
           pilotCharacterName,
@@ -256,9 +331,11 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
           itemId,
           walletId,
           characterId,
+          raidActivityId,
         }) => ({
           type: WalletTransactionType.PURCHASE,
-          amount,
+          createdAt,
+          amount: -Math.abs(amount),
           characterName,
           pilotCharacterName,
           itemName,
@@ -266,8 +343,8 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
           characterId,
           itemId,
           raidActivityId,
-          createdById,
-          updatedById,
+          createdById: userId,
+          updatedById: userId,
         }),
       ),
     });
@@ -276,10 +353,7 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
   countUnclearedTransactions: async () => {
     return p.walletTransaction.count({
       where: {
-        AND: [
-          UNCLEARED_PRISMA_WHERE,
-          getRejectedTransactionsPrismaWhere(false),
-        ],
+        AND: [UNCLEARED_PRISMA_WHERE, { rejected: false }],
       },
     });
   },
@@ -327,16 +401,14 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
       },
     });
 
-    const spent = Math.abs(
-      t.find(({ type }) => type === "PURCHASE")?._sum.amount ?? 0,
-    );
-
     const earned =
       (t.find(({ type }) => type === "ATTENDANCE")?._sum.amount ?? 0) +
       (t.find(({ type }) => type === "ADJUSTMENT")?._sum.amount ?? 0);
 
+    const spent = t.find(({ type }) => type === "PURCHASE")?._sum.amount ?? 0;
+
     return {
-      current: earned - spent,
+      current: earned + spent,
       spentDkp: spent,
       earnedDkp: earned,
     };
@@ -347,22 +419,24 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     showCleared,
     type,
     raidActivityId,
+    userId,
     filterModel,
   }: {
     showRejected?: boolean;
     showCleared?: boolean;
     type?: WalletTransactionType;
     raidActivityId?: number;
+    userId?: string;
     filterModel: AgFilterModel;
   }) => {
     return p.walletTransaction.count({
       where: {
         AND: {
           ...agFilterModelToPrismaWhere(filterModel),
-          ...getRejectedTransactionsPrismaWhere(showRejected),
           ...getUnclearedTransactionsPrismaWhere(!showCleared),
           ...getTypeTransactionsPrismaWhere(type),
           ...getRaidActivityTransactionsPrismaWhere(raidActivityId),
+          ...getUserTransactionsPrismaWhere(userId),
         },
       },
     });
@@ -373,27 +447,27 @@ export const walletRepository = (p: PrismaTransactionClient = prisma) => ({
     endRow,
     filterModel,
     sortModel,
-    showRejected,
     showCleared,
     type,
     raidActivityId,
+    userId,
   }: {
-    showRejected?: boolean;
     showCleared?: boolean;
     type?: WalletTransactionType;
     raidActivityId?: number;
+    userId?: string;
   } & AgGrid) => {
     return p.walletTransaction.findMany({
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
-        id: "desc",
+        createdAt: "desc",
       },
       where: {
         AND: {
           ...agFilterModelToPrismaWhere(filterModel),
-          ...getRejectedTransactionsPrismaWhere(showRejected),
           ...getUnclearedTransactionsPrismaWhere(!showCleared),
           ...getTypeTransactionsPrismaWhere(type),
           ...getRaidActivityTransactionsPrismaWhere(raidActivityId),
+          ...getUserTransactionsPrismaWhere(userId),
         },
       },
       include: {

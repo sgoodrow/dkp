@@ -29,13 +29,7 @@ export const PlayerLink: FC<{
     <SiteLink
       inheritSize={inheritSize}
       data-monitoring-id={monitoringIds.GOTO_PLAYER}
-      href={
-        user
-          ? uiRoutes.player.href({
-              userId: user.id,
-            })
-          : ""
-      }
+      href={user ? uiRoutes.player.href(user.id) : ""}
       label={user?.displayName || <Skeleton />}
       color={role?.color || undefined}
     />

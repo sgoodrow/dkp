@@ -1,18 +1,13 @@
 "use client";
 
 import { FC } from "react";
-import { LabeledCard } from "@/ui/shared/components/cards/LabeledCard";
-import { Box, Button, Skeleton, Stack, Typography } from "@mui/material";
 import { trpc } from "@/api/views/trpc/trpc";
 import { enqueueSnackbar } from "notistack";
-import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 import { Sync } from "@mui/icons-material";
-import dayjs from "dayjs";
-import { DiscordRoleTypography } from "@/ui/shared/components/typography/DiscordRoleTypography";
+import { ActionCard } from "@/ui/shared/components/cards/ActionCard";
 
 export const DiscordSyncCard: FC<{}> = ({}) => {
   const utils = trpc.useUtils();
-  const { data: guild } = trpc.guild.get.useQuery();
   const { mutate, isPending } = trpc.discord.sync.useMutation({
     onSuccess: () => {
       enqueueSnackbar("Discord metadata synced.", { variant: "success" });
@@ -24,63 +19,17 @@ export const DiscordSyncCard: FC<{}> = ({}) => {
       });
     },
   });
-
-  const { data: latestSyncEvent } = trpc.discord.getLatestSyncEvent.useQuery();
-
+  const handleSync = () => {
+    mutate();
+  };
   return (
-    <LabeledCard
-      title="Sync Discord"
-      labelId="discord-sync-label"
-      titleInfo="Discord metadata is synced nightly, but admins can manually sync anytime."
-      titleAvatar={<Sync />}
-    >
-      <Box>
-        Force a refresh of the application&apos;s Discord metadata.
-        <br />
-        <br />
-        This is useful if a change has been made in Discord that you want to be
-        reflected here immediately, such as the addition of the{" "}
-        <DiscordRoleTypography roleId={guild?.discordHelperRoleId} /> role to a
-        member.
-      </Box>
-      <Stack direction="row" spacing={1}>
-        <Button
-          fullWidth
-          disabled={isPending}
-          onClick={() => mutate()}
-          color="secondary"
-        >
-          Sync
-        </Button>
-      </Stack>
-      <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2" color="text.secondary">
-          Last synced
-        </Typography>
-        {latestSyncEvent === undefined ? (
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ flexGrow: 1 }}
-          >
-            <Skeleton />
-          </Typography>
-        ) : latestSyncEvent === null ? (
-          <Typography variant="body2" color="text.secondary">
-            never.
-          </Typography>
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            {dayjs(latestSyncEvent.createdAt).fromNow()} by{" "}
-            {latestSyncEvent.createdBy !== null ? (
-              <PlayerLink inheritSize user={latestSyncEvent.createdBy} />
-            ) : (
-              "Nightly runner"
-            )}
-            .
-          </Typography>
-        )}
-      </Stack>
-    </LabeledCard>
+    <ActionCard
+      Icon={Sync}
+      label="Sync Discord"
+      description="Force a refresh of the application's Discord metadata."
+      onClick={() => handleSync()}
+      disabled={isPending}
+      loading={isPending}
+    />
   );
 };

@@ -9,6 +9,7 @@ export const getTransactionTypeColumn = (): Column<TransactionRow> => ({
   headerName: "Type",
   field: "type",
   width: 100,
+  sortable: true,
   filter: TypeColumnFilter,
   cellRenderer: ({ data }) => {
     return data === undefined ? (

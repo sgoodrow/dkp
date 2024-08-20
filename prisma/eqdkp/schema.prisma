@@ -22,8 +22,8 @@ model eqdkp_User {
 
 model eqdkp_UserCharacter {
     // Properties
-    member_id Int @id
-    user_id   Int
+    member_id Int @unique
+    user_id   Int @unique
 
     // Relationships
     user      eqdkp_User      @relation(fields: [user_id], references: [user_id])
@@ -48,7 +48,10 @@ model eqdkp_Character {
     profiledata Json
 
     // Relationships
-    userCharacter eqdkp_UserCharacter?
+    userCharacter          eqdkp_UserCharacter?
+    adjustments            eqdkp_Adjustment[]
+    purchases              eqdkp_Purchase[]
+    raidActivityAttendance eqdkp_RaidActivityAttendant[]
 
     @@map("eqdkp23_members")
 }
@@ -87,14 +90,74 @@ model eqdkp_CharacterAttribute {
 }
 
 model eqdkp_RaidActivityType {
-    event_id    Int    @id
-    event_name  String
-    event_value Float
+    event_id       Int                  @id
+    event_name     String
+    event_value    Float
+    raidActivities eqdkp_RaidActivity[]
+    adjustments    eqdkp_Adjustment[]
 
     @@map("eqdkp23_events")
 }
 
-// eqdkp23_adjustments
-// eqdkp23_items
-// eqdkp23_raids
-// eqdkp23_raid_attendees
+model eqdkp_Adjustment {
+    // Properties
+    adjustment_id     Int    @id
+    adjustment_value  Float
+    adjustment_date   Int // epoch seconds
+    adjustment_reason String
+
+    // Relationships
+    member_id        Int
+    character        eqdkp_Character        @relation(fields: [member_id], references: [member_id])
+    event_id         Int
+    raidActivityType eqdkp_RaidActivityType @relation(fields: [event_id], references: [event_id])
+    raid_id          Int?
+    raidActivity     eqdkp_RaidActivity?    @relation(fields: [raid_id], references: [raid_id])
+
+    @@map("eqdkp23_adjustments")
+}
+
+model eqdkp_RaidActivity {
+    // Properties
+    raid_id    Int    @id
+    raid_date  Int // epoch seconds
+    raid_note  String
+    raid_value Float
+
+    // Relationships
+    event_id         Int
+    raidActivityType eqdkp_RaidActivityType        @relation(fields: [event_id], references: [event_id])
+    purchases        eqdkp_Purchase[]
+    attendees        eqdkp_RaidActivityAttendant[]
+    adjustments      eqdkp_Adjustment[]
+
+    @@map("eqdkp23_raids")
+}
+
+model eqdkp_RaidActivityAttendant {
+    // Properties
+    raid_id   Int @unique
+    member_id Int @unique
+
+    // Relationships
+    raid   eqdkp_RaidActivity @relation(fields: [raid_id], references: [raid_id])
+    member eqdkp_Character    @relation(fields: [member_id], references: [member_id])
+
+    @@map("eqdkp23_raid_attendees")
+}
+
+model eqdkp_Purchase {
+    // Properties
+    item_id    Int    @id
+    item_date  Int // epoch seconds
+    item_value Float
+    item_name  String @unique
+
+    // Relationships
+    raid_id   Int
+    raid      eqdkp_RaidActivity @relation(fields: [raid_id], references: [raid_id])
+    member_id Int
+    character eqdkp_Character    @relation(fields: [member_id], references: [member_id])
+
+    @@map("eqdkp23_items")
+}

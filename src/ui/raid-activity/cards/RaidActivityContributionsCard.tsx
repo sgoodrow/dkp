@@ -88,7 +88,6 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
                   value={
                     <TransactionAmountTypography
                       amount={earned ? earned.sum : earned}
-                      positive
                     />
                   }
                 />
@@ -99,7 +98,6 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
                   value={
                     <TransactionAmountTypography
                       amount={spent ? spent.sum : spent}
-                      positive={false}
                     />
                   }
                 />
@@ -107,16 +105,7 @@ export const RaidActivityContributionsCard: FC<{ id: number }> = ({ id }) => {
               <Unstable_Grid2 xs={6} sm={4}>
                 <StatCard
                   label="DKP change"
-                  value={
-                    <TransactionAmountTypography
-                      amount={change}
-                      positive={
-                        change === undefined || change === null
-                          ? true
-                          : change >= 0
-                      }
-                    />
-                  }
+                  value={<TransactionAmountTypography amount={change} />}
                 />
               </Unstable_Grid2>
               <Unstable_Grid2 xs={6} sm={4}>

@@ -30,7 +30,6 @@ export const RaidActivityAdjustmentsTable: FC<{ id: number }> = ({ id }) => {
         type: WalletTransactionType.ADJUSTMENT,
         raidActivityId: id,
         showCleared: true,
-        showRejected: true,
         ...params,
       }),
     [utils, id],

@@ -3,25 +3,53 @@
     "name": "Enchanter",
     "colorHexLight": "#6929c4",
     "colorHexDark": "#8a3ffc",
-    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "High Elf", "Human"]
+    "allowedRaces": [
+      "Dark Elf",
+      "Erudite",
+      "Gnome",
+      "High Elf",
+      "Human",
+      "Unknown Race"
+    ]
   },
   {
     "name": "Magician",
     "colorHexLight": "#1192e8",
     "colorHexDark": "#33b1ff",
-    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "High Elf", "Human"]
+    "allowedRaces": [
+      "Dark Elf",
+      "Erudite",
+      "Gnome",
+      "High Elf",
+      "Human",
+      "Unknown Race"
+    ]
   },
   {
     "name": "Necromancer",
     "colorHexLight": "#fa4d56",
     "colorHexDark": "#fa4d56",
-    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "Iksar", "Human"]
+    "allowedRaces": [
+      "Dark Elf",
+      "Erudite",
+      "Gnome",
+      "Iksar",
+      "Human",
+      "Unknown Race"
+    ]
   },
   {
     "name": "Wizard",
     "colorHexLight": "#9f1853",
     "colorHexDark": "#ff7eb6",
-    "allowedRaces": ["Dark Elf", "Erudite", "Gnome", "High Elf", "Human"]
+    "allowedRaces": [
+      "Dark Elf",
+      "Erudite",
+      "Gnome",
+      "High Elf",
+      "Human",
+      "Unknown Race"
+    ]
   },
   {
     "name": "Cleric",
@@ -33,40 +61,46 @@
       "Dwarf",
       "Gnome",
       "High Elf",
-      "Half Elf",
       "Human",
-      "Halfling"
+      "Halfling",
+      "Unknown Race"
     ]
   },
   {
     "name": "Druid",
     "colorHexLight": "#198038",
     "colorHexDark": "#6fdc8c",
-    "allowedRaces": ["Wood Elf", "Half Elf", "Halfling", "Human"]
+    "allowedRaces": [
+      "Wood Elf",
+      "Half Elf",
+      "Halfling",
+      "Human",
+      "Unknown Race"
+    ]
   },
   {
     "name": "Shaman",
     "colorHexLight": "#002d9c",
     "colorHexDark": "#4589ff",
-    "allowedRaces": ["Barbarian", "Iksar", "Ogre", "Troll"]
+    "allowedRaces": ["Barbarian", "Iksar", "Ogre", "Troll", "Unknown Race"]
   },
   {
     "name": "Bard",
     "colorHexLight": "#b28600",
     "colorHexDark": "#d2a106",
-    "allowedRaces": ["Wood Elf", "Half Elf", "Human"]
+    "allowedRaces": ["Wood Elf", "Half Elf", "Human", "Unknown Race"]
   },
   {
     "name": "Monk",
     "colorHexLight": "#012749",
     "colorHexDark": "#bae6ff",
-    "allowedRaces": ["Iksar", "Human"]
+    "allowedRaces": ["Iksar", "Human", "Unknown Race"]
   },
   {
     "name": "Ranger",
     "colorHexLight": "#009d9a",
     "colorHexDark": "#08bdba",
-    "allowedRaces": ["Half Elf", "Human", "Wood Elf"]
+    "allowedRaces": ["Half Elf", "Human", "Wood Elf", "Unknown Race"]
   },
   {
     "name": "Rogue",
@@ -80,20 +114,36 @@
       "Half Elf",
       "Halfling",
       "Human",
-      "Wood Elf"
+      "Wood Elf",
+      "Unknown Race"
     ]
   },
   {
     "name": "Paladin",
     "colorHexLight": "#a56eff",
     "colorHexDark": "#d4bbff",
-    "allowedRaces": ["Dwarf", "Erudite", "Half Elf", "High Elf", "Human"]
+    "allowedRaces": [
+      "Dwarf",
+      "Erudite",
+      "Half Elf",
+      "High Elf",
+      "Human",
+      "Unknown Race"
+    ]
   },
   {
     "name": "Shadow Knight",
     "colorHexLight": "#005d5d",
     "colorHexDark": "#007d79",
-    "allowedRaces": ["Dark Elf", "Erudite", "Human", "Iksar", "Ogre", "Troll"]
+    "allowedRaces": [
+      "Dark Elf",
+      "Erudite",
+      "Human",
+      "Iksar",
+      "Ogre",
+      "Troll",
+      "Unknown Race"
+    ]
   },
   {
     "name": "Warrior",
@@ -105,11 +155,19 @@
       "Dwarf",
       "Gnome",
       "Half Elf",
+      "Wood Elf",
       "Halfling",
       "Human",
       "Iksar",
       "Ogre",
-      "Troll"
+      "Troll",
+      "Unknown Race"
     ]
+  },
+  {
+    "name": "Unknown Class",
+    "colorHexLight": "#000000",
+    "colorHexDark": "#ffffff",
+    "allowedRaces": ["Unknown Race"]
   }
 ]

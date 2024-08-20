@@ -9,28 +9,28 @@ import { useForm } from "@tanstack/react-form";
 import { trpc } from "@/api/views/trpc/trpc";
 import { useGridApi } from "@/ui/shared/components/tables/InfiniteTable";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-import dayjs, { Dayjs } from "dayjs";
-import { Box, FormControlLabel, FormHelperText, Switch } from "@mui/material";
+import dayjs from "dayjs";
+import { LabeledSwitch } from "@/ui/shared/components/switches/LabeledSwitch";
+
+const defaultValues = {
+  before: dayjs(),
+  includePurchases: false,
+  includeAdjustments: false,
+  onlyBots: false,
+};
 
 export const RejectOldTransactionsDialog: FC<{ onClose: () => void }> = ({
   onClose,
 }) => {
   const api = useGridApi();
-  const { Field, Subscribe, handleSubmit, reset } = useForm<{
-    before: Dayjs;
-    includePurchases: boolean;
-    includeAdjustments: boolean;
-  }>({
-    defaultValues: {
-      before: dayjs(),
-      includePurchases: false,
-      includeAdjustments: false,
-    },
+  const { Field, Subscribe, handleSubmit, reset } = useForm({
+    defaultValues,
     onSubmit: async ({ value }) => {
       mutate({
         before: value.before.toDate(),
         includePurchases: value.includePurchases,
         includeAdjustments: value.includeAdjustments,
+        onlyBots: value.onlyBots,
       });
     },
   });
@@ -53,10 +53,8 @@ export const RejectOldTransactionsDialog: FC<{ onClose: () => void }> = ({
       onSubmit={handleSubmit}
       onClose={onClose}
     >
-      <Field
-        name="before"
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
+      <Field name="before">
+        {(field) => (
           <DateTimePicker
             defaultValue={field.state.value}
             label="Before"
@@ -72,71 +70,50 @@ export const RejectOldTransactionsDialog: FC<{ onClose: () => void }> = ({
             disableFuture
           />
         )}
-      />
-      <Field
-        name="includePurchases"
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
-          <Box>
-            <FormControlLabel
-              sx={{
-                ml: 0,
-                width: "100%",
-              }}
-              control={
-                <Switch
-                  autoFocus
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.checked)}
-                />
-              }
-              label="Include purchases"
-            />
-            <FormHelperText>
-              Include uncleared purchase transactions as well.
-            </FormHelperText>
-          </Box>
+      </Field>
+      <Field name="includePurchases">
+        {(field) => (
+          <LabeledSwitch
+            switched={field.state.value}
+            onChange={field.handleChange}
+            label="Include purchases"
+            helperText="Include uncleared purchase transactions as well."
+          />
         )}
-      />
-      <Field
-        name="includeAdjustments"
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
-          <Box>
-            <FormControlLabel
-              sx={{
-                ml: 0,
-                width: "100%",
-              }}
-              control={
-                <Switch
-                  autoFocus
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.checked)}
-                />
-              }
-              label="Include adjustments"
-            />
-            <FormHelperText>
-              Include uncleared adjustment transactions as well.
-            </FormHelperText>
-          </Box>
+      </Field>
+      <Field name="includeAdjustments">
+        {(field) => (
+          <LabeledSwitch
+            switched={field.state.value}
+            onChange={field.handleChange}
+            label="Include adjustments"
+            helperText="Include uncleared adjustment transactions as well."
+          />
         )}
-      />
-      {/* Add switches for type inclusions, and some dialog content */}
+      </Field>
+      <Field name="onlyBots">
+        {(field) => (
+          <LabeledSwitch
+            switched={field.state.value}
+            onChange={field.handleChange}
+            label="Bots only"
+            helperText="Only reject transactions from bots."
+          />
+        )}
+      </Field>
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
           isSubmitting: state.isSubmitting,
         })}
-        // eslint-disable-next-line react/no-children-prop
-        children={({ canSubmit, isSubmitting }) => (
+      >
+        {({ canSubmit, isSubmitting }) => (
           <FormDialogButton
             label="Reject Old"
             disabled={!canSubmit || isSubmitting}
           />
         )}
-      />
+      </Subscribe>
     </FormDialog>
   );
 };

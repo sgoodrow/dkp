@@ -10,11 +10,11 @@ export const AdminRoutePage = () => {
     <HeaderLayout uiRoute={uiRoutes.admin}>
       <Box>
         <Unstable_Grid2 container width={1} spacing={1}>
-          <Unstable_Grid2 xs={12} sm={12} md={12} lg={8} xl={8}>
-            <DiscordMetadataCard />
-          </Unstable_Grid2>
-          <Unstable_Grid2 xs={12} sm={12} md={12} lg={4} xl={4}>
+          <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
             <DiscordSyncCard />
+          </Unstable_Grid2>
+          <Unstable_Grid2 xs={12}>
+            <DiscordMetadataCard />
           </Unstable_Grid2>
           <Unstable_Grid2 xs={12}>
             <AdminsCard />

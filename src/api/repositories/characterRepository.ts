@@ -10,12 +10,8 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
-import { CharacterRace } from "@prisma/client";
-import { startCase, upperFirst } from "lodash";
-
-const normalizeName = (name: string) => {
-  return upperFirst(name.toLowerCase());
-};
+import { character } from "@/shared/utils/character";
+import { startCase } from "lodash";
 
 const normalizeRace = (race: string) => {
   return startCase(race.toLowerCase());
@@ -37,7 +33,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     classId: number;
     defaultPilotId?: string;
   }) => {
-    const normalizedName = normalizeName(name);
+    const normalizedName = character.normalizeName(name);
     return p.character.upsert({
       where: {
         name: normalizedName,
@@ -63,18 +59,25 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
       name: string;
       raceId: number;
       classId: number;
-      defaultPilotId?: string;
+      defaultPilotId: string | null;
     }[];
   }) => {
-    return p.character.createMany({
+    return p.character.createManyAndReturn({
       data: characters.map((c) => {
         return {
-          name: normalizeName(c.name),
+          name: character.normalizeName(c.name),
           raceId: c.raceId,
           classId: c.classId,
           defaultPilotId: c.defaultPilotId,
         };
       }),
+      include: {
+        defaultPilot: {
+          include: {
+            wallet: true,
+          },
+        },
+      },
     });
   },
 
@@ -87,7 +90,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
       colorHexDark: string;
     }[];
   }) => {
-    return p.characterClass.createMany({
+    await p.characterClass.createMany({
       data: classes.map((c) => {
         return {
           name: normalizeClass(c.name),
@@ -108,10 +111,10 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
-  createRaceClassCombos: async ({
-    classCombos,
+  createRaceClassCombinations: async ({
+    classCombinations,
   }: {
-    classCombos: {
+    classCombinations: {
       name: string;
       allowedRaces: string[];
     }[];
@@ -120,20 +123,24 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     const races = await characterRepository(p).getRaces({});
 
     const data = classes.flatMap((c) => {
-      const match = classCombos.find(({ name }) => name === c.name);
+      const match = classCombinations.find(
+        ({ name }) => normalizeClass(name) === c.name,
+      );
       if (!match) {
         return [];
       }
 
       return races
-        .filter((r) => match.allowedRaces.includes(r.name))
+        .filter((r) =>
+          match.allowedRaces.map((r) => normalizeRace(r)).includes(r.name),
+        )
         .map((r) => ({
           classId: c.id,
           raceId: r.id,
         }));
     });
 
-    return p.raceClassCombination.createMany({
+    await p.raceClassCombination.createMany({
       data,
     });
   },
@@ -141,7 +148,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   isNameAvailable: async ({ name }: { name: string }) => {
     const numCharactersWithName = await p.character.count({
       where: {
-        name: normalizeName(name),
+        name: character.normalizeName(name),
       },
     });
     return numCharactersWithName === 0;
@@ -163,6 +170,19 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     return combination !== null;
   },
 
+  countWithoutDefaultPilot: async ({
+    filterModel,
+  }: {
+    filterModel?: AgFilterModel;
+  }) => {
+    return p.character.count({
+      where: {
+        ...agFilterModelToPrismaWhere(filterModel),
+        defaultPilotId: null,
+      },
+    });
+  },
+
   countByUserId: async ({
     userId,
     filterModel,
@@ -181,11 +201,15 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  getRaceClassCombinations: async () => {
+    return p.raceClassCombination.findMany();
+  },
+
   getManyByNameMatch: async ({ names }: { names: string[] }) => {
     return p.character.findMany({
       where: {
         name: {
-          in: names.map((name) => normalizeName(name)),
+          in: names.map((name) => character.normalizeName(name)),
         },
       },
       include: {
@@ -230,6 +254,34 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     });
   },
 
+  getManyWithoutDefaultPilot: async ({
+    startRow,
+    endRow,
+    filterModel,
+    sortModel,
+  }: {
+    startRow: number;
+    endRow: number;
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
+    return p.character.findMany({
+      where: {
+        ...agFilterModelToPrismaWhere(filterModel),
+        defaultPilotId: null,
+      },
+      orderBy: agSortModelToPrismaOrderBy(sortModel) || {
+        createdAt: "desc",
+      },
+      include: {
+        class: true,
+        race: true,
+      },
+      skip: startRow,
+      take: endRow - startRow,
+    });
+  },
+
   getManyByUserId: async ({
     userId,
     startRow,
@@ -249,21 +301,11 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
         defaultPilotId: userId,
       },
       orderBy: agSortModelToPrismaOrderBy(sortModel) || {
-        id: "desc",
+        createdAt: "desc",
       },
       include: {
-        class: {
-          select: {
-            name: true,
-            colorHexDark: true,
-            colorHexLight: true,
-          },
-        },
-        race: {
-          select: {
-            name: true,
-          },
-        },
+        class: true,
+        race: true,
       },
       skip: startRow,
       take: endRow - startRow,
@@ -271,6 +313,9 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   getClasses: async ({ raceId }: { raceId?: number }) => {
+    if (!raceId) {
+      return p.characterClass.findMany();
+    }
     return p.characterClass.findMany({
       where: {
         raceClassCombinations: {
@@ -291,6 +336,9 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
   },
 
   getRaces: async ({ classId }: { classId?: number }) => {
+    if (!classId) {
+      return p.characterRace.findMany();
+    }
     return p.characterRace.findMany({
       where: {
         raceClassCombinations: {
@@ -314,7 +362,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.character.findFirst({
       where: {
         name: {
-          equals: normalizeName(search),
+          equals: character.normalizeName(search),
         },
       },
     });
@@ -330,7 +378,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     return p.character.findMany({
       where: {
         name: {
-          contains: normalizeName(search),
+          contains: character.normalizeName(search),
         },
       },
       orderBy: {
@@ -348,7 +396,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
     const characters = await p.character.findMany({
       where: {
         name: {
-          in: characterNames.map((n) => normalizeName(n)),
+          in: characterNames.map((n) => character.normalizeName(n)),
         },
       },
       select: {
@@ -374,7 +422,7 @@ export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
 
     return {
       get: (name?: string) =>
-        name === undefined ? null : map[normalizeName(name)] || null,
+        name === undefined ? null : map[character.normalizeName(name)] || null,
     };
   },
 });

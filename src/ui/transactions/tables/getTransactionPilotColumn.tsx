@@ -19,8 +19,10 @@ export const getTransactionPilotColumn = ({
   editable?: boolean;
 }): Column<TransactionRow> => ({
   headerName: "Pilot",
-  field: "wallet.userId",
+  field: "wallet.user.discordMetadata.displayName",
   flex: 1,
+  filter: "agTextColumnFilter",
+  sortable: true,
   editable,
   cellEditor: (props) => {
     return (

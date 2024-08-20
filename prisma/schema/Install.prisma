@@ -1,7 +1,7 @@
 enum InstallAttemptStatus {
-  IN_PROGRESS
   FAIL
-  SUCCESS
+  READY_FOR_IMPORT
+  COMPLETE
 }
 
 model InstallAttempt {
@@ -11,14 +11,13 @@ model InstallAttempt {
   updatedAt DateTime @updatedAt
 
   // Properties
-  status                   InstallAttemptStatus
-  error                    String?
-  installedRaces           Boolean?             @default(false)
-  installedClasses         Boolean?             @default(false)
-  installedRaceClassCombos Boolean?             @default(false)
-  installedItems           Boolean?             @default(false)
-  installedGuild           Boolean?             @default(false)
-  syncedDiscordMetadata    Boolean?             @default(false)
+  status                         InstallAttemptStatus
+  error                          String?
+  installedRaces                 Boolean?             @default(false)
+  installedClasses               Boolean?             @default(false)
+  installedRaceClassCombinations Boolean?             @default(false)
+  installedItems                 Boolean?             @default(false)
+  installedGuild                 Boolean?             @default(false)
 
   // Relationships
   createdById String

@@ -10,10 +10,21 @@ import {
   AgSortModel,
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
+import { AgGrid } from "@/api/shared/agGridUtils/table";
 
 const SYSTEM_USER_EMAIL = "system@dkp.com";
 
 export const userRepository = (p: PrismaTransactionClient = prisma) => ({
+  createManyStubUsers: async ({
+    users,
+  }: {
+    users: { name: string; email: string }[];
+  }) => {
+    return p.user.createManyAndReturn({
+      data: users,
+    });
+  },
+
   upsertSystemUser: async () => {
     return p.user.upsert({
       where: {
@@ -88,12 +99,53 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
     return systemUser.id;
   },
 
+  getMany: async ({ startRow, endRow, filterModel, sortModel }: AgGrid) => {
+    const systemUserId = await userRepository(p).getSystemUserId();
+    return p.user.findMany({
+      where: {
+        ...agFilterModelToPrismaWhere(filterModel),
+        id: { not: systemUserId },
+      },
+      orderBy: agSortModelToPrismaOrderBy(sortModel),
+      include: {
+        characters: true,
+        discordMetadata: true,
+        wallet: true,
+        accounts: true,
+        _count: {
+          select: {
+            accounts: true,
+            characters: true,
+          },
+        },
+      },
+      skip: startRow,
+      take: endRow - startRow,
+    });
+  },
+
+  count: async ({ filterModel }: { filterModel?: AgFilterModel }) => {
+    const systemUserId = await userRepository(p).getSystemUserId();
+    return p.user.count({
+      where: {
+        ...agFilterModelToPrismaWhere(filterModel),
+        id: {
+          not: systemUserId,
+        },
+      },
+    });
+  },
+
   getManyAdmins: async ({
+    startRow,
+    endRow,
     discordHelperRoleId,
     discordOwnerRoleId,
     filterModel,
     sortModel,
   }: {
+    startRow: number;
+    endRow: number;
     discordHelperRoleId: string;
     discordOwnerRoleId: string;
     filterModel?: AgFilterModel;
@@ -130,6 +182,8 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
           },
         },
       },
+      skip: startRow,
+      take: endRow - startRow,
     });
   },
 
@@ -196,6 +250,19 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
       where: { id: userId },
       include: {
         discordMetadata: true,
+      },
+    });
+  },
+
+  getManyByEmails: async ({ emails }: { emails: string[] }) => {
+    return p.user.findMany({
+      where: {
+        email: {
+          in: emails,
+        },
+      },
+      include: {
+        wallet: true,
       },
     });
   },

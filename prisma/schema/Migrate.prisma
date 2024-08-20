@@ -1,7 +1,6 @@
 enum MigrateAttemptStatus {
-  IN_PROGRESS
   FAIL
-  SUCCESS
+  COMPLETE
 }
 
 model MigrateAttempt {
@@ -17,7 +16,6 @@ model MigrateAttempt {
   importedCharacters        Boolean?             @default(false)
   importedRaidActivityTypes Boolean?             @default(false)
   importedRaidActivities    Boolean?             @default(false)
-  syncedDiscordMetadata     Boolean?             @default(false)
 
   // Relationships
   createdById String
@@ -26,11 +24,11 @@ model MigrateAttempt {
 
 model MigrateEqdkpUser {
   // Common
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id Int @id @default(autoincrement())
 
   // Properties
-  eqdkpUserId Int
+  name        String
+  eqdkpUserId Int     @unique
   email       String? @unique
+  currentDkp  Float
 }

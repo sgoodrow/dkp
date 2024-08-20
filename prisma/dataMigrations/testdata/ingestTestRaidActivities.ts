@@ -1,11 +1,7 @@
 import { raidActivityController } from "@/api/controllers/raidActivityController";
-import { random, range } from "lodash";
+import { range } from "lodash";
 import { createLogger } from "prisma/dataMigrations/util/log";
-import {
-  getRandomAdjustments,
-  getRandomAttendees,
-  getRandomRaidActivity,
-} from "prisma/dataMigrations/util/random";
+import { getRandomRaidActivity } from "prisma/dataMigrations/util/random";
 
 const logger = createLogger("Ingesting raid activities");
 
@@ -38,15 +34,7 @@ export const ingestTestRaidActivities = async ({
   range(NUM_ACTIVITIES).forEach(async () => {
     const { id } = await raidActivityController().create({
       activity: getRandomRaidActivity({ raidActivityTypes }),
-      adjustments: getRandomAdjustments({
-        count: random(3, 5),
-      }),
-      attendees: getRandomAttendees({
-        count: random(40, 115),
-      }),
-      purchases: [],
-      createdById: userId,
-      updatedById: userId,
+      userId,
     });
     logger.info(`Created raid activity ${id}.`);
   });

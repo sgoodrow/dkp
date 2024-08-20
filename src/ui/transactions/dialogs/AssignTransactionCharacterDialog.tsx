@@ -60,10 +60,8 @@ export const AssignTransactionCharacterDialog: FC<{
           It is currently assigned to <CharacterLink character={character} />.
         </DialogContentText>
       )}
-      <Field
-        name="characterId"
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
+      <Field name="characterId">
+        {(field) => (
           <CharacterAutocomplete
             label="Character"
             onChange={field.setValue}
@@ -74,17 +72,17 @@ export const AssignTransactionCharacterDialog: FC<{
             }
           />
         )}
-      />
+      </Field>
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
           isSubmitting: state.isSubmitting,
         })}
-        // eslint-disable-next-line react/no-children-prop
-        children={({ canSubmit, isSubmitting }) => (
+      >
+        {({ canSubmit, isSubmitting }) => (
           <AssignDialogButton disabled={!canSubmit || isSubmitting} />
         )}
-      />
+      </Subscribe>
     </FormDialog>
   );
 };

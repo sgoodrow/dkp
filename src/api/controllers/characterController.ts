@@ -2,8 +2,23 @@ import { characterRepository } from "@/api/repositories/characterRepository";
 import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
+import { AgGrid } from "@/api/shared/agGridUtils/table";
+import { groupBy, mapValues, uniq } from "lodash";
 
 export const characterController = (p?: PrismaTransactionClient) => ({
+  createMany: async ({
+    characters,
+  }: {
+    characters: {
+      name: string;
+      raceId: number;
+      classId: number;
+      defaultPilotId: string | null;
+    }[];
+  }) => {
+    return characterRepository(p).createMany({ characters });
+  },
+
   upsert: async ({
     name,
     raceId,
@@ -39,16 +54,16 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     await characterRepository(p).createRaces(races);
   },
 
-  createRaceClassCombos: async ({
-    classCombos,
+  createRaceClassCombinations: async ({
+    classCombinations,
   }: {
-    classCombos: {
+    classCombinations: {
       name: string;
       allowedRaces: string[];
     }[];
   }) => {
-    return characterRepository(p).createRaceClassCombos({
-      classCombos,
+    return characterRepository(p).createRaceClassCombinations({
+      classCombinations,
     });
   },
 
@@ -71,6 +86,20 @@ export const characterController = (p?: PrismaTransactionClient) => ({
 
   countByUserId: async ({ userId }: { userId: string }) => {
     return characterRepository(p).countByUserId({ userId });
+  },
+
+  getCharacterValidator: async () => {
+    const map = mapValues(
+      groupBy(
+        await characterRepository(p).getRaceClassCombinations(),
+        ({ classId }) => classId,
+      ),
+      (group) => uniq(group.map(({ raceId }) => raceId)),
+    );
+    return ({ classId, raceId }: { classId?: number; raceId?: number }) =>
+      classId !== undefined &&
+      raceId !== undefined &&
+      map[classId]?.includes(raceId);
   },
 
   getManyByNameMatch: async ({ names }: { names: string[] }) => {
@@ -111,6 +140,14 @@ export const characterController = (p?: PrismaTransactionClient) => ({
     }
 
     return null;
+  },
+
+  getManyWithoutOwner: async (agGrid: AgGrid) => {
+    return {
+      totalRowCount:
+        await characterRepository(p).countWithoutDefaultPilot(agGrid),
+      rows: await characterRepository(p).getManyWithoutDefaultPilot(agGrid),
+    };
   },
 
   getManyByUserId: async ({

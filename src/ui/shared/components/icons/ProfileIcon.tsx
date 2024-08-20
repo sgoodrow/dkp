@@ -7,7 +7,7 @@ import Image from "next/image";
 import { FC } from "react";
 
 export const ProfileIcon: FC<{ size: number }> = ({ size }) => {
-  const { data } = trpc.user.get.useQuery();
+  const { data } = trpc.user.get.useQuery({});
   const theme = useTheme();
   return data === undefined ? (
     <Skeleton variant="circular" width={size} height={size} />

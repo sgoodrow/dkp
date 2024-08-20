@@ -9,6 +9,7 @@ import { useForm } from "@tanstack/react-form";
 import { trpc } from "@/api/views/trpc/trpc";
 import { TextField } from "@mui/material";
 import { useGridApi } from "@/ui/shared/components/tables/InfiniteTable";
+import { getHelperText } from "@/ui/shared/utils/formHelpers";
 
 export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
   onClose,
@@ -59,25 +60,21 @@ export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
             }
           },
         }}
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
+      >
+        {(field) => (
           <TextField
             required
             label="Name"
             autoFocus
             fullWidth
-            error={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-            }
             onChange={(e) => field.handleChange(e.target.value)}
-            helperText={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-                ? field.state.meta.errors.join(",")
-                : "Enter a unique name for the raid activity type"
-            }
+            {...getHelperText({
+              field,
+              helperText: "Enter a unique name for the raid activity type",
+            })}
           />
         )}
-      />
+      </Field>
       <Field
         name="defaultPayout"
         validators={{
@@ -88,8 +85,8 @@ export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
             return;
           },
         }}
-        // eslint-disable-next-line react/no-children-prop
-        children={(field) => (
+      >
+        {(field) => (
           <TextField
             required
             label="Default Payout"
@@ -98,28 +95,25 @@ export const CreateRaidActivityTypeDialog: FC<{ onClose: () => void }> = ({
             inputProps={{
               step: "any",
             }}
-            error={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-            }
             onChange={(e) => field.handleChange(Number(e.target.value))}
-            helperText={
-              field.state.meta.isTouched && field.state.meta.errors.length > 0
-                ? field.state.meta.errors.join(",")
-                : "Enter a non-negative default payout for the raid activity type"
-            }
+            {...getHelperText({
+              field,
+              helperText:
+                "Enter a non-negative default payout for the raid activity type",
+            })}
           />
         )}
-      />
+      </Field>
       <Subscribe
         selector={(state) => ({
           canSubmit: state.canSubmit,
           isSubmitting: state.isSubmitting,
         })}
-        // eslint-disable-next-line react/no-children-prop
-        children={({ canSubmit, isSubmitting }) => (
+      >
+        {({ canSubmit, isSubmitting }) => (
           <CreateDialogButton disabled={!canSubmit || isSubmitting} />
         )}
-      />
+      </Subscribe>
     </FormDialog>
   );
 };

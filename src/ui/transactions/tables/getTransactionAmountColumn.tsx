@@ -16,8 +16,10 @@ export const getTransactionAmountColumn = ({
   editable?: boolean;
 }): Column<TransactionRow> => ({
   headerName: "Amount",
-  field: "type",
-  width: 120,
+  field: "amount",
+  width: 140,
+  sortable: true,
+  filter: "agNumberColumnFilter",
   editable,
   cellEditor: (props) => {
     return (
@@ -46,10 +48,7 @@ export const getTransactionAmountColumn = ({
             onAssign={() => api.refreshInfiniteCache()}
           />
         )}
-        <TransactionAmountTypography
-          amount={data.amount}
-          positive={data.type !== "PURCHASE"}
-        />
+        <TransactionAmountTypography amount={data.amount} />
       </CellLayout>
     );
   },

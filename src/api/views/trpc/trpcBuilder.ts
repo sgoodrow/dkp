@@ -1,4 +1,5 @@
 import { apiKeyController } from "@/api/controllers/apiKeyController";
+import { installController } from "@/api/controllers/installController";
 import { userController } from "@/api/controllers/userController";
 import { agGridSchema } from "@/api/shared/agGridUtils/table";
 import { auth } from "@/auth";
@@ -44,6 +45,33 @@ export const publicProcedure = t.procedure;
 
 export const createCallerFactory = t.createCallerFactory;
 
+export const installProcedure = t.procedure
+  .input(
+    z.object({
+      activationKey: z.string(),
+    }),
+  )
+  .use(async ({ next, input }) => {
+    const isValid = await installController().isValidActivationKey({
+      activationKey: input.activationKey,
+    });
+
+    if (!isValid) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Invalid activation key",
+      });
+    }
+
+    const userId = await userController().getSystemUserId();
+
+    return next({
+      ctx: {
+        userId,
+      },
+    });
+  });
+
 export const protectedProcedure = t.procedure.use(
   async ({ meta, ctx, next, path }) => {
     // Check if the user is logged in.
@@ -74,7 +102,7 @@ export const protectedProcedure = t.procedure.use(
 
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: `Protected procedures ${path} has no meta scope. Only procedures with meta scopes are available programmatically.`,
+      message: `Procedure ${path} has no meta scope. Only procedures with meta scopes are available programmatically.`,
     });
   },
 );
@@ -110,23 +138,3 @@ export const adminProcedure = protectedProcedure.use(async ({ ctx, next }) => {
 
   return next();
 });
-
-export const protectedApiKeyProcedure = adminProcedure
-  .input(
-    z.object({
-      apiKeyId: z.number().positive().int(),
-    }),
-  )
-  .use(async ({ input, ctx, next }) => {
-    const apiKey = await apiKeyController().get({
-      apiKeyId: input.apiKeyId,
-    });
-    if (apiKey.userId !== ctx.userId) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "You do not have access to this API key.",
-      });
-    }
-
-    return next();
-  });

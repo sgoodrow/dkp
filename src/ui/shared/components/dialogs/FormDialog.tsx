@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import {
   Button,
@@ -5,22 +7,39 @@ import {
   DialogContent,
   DialogTitle,
   Stack,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 
-export const FormDialog: FCWithChildren<{
+export type FormDialogProps = {
   id: string;
   title: string;
+  hideBackdrop?: boolean;
   onSubmit: () => void;
   onClose: () => void;
-}> = ({ id, title, onSubmit, onClose, children }) => {
+};
+
+export const FormDialog: FCWithChildren<FormDialogProps> = ({
+  id,
+  title,
+  hideBackdrop,
+  onSubmit,
+  onClose,
+  children,
+}) => {
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
   return (
     <Dialog
       open
       onClose={onClose}
       aria-labelledby={id}
+      fullScreen={fullScreen}
       fullWidth
       disableRestoreFocus
       maxWidth="sm"
+      hideBackdrop={hideBackdrop}
     >
       <DialogTitle id={id}>{title}</DialogTitle>
       <DialogContent>
@@ -70,4 +89,10 @@ export const CreateDialogButton: FC<{
   disabled: boolean;
 }> = ({ disabled }) => {
   return <FormDialogButton label="Create" disabled={disabled} />;
+};
+
+export const ApplyDialogButton: FC<{
+  disabled: boolean;
+}> = ({ disabled }) => {
+  return <FormDialogButton label="Apply" disabled={disabled} />;
 };

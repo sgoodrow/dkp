@@ -19,8 +19,10 @@ export const getTransactionCharacterColumn = ({
   editable?: boolean;
 }): Column<TransactionRow> => ({
   headerName: "Character",
-  field: "characterId",
+  field: "characterName",
   flex: 1,
+  sortable: true,
+  filter: "agTextColumnFilter",
   editable,
   cellEditor: (props) => {
     return (

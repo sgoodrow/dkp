@@ -25,7 +25,7 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
   getLatestSyncEvent: async () => {
     return p.discordSyncEvent.findFirst({
       orderBy: {
-        id: "desc",
+        createdAt: "desc",
       },
       include: {
         createdBy: {
@@ -97,7 +97,7 @@ export const discordRepository = (p: PrismaTransactionClient = prisma) => ({
       roleIds: string[];
     }[];
   }) => {
-    return prisma.$transaction(async (p) => {
+    await prisma.$transaction(async (p) => {
       await p.discordUserMetadata.deleteMany({
         where: {
           memberId: {

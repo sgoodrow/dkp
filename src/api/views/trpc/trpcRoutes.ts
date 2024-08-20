@@ -18,10 +18,12 @@ import { discordApiRoutes } from "@/api/views/apiRoutes/discordApiRoutes";
 import { itemApiRoutes } from "@/api/views/apiRoutes/itemApiRoutes";
 import { guildApiRoutes } from "@/api/views/apiRoutes/guildApiRoutes";
 import { installApiRoutes } from "@/api/views/apiRoutes/installApiRoutes";
+import { migrateApiRoutes } from "@/api/views/apiRoutes/migrateApiRoutes";
 
 export const trpcRoutes = createRoutes({
   health: healthApiRoutes,
   install: installApiRoutes,
+  migrate: migrateApiRoutes,
   guild: guildApiRoutes,
   user: userApiRoutes,
   apiKey: apiKeyApiRoutes,

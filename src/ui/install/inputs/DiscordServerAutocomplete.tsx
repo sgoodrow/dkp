@@ -6,12 +6,21 @@ import { FC } from "react";
 
 export const DiscordServerAutocomplete: FC<{
   label: string;
+  value: string;
   required?: boolean;
   autoFocus?: boolean;
   fullWidth?: boolean;
   helperText?: TextFieldProps["helperText"];
   onChange: (newValue: string) => void;
-}> = ({ label, required, autoFocus, fullWidth, helperText, onChange }) => {
+}> = ({
+  label,
+  value,
+  required,
+  autoFocus,
+  fullWidth,
+  helperText,
+  onChange,
+}) => {
   const { data = [], isLoading } = trpc.discord.getUserServers.useQuery();
   const options = data.map((o) => ({
     id: o.id,
@@ -21,6 +30,7 @@ export const DiscordServerAutocomplete: FC<{
   return (
     <Autocomplete
       isOptionEqualToValue={(a, b) => a.id === b.id}
+      value={options.find((o) => o.id === value) || null}
       onChange={(_, newValue) => {
         onChange(newValue?.id || "");
       }}

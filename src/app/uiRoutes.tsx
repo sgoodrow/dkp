@@ -16,13 +16,19 @@ import {
 import dayjs from "dayjs";
 
 export const uiRoutes = {
-  // Organizational segments
-  root: {
-    href: () => "/" as const,
-  },
+  // Install pages
   install: {
-    href: () => "/install" as const,
+    segment: "install",
+    href: () => `/${uiRoutes.install.segment}` as const,
     name: "Install",
+  },
+  setup: {
+    href: () => `${uiRoutes.install.href()}/setup` as const,
+    name: "Setup",
+  },
+  migrate: {
+    href: () => `${uiRoutes.install.href()}/migrate` as const,
+    name: "Migrate",
   },
   private: {
     href: () => "/private" as const,
@@ -51,20 +57,28 @@ export const uiRoutes = {
     dataMonitoringId: monitoringIds.GOTO_PLAYERS,
   },
   player: {
-    href: ({ userId }: { userId: string }) =>
-      `${uiRoutes.players.href()}/${userId}` as const,
+    href: (id: string) => `${uiRoutes.players.href()}/${id}` as const,
     name: (name: string) => `Player - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_PLAYER,
   },
+  playerAttendance: {
+    href: (id: string) => `${uiRoutes.player.href(id)}/attendance` as const,
+    name: "Attendance",
+    dataMonitoringId: monitoringIds.GOTO_PLAYER_ATTENDANCE,
+  },
+  playerPurchases: {
+    href: (id: string) => `${uiRoutes.player.href(id)}/purchases` as const,
+    name: "Purchases",
+    dataMonitoringId: monitoringIds.GOTO_PLAYER_PURCHASES,
+  },
+  playerAdjustments: {
+    href: (id: string) => `${uiRoutes.player.href(id)}/adjustments` as const,
+    name: "Adjustments",
+    dataMonitoringId: monitoringIds.GOTO_PLAYER_ADJUSTMENTS,
+  },
   character: {
-    href: ({
-      playerId,
-      characterId,
-    }: {
-      playerId: string;
-      characterId: number;
-    }) =>
-      `${uiRoutes.player.href({ userId: playerId })}/character/${characterId}` as const,
+    href: ({ userId, characterId }: { userId: string; characterId: number }) =>
+      `${uiRoutes.player.href(userId)}/character/${characterId}` as const,
     name: (name: string) => `Character - ${name}`,
     dataMonitoringId: monitoringIds.GOTO_CHARACTER,
   },
@@ -189,7 +203,8 @@ export const uiRoutes = {
   bots: {
     href: () => `${uiRoutes.admin.href()}/bots` as const,
     name: "Bots",
-    description: "View and manage bots.",
+    description:
+      "View and manage bots, characters which have no default pilot.",
     dataMonitoringId: monitoringIds.GOTO_BOTS,
     icon: SmartToy,
     adminOnly: true,

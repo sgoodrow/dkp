@@ -64,7 +64,23 @@ export const apiKeyController = (p?: PrismaTransactionClient) => ({
     return apiKeyRepository(p).deleteExpired();
   },
 
-  delete: async ({ apiKeyId }: { apiKeyId: number }) => {
+  delete: async ({
+    apiKeyId,
+    userId,
+  }: {
+    apiKeyId: number;
+    userId: string;
+  }) => {
+    const apiKey = await apiKeyController().get({
+      apiKeyId,
+    });
+    if (apiKey.userId !== userId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "You can only delete your own API keys.",
+      });
+    }
+
     return apiKeyRepository(p).delete({ apiKeyId });
   },
 

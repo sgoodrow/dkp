@@ -98,7 +98,9 @@ export const SideBarButton: FC<{
           <Badge
             component={Link}
             href={badge?.href || ""}
-            badgeContent={badge?.count}
+            badgeContent={
+              badge?.count === undefined ? undefined : badge.count.toFixed(0)
+            }
             color="error"
             showZero={badge?.showZero}
             max={badge?.count}

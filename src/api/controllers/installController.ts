@@ -1,20 +1,19 @@
 import { ENV } from "@/api/env";
-import { installRepository } from "@/api/repositories/installRepository";
+import {
+  CreateInstallAttempt,
+  installRepository,
+} from "@/api/repositories/installRepository";
 import {
   prisma,
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
-import { InstallAttemptStatus } from "@prisma/client";
 import { z } from "zod";
 import { characterController } from "@/api/controllers/characterController";
-import { processBatch } from "prisma/dataMigrations/util/batch";
+import { processAllInBatches } from "prisma/dataMigrations/util/batch";
 import { itemController } from "@/api/controllers/itemController";
 import { guildController } from "@/api/controllers/guildController";
 import { discordController } from "@/api/controllers/discordController";
-import { MINUTES } from "@/shared/constants/time";
 import { TRPCError } from "@trpc/server";
-
-export const INSTALL_TIMEOUT = 1 * MINUTES;
 
 const installRaces = async (p: PrismaTransactionClient) => {
   const { default: data } = await import("prisma/data/eq/races.json");
@@ -43,9 +42,9 @@ const installClasses = async (p: PrismaTransactionClient) => {
   await characterController(p).createClasses({ classes });
 };
 
-const installRaceClassCombos = async (p: PrismaTransactionClient) => {
+const installRaceClassCombinations = async (p: PrismaTransactionClient) => {
   const { default: data } = await import("prisma/data/eq/classes.json");
-  const classCombos = z
+  const classCombinations = z
     .array(
       z.object({
         name: z.string(),
@@ -54,7 +53,9 @@ const installRaceClassCombos = async (p: PrismaTransactionClient) => {
     )
     .parse(data);
 
-  await characterController(p).createRaceClassCombos({ classCombos });
+  await characterController(p).createRaceClassCombinations({
+    classCombinations,
+  });
 };
 
 const installGameItems = async (p: PrismaTransactionClient) => {
@@ -68,15 +69,17 @@ const installGameItems = async (p: PrismaTransactionClient) => {
     )
     .parse(data);
 
-  await processBatch(items, (batch) =>
-    itemController(p).createMany({ items: batch }),
-  );
+  await processAllInBatches({
+    items,
+    process: (batch) => itemController(p).createMany({ items: batch }),
+    batchSize: 5000,
+  });
 };
 
 export const installController = (p?: PrismaTransactionClient) => ({
-  isInstalled: async () => {
-    const attempt = await installRepository(p).getLatest();
-    return attempt?.status === InstallAttemptStatus.SUCCESS;
+  getStatus: async () => {
+    const latest = await installController().getLatest();
+    return latest?.status || null;
   },
 
   get: async ({ id }: { id: number }) => {
@@ -122,24 +125,15 @@ export const installController = (p?: PrismaTransactionClient) => ({
 
     // Check if already installed or in progress
     const latest = await installController().getLatest();
-    if (latest?.status === InstallAttemptStatus.SUCCESS) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: "Already installed",
-      });
-    }
-    if (latest?.status === InstallAttemptStatus.IN_PROGRESS) {
-      throw new TRPCError({
-        code: "CONFLICT",
-        message: "Already installed",
-      });
+    if (
+      latest?.status === "COMPLETE" ||
+      latest?.status === "READY_FOR_IMPORT"
+    ) {
+      throw new TRPCError({ code: "CONFLICT", message: "Already installed" });
     }
 
     // Start install
-    const data = await installRepository().create({
-      status: InstallAttemptStatus.IN_PROGRESS,
-      createdById: userId,
-    });
+    const data: Partial<CreateInstallAttempt> = {};
 
     await prisma.$transaction(async (p) => {
       try {
@@ -149,8 +143,8 @@ export const installController = (p?: PrismaTransactionClient) => ({
         await installClasses(p);
         data.installedClasses = true;
 
-        await installRaceClassCombos(p);
-        data.installedRaceClassCombos = true;
+        await installRaceClassCombinations(p);
+        data.installedRaceClassCombinations = true;
 
         await installGameItems(p);
         data.installedItems = true;
@@ -166,19 +160,34 @@ export const installController = (p?: PrismaTransactionClient) => ({
         });
         data.installedGuild = true;
 
-        await discordController(p).sync({ userId });
-        data.syncedDiscordMetadata = true;
-
-        data.status = "SUCCESS";
-        await installRepository().update(data);
+        await installRepository().create({
+          ...data,
+          createdById: userId,
+          status: "READY_FOR_IMPORT",
+        });
       } catch (err) {
-        data.status = "FAIL";
-        data.error = String(err);
-        await installRepository().update(data);
+        await installRepository().create({
+          ...data,
+          createdById: userId,
+          status: "FAIL",
+          error: String(err),
+        });
         throw err;
       }
     });
 
     return data;
+  },
+
+  complete: async ({ userId }: { userId: string }) => {
+    const latest = await installController(p).getLatest();
+    if (latest?.status !== "READY_FOR_IMPORT") {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Installation cannot be completed yet",
+      });
+    }
+    await discordController(p).sync({ userId });
+    return installRepository(p).complete({ id: latest.id });
   },
 });
