@@ -120,5 +120,6 @@ build:
 	@yarn run prisma generate --schema=./prisma/schema
 	@yarn run prisma generate --schema=./prisma/eqdkp/schema.prisma
 	@yarn run prisma migrate deploy --schema=./prisma/schema
+	@yarn run prisma db seed
 	@yarn run next build
 
