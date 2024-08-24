@@ -1,9 +1,10 @@
 import { characterController } from "@/api/controllers/characterController";
 import { eqdkpRepository } from "@/api/repositories/eqdkpRepository";
 import { getPrismaEqdkp } from "@/api/repositories/shared/prismaEqdkp";
+import { createEqdkpService } from "@/api/services/createEqdkpService";
 import { character } from "@/shared/utils/character";
 import { CharacterClass, CharacterRace } from "@prisma/client";
-import { unknown, z } from "zod";
+import { z } from "zod";
 
 const profiledataSchema = z.object({
   race: z.union([z.string(), z.number()]),
@@ -47,57 +48,76 @@ export const createEqdkpController = ({ dbUrl }: { dbUrl: string }) => {
     },
 
     getManyRaidActivityTypes: async ({
-      skip,
       take,
+      cursor,
     }: {
-      skip: number;
       take: number;
+      cursor: number | null;
     }) => {
       return eqdkpRepository(client).getManyRaidActivityTypes({
-        skip,
+        cursor,
         take,
       });
     },
 
-    getManyRaidActivities: async ({
-      skip,
+    getManyUsers: async ({
+      siteUrl,
+      siteApiKey,
       take,
+      cursor,
     }: {
-      skip: number;
+      siteUrl: string;
+      siteApiKey: string;
       take: number;
+      cursor: number | null;
     }) => {
-      return eqdkpRepository(client).getManyRaidActivities({
-        skip,
+      const users = await eqdkpRepository(client).getManyUsers({
         take,
+        cursor,
       });
+
+      const eqdkpService = createEqdkpService({
+        baseUrl: siteUrl,
+        apiKey: siteApiKey,
+      });
+
+      // Emails are used to identify users; since they are encrypted in the EQ DKP Database, we need
+      // to query them via the REST API.
+      const remoteUsers = await Promise.all(
+        users.map(({ user_id: eqdkpUserId }) =>
+          eqdkpService.getUserById({ eqdkpUserId }),
+        ),
+      );
+
+      return remoteUsers.map((u) => ({
+        remoteId: Number(u.user_id),
+        name: u.username,
+        email: u.email,
+      }));
     },
 
-    getManyUsers: async ({ take, skip }: { take: number; skip: number }) => {
-      return eqdkpRepository(client).getManyUsers({
-        take,
-        skip,
-      });
+    countUsers: async () => {
+      return eqdkpRepository(client).countUsers();
     },
 
-    getManyAdjustmentsWithoutRaidActivities: async ({
-      skip,
-      take,
-    }: {
-      skip: number;
-      take: number;
-    }) => {
-      return eqdkpRepository(client).getManyAdjustmentsWithoutRaidActivities({
-        skip,
-        take,
-      });
+    countCharacters: async () => {
+      return eqdkpRepository(client).countCharacters();
+    },
+
+    countRaidActivityTypes: async () => {
+      return eqdkpRepository(client).countRaidActivityTypes();
+    },
+
+    countRaidActivities: async () => {
+      return eqdkpRepository(client).countRaidActivities();
     },
 
     getManyCharacters: async ({
-      skip,
       take,
+      cursor,
     }: {
-      skip: number;
       take: number;
+      cursor: number | null;
     }) => {
       const raceMap = await getRaceMap();
       const classMap = await getClassMap();
@@ -109,7 +129,7 @@ export const createEqdkpController = ({ dbUrl }: { dbUrl: string }) => {
         name: "Unknown Class",
       });
       const characters = await eqdkpRepository(client).getManyCharacters({
-        skip,
+        cursor,
         take,
       });
       return characters.map(
@@ -121,7 +141,7 @@ export const createEqdkpController = ({ dbUrl }: { dbUrl: string }) => {
           return {
             name: character.normalizeName(member_name.split(" ")[0]),
             eqdkpId: Number(member_id),
-            eqdkpUserId: Number(userCharacter?.user_id),
+            eqdkpUserId: userCharacter?.user_id,
             classId: data
               ? classMap[data.class]?.id || unknownClassId
               : unknownClassId,
@@ -131,6 +151,40 @@ export const createEqdkpController = ({ dbUrl }: { dbUrl: string }) => {
           };
         },
       );
+    },
+
+    getManyRaidActivities: async ({
+      take,
+      cursor,
+    }: {
+      take: number;
+      cursor: number | null;
+    }) => {
+      const activities = await eqdkpRepository(client).getManyRaidActivities({
+        take,
+        cursor,
+      });
+
+      // EQ DKP Plus creates some adjustments on a phantom raid activity with id "0, such as those generated
+      // by consolidation events. We include them in the first batch.
+      if (cursor === null) {
+        activities.push({
+          event_id: 0,
+          raid_id: 0,
+          raid_date: Date.now() / 1000,
+          raid_note:
+            "These adjustments were migrated from EQ DKP Plus. There, they were not associated with any raid activity, which made them difficult to find.",
+          raid_value: 0,
+          attendees: [],
+          purchases: [],
+          adjustments:
+            await eqdkpRepository(
+              client,
+            ).getAllAdjustmentsWithoutRaidActivities(),
+        });
+      }
+
+      return activities;
     },
   });
 };

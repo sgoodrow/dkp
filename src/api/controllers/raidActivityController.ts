@@ -14,6 +14,8 @@ import { itemController } from "@/api/controllers/itemController";
 import { characterController } from "@/api/controllers/characterController";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
 import { userController } from "@/api/controllers/userController";
+import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
+import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 
 const getCharacterNames = (
   list: {
@@ -28,6 +30,23 @@ const getCharacterNames = (
   );
 
 export const raidActivityController = (p?: PrismaTransactionClient) => ({
+  count: async ({ filterModel }: { filterModel?: AgFilterModel }) => {
+    return raidActivityRepository(p).count({ filterModel });
+  },
+
+  countTypes: async ({
+    filterModel,
+    sortModel,
+  }: {
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
+  }) => {
+    return raidActivityRepository(p).countTypes({
+      filterModel,
+      sortModel,
+    });
+  },
+
   createManyTypes: async ({
     types,
     createdById,
@@ -56,6 +75,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
         walletId: number | null;
       }[];
       adjustments: {
+        createdAt: string;
         characterName: string;
         characterId: number | null;
         walletId: number | null;
@@ -63,6 +83,7 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
         reason: string;
       }[];
       purchases: {
+        createdAt: string;
         characterName: string;
         characterId: number | null;
         walletId: number | null;
@@ -284,22 +305,20 @@ export const raidActivityController = (p?: PrismaTransactionClient) => ({
     });
   },
 
-  upsertType: async ({
+  upsertTypeByName: async ({
     name,
     defaultPayout,
-    createdById,
-    updatedById,
+    userId,
   }: {
     name: string;
     defaultPayout: number;
-    createdById: string;
-    updatedById: string;
+    userId: string;
   }) => {
-    return raidActivityRepository(p).upsertType({
+    return raidActivityRepository(p).upsertTypeByName({
       name,
       defaultPayout,
-      createdById,
-      updatedById,
+      createdById: userId,
+      updatedById: userId,
     });
   },
 

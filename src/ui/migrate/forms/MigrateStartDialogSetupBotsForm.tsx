@@ -4,14 +4,14 @@ import { getHelperText } from "@/ui/shared/utils/formHelpers";
 import { DialogContentText, TextField } from "@mui/material";
 import { FC } from "react";
 
-export const MigrateStartDialogPrepareBotsForm: FC<{
+export const MigrateStartDialogSetupBotsForm: FC<{
   Field: MigrateStartField;
 }> = ({ Field }) => {
   return (
     <>
       <DialogContentText>
-        Characters with no user association will not be imported unless their
-        name is provided below.
+        Characters with no user associations will not be imported unless their
+        first name is provided below.
       </DialogContentText>
       <Field
         name="botNamesCsv"
@@ -43,7 +43,8 @@ export const MigrateStartDialogPrepareBotsForm: FC<{
       >
         {(field) => (
           <TextField
-            label={`Bot Names`}
+            label="Bot Names"
+            defaultValue={field.state.value}
             autoFocus
             fullWidth
             multiline

@@ -16,7 +16,7 @@ import { WalletTransactionType } from "@prisma/client";
 export const raidActivityRepository = (
   p: PrismaTransactionClient = prisma,
 ) => ({
-  upsertType: async ({
+  upsertTypeByName: async ({
     name,
     defaultPayout,
     createdById,

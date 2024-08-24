@@ -1,8 +1,3 @@
-enum MigrateAttemptStatus {
-  FAIL
-  COMPLETE
-}
-
 model MigrateAttempt {
   // Common
   id        Int      @id @default(autoincrement())
@@ -10,25 +5,51 @@ model MigrateAttempt {
   updatedAt DateTime @updatedAt
 
   // Properties
-  status                    MigrateAttemptStatus
-  error                     String?
-  importedUsers             Boolean?             @default(false)
-  importedCharacters        Boolean?             @default(false)
-  importedRaidActivityTypes Boolean?             @default(false)
-  importedRaidActivities    Boolean?             @default(false)
+  lastMigratedRemoteUserId             Int?
+  lastMigratedRemoteCharacterId        Int?
+  lastMigratedRemoteRaidActivityTypeId Int?
+  lastMigratedRemoteRaidActivityId     Int?
 
   // Relationships
   createdById String
   createdBy   User   @relation(fields: [createdById], references: [id])
 }
 
-model MigrateEqdkpUser {
+model MigrateUser {
   // Common
   id Int @id @default(autoincrement())
 
   // Properties
-  name        String
-  eqdkpUserId Int     @unique
-  email       String? @unique
-  currentDkp  Float
+  userId       String @unique
+  remoteUserId Int    @unique
+}
+
+model MigrateCharacter {
+  // Common
+  id Int @id @default(autoincrement())
+
+  // Properties
+  characterId       Int @unique
+  remoteCharacterId Int @unique
+}
+
+model MigrateRaidActivityType {
+  // Common
+  id Int @id @default(autoincrement())
+
+  // Properties
+  raidActivityTypeId       Int @unique
+  remoteRaidActivityTypeId Int @unique
+}
+
+model MigrateInvalidCharacter {
+  // Common
+  id Int @id @default(autoincrement())
+
+  // Properties
+  name                    String
+  remoteId                Int     @unique
+  missingOwner            Boolean @default(false)
+  invalidName             Boolean @default(false)
+  duplicateNormalizedName Boolean @default(false)
 }

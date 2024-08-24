@@ -3,9 +3,40 @@ import { PrismaTransactionClient } from "@/api/repositories/shared/prisma";
 import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 import { AgSortModel } from "@/api/shared/agGridUtils/sort";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
-import { groupBy, mapValues, uniq } from "lodash";
+import { character } from "@/shared/utils/character";
+import { countBy, groupBy, mapValues, uniq } from "lodash";
 
 export const characterController = (p?: PrismaTransactionClient) => ({
+  deleteAllCharacters: async () => {
+    await characterRepository(p).deleteAll();
+  },
+
+  getNameDuplicateValidator: async ({ names }: { names: string[] }) => {
+    const newNames = new Set(
+      Object.entries(countBy(names))
+        .filter(([_, count]) => count > 1)
+        .map(([name]) => name),
+    );
+
+    const characters = await characterController().getManyByNameMatch({
+      names,
+    });
+    const existingNames = new Set(characters.map(({ name }) => name));
+
+    return (name: string) => {
+      const normalizedName = character.normalizeName(name);
+      return newNames.has(normalizedName) || existingNames.has(normalizedName);
+    };
+  },
+
+  getManyByIds: async ({ ids }: { ids: number[] }) => {
+    return characterRepository(p).getManyByIds({ ids });
+  },
+
+  count: async () => {
+    return characterRepository(p).count();
+  },
+
   createMany: async ({
     characters,
   }: {

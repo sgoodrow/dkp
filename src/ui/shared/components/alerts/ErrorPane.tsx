@@ -47,7 +47,7 @@ export const ErrorPane: React.FC<{
       <Box role="region" aria-labelledby={alertTitleId}>
         <Typography>
           You can press reload to try again. If the issue persists, please
-          contact me at <MaintainerLink />.
+          contact <MaintainerLink />.
         </Typography>
       </Box>
     </Alert>

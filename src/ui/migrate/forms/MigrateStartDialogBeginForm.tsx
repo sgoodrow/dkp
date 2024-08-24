@@ -6,14 +6,18 @@ import { ActionCard } from "@/ui/shared/components/cards/ActionCard";
 import { Redo } from "@mui/icons-material";
 import { DialogContentText } from "@mui/material";
 import { FC } from "react";
+import { useRouter } from "next/navigation";
+import { uiRoutes } from "@/app/uiRoutes";
 
 export const MigrateStartDialogBeginForm: FC<{}> = ({}) => {
   const activationKey = useActivationKey();
   const utils = trpc.useUtils();
+  const { replace } = useRouter();
 
   const { mutate: completeInstallation } = trpc.install.complete.useMutation({
     onSuccess: () => {
       utils.invalidate();
+      replace(uiRoutes.home.href());
     },
   });
 
@@ -33,7 +37,6 @@ export const MigrateStartDialogBeginForm: FC<{}> = ({}) => {
       <ActionCard
         label="Skip migration"
         description="Migrations can only be applied on a fresh installation. You can reset the application from the admin page."
-        // TODO: this should redirect somewhere?
         onClick={() => completeInstallation({ activationKey })}
         Icon={Redo}
       />

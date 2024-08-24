@@ -7,6 +7,10 @@ import { walletController } from "@/api/controllers/walletController";
 import { guildController } from "@/api/controllers/guildController";
 
 export const userController = (p?: PrismaTransactionClient) => ({
+  count: async () => {
+    return userRepository(p).count({});
+  },
+
   createManyStubUsers: async ({
     users,
   }: {

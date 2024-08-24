@@ -19,22 +19,23 @@ export type MigrateCharacter = MigrateCharacterInvalid | MigrateCharacterValid;
 
 export type MigrateCharacterInvalid = MigrateCharacterCommon & {
   valid: false;
+  name: string;
+  remoteId: number;
   missingOwner: boolean;
   invalidName: boolean;
-  invalidRaceClassCombination: boolean;
   duplicateNormalizedName: boolean;
 };
 
 export type MigrateCharacterValid = MigrateCharacterCommon & {
   valid: true;
-  id: number;
+  name: string;
+  remoteId: number;
   classId: number;
   raceId: number;
   defaultPilotId: string | null;
-  walletId: number | null;
 };
 
 type MigrateCharacterCommon = {
   name: string;
-  eqdkpId: number;
+  remoteId: number;
 };

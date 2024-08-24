@@ -1,389 +1,48 @@
-import { decode } from "he";
 import {
   prisma,
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
-import {
-  CreateMigrateAttempt,
-  migrateRepository,
-} from "@/api/repositories/migrateRepository";
+import { migrateRepository } from "@/api/repositories/migrateRepository";
 import { createEqdkpService } from "@/api/services/createEqdkpService";
 import { TRPCError } from "@trpc/server";
 import { userController } from "@/api/controllers/userController";
-import { processManyInBatches } from "prisma/dataMigrations/util/batch";
 import { character } from "@/shared/utils/character";
 import { characterController } from "@/api/controllers/characterController";
-import {
-  MigrateCharacter,
-  MigrateCharacterInvalid,
-  MigrateCharacterValid,
-  MigrateSummary,
-} from "@/shared/types/migrateTypes";
-import { differenceBy, keyBy, mapValues, partition } from "lodash";
-import { raidActivityController } from "@/api/controllers/raidActivityController";
+import { differenceBy, maxBy, uniq } from "lodash";
 import { createEqdkpController } from "./createEqdkpController";
-import { MINUTES, SECONDS } from "@/shared/constants/time";
-import { installController } from "@/api/controllers/installController";
+import { raidActivityController } from "@/api/controllers/raidActivityController";
+import { SECONDS } from "@/shared/constants/time";
+import { decode } from "he";
+import { AgGrid } from "@/api/shared/agGridUtils/table";
+import { AgFilterModel } from "@/api/shared/agGridUtils/filter";
 
-const getPreparationState = ({
-  count,
-  countWithEmails,
-}: {
-  count: number;
-  countWithEmails: number;
-}) => {
-  if (count === 0) {
-    return "NOT_STARTED" as const;
+const findOrThrow = <T>(items: T[], predicate: (item: T) => boolean) => {
+  const item = items.find(predicate);
+  if (item === undefined) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Could not find item",
+    });
   }
-  if (countWithEmails === count) {
-    return "DONE" as const;
-  }
-  return "PREPARING" as const;
-};
-
-class DryRunSuccess extends Error {
-  constructor() {
-    super();
-    this.name = "Dry Run Success";
-  }
-}
-
-const ingestStubUsers = async ({ p }: { p: PrismaTransactionClient }) =>
-  processManyInBatches({
-    batchSize: 1000,
-    get: migrateRepository(p).getManyUsersWithEmails,
-    process: async (batch) => {
-      const emails = batch.flatMap(({ email }) => (email ? email : []));
-      const ignored = await userController(p).getManyByEmails({ emails });
-      const created = await userController(p).createManyStubUsers({
-        users: differenceBy(batch, ignored, ({ email }) => email).map((u) => ({
-          email: u.email,
-          name: u.name,
-        })),
-      });
-      const getEqdkpId = (email: string) => {
-        const match = batch.find((u) => u.email === email);
-        if (match === undefined) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: `Could not find user with email ${email}`,
-          });
-        }
-        return match.eqdkpUserId;
-      };
-      const getWalletId = (email: string, wallet: { id: number } | null) => {
-        if (wallet === null) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: `Could not find wallet for email ${email}`,
-          });
-        }
-        return wallet.id;
-      };
-      return [...ignored, ...created].map(({ id, email, wallet }) => ({
-        id,
-        eqdkpId: getEqdkpId(email),
-        walletId: getWalletId(email, wallet),
-      }));
-    },
-  });
-
-const ingestCharacters = async ({
-  p,
-  dbUrl,
-  users,
-  botNames,
-}: {
-  p: PrismaTransactionClient;
-  dbUrl: string;
-  users: { id: string; eqdkpId: number; walletId: number }[];
-  botNames: string[];
-}) => {
-  const ownerMap = mapValues(
-    keyBy(users, ({ eqdkpId }) => eqdkpId || -1),
-    ({ id, walletId }) => ({ id, walletId }),
-  );
-
-  const namesSeen: Record<string, number> = {};
-  const namesAllowedNoOwner = new Set(
-    botNames.map((name) => character.normalizeName(name)),
-  );
-
-  const eqdkpController = createEqdkpController({ dbUrl });
-
-  const isCharacterValid = await characterController().getCharacterValidator();
-
-  return processManyInBatches({
-    batchSize: 1000,
-    get: eqdkpController().getManyCharacters,
-    process: async (batch): Promise<MigrateCharacter[]> => {
-      batch.forEach(({ name }) => {
-        namesSeen[name] = (namesSeen[name] || 0) + 1;
-      });
-      const all = batch.map<MigrateCharacterInvalid | MigrateCharacterValid>(
-        ({ eqdkpId, eqdkpUserId, name, classId, raceId }) => {
-          const owner = ownerMap[eqdkpUserId];
-          const missingOwner = owner === undefined;
-          const invalidOwner = missingOwner && !namesAllowedNoOwner.has(name);
-          const invalidName = !character.isValidName(name);
-          const duplicateNormalizedName = namesSeen[name] > 1;
-          const invalidRaceClassCombination = !isCharacterValid({
-            classId,
-            raceId,
-          });
-          const valid =
-            !invalidName &&
-            !invalidRaceClassCombination &&
-            !invalidOwner &&
-            !duplicateNormalizedName;
-          return valid
-            ? {
-                valid,
-                id: 1,
-                name,
-                eqdkpId,
-                classId,
-                raceId,
-                defaultPilotId: owner?.id || null,
-                walletId: owner?.walletId || null,
-              }
-            : {
-                valid,
-                name,
-                eqdkpId,
-                missingOwner,
-                duplicateNormalizedName,
-                invalidName,
-                invalidRaceClassCombination,
-              };
-        },
-      );
-
-      const valid = all.flatMap((c) => (c.valid ? [c] : []));
-      const invalid = all.flatMap((c) => (c.valid ? [] : [c]));
-
-      const created = await characterController(p).createMany({
-        characters: valid,
-      });
-
-      const getId = (name: string) => {
-        const match = created.find(({ name: n }) => n === name);
-        if (match === undefined) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: `Could not find character with name ${name}`,
-          });
-        }
-        return match.id;
-      };
-
-      const validWithIds = valid.map<MigrateCharacterValid>((c) => ({
-        ...c,
-        id: getId(c.name),
-      }));
-
-      return [...invalid, ...validWithIds];
-    },
-  });
-};
-
-const ingestRaidActivityTypes = async ({
-  p,
-  dbUrl,
-  userId,
-}: {
-  p: PrismaTransactionClient;
-  dbUrl: string;
-  userId: string;
-}) => {
-  const eqdkpController = createEqdkpController({ dbUrl });
-  return processManyInBatches({
-    batchSize: 1000,
-    get: eqdkpController().getManyRaidActivityTypes,
-    process: async (batch) => {
-      const created = await raidActivityController(p).createManyTypes({
-        types: batch.map(({ event_name, event_value }) => ({
-          name: event_name,
-          defaultPayout: event_value,
-        })),
-        createdById: userId,
-      });
-
-      const getEqdkpId = (name: string) => {
-        const match = batch.find(({ event_name }) => event_name === name);
-        if (match === undefined) {
-          throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: `Could not find raid activity type with name ${name}`,
-          });
-        }
-        return match.event_id;
-      };
-
-      return created.map(({ id, name }) => ({
-        id,
-        eqdkpId: getEqdkpId(name),
-      }));
-    },
-  });
-};
-
-const ingestRaidActivities = async ({
-  p,
-  dbUrl,
-  characters,
-  raidActivityTypes,
-  userId,
-}: {
-  p: PrismaTransactionClient;
-  dbUrl: string;
-  characters: MigrateCharacter[];
-  raidActivityTypes: { id: number; eqdkpId: number }[];
-  userId: string;
-}) => {
-  const eqdkpController = createEqdkpController({ dbUrl });
-
-  const charactersIdMap = keyBy(characters, (c) => c.eqdkpId);
-  const raidActivityTypesIdMap = keyBy(raidActivityTypes, (t) => t.eqdkpId);
-
-  const getTypeId = ({ eqdkpEventId }: { eqdkpEventId: number }) => {
-    const match = raidActivityTypesIdMap[eqdkpEventId];
-    if (match === undefined) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: `Could not find raid activity type with eqdkp id ${eqdkpEventId}`,
-      });
-    }
-    return match.id;
-  };
-
-  const migrationRaidActivity = await raidActivityController(p).upsertType({
-    name: "Migration Adjustments without Raid Activities",
-    defaultPayout: 0,
-    createdById: userId,
-    updatedById: userId,
-  });
-
-  await processManyInBatches({
-    batchSize: 1000,
-    get: eqdkpController().getManyAdjustmentsWithoutRaidActivities,
-    process: async (batch) => {
-      await raidActivityController(p).createMany({
-        activities: [
-          {
-            typeId: migrationRaidActivity.id,
-            createdAt: new Date().toISOString(),
-            payout: 0,
-            note: "These adjustments were migrated from EQ DKP Plus. There, they were not associated with any raid activity, which made them difficult to find.",
-            adjustments: batch
-              .map(
-                ({
-                  member_id,
-                  adjustment_value,
-                  adjustment_reason,
-                  adjustment_date,
-                }) => {
-                  const c = charactersIdMap[member_id];
-                  return {
-                    characterName: c?.name || `${member_id}`,
-                    characterId: c?.valid ? c.id : null,
-                    walletId: c?.valid ? c.walletId : null,
-                    amount: adjustment_value,
-                    reason: adjustment_reason,
-                    createdAt: new Date(
-                      adjustment_date * SECONDS,
-                    ).toISOString(),
-                  };
-                },
-              )
-              .filter((a) => a.characterId !== null),
-            attendees: [],
-            purchases: [],
-          },
-        ],
-        userId,
-      });
-      return [];
-    },
-  });
-
-  return processManyInBatches({
-    batchSize: 1000,
-    get: eqdkpController().getManyRaidActivities,
-    process: async (batch) => {
-      return raidActivityController(p).createMany({
-        userId,
-        activities: batch.map(
-          ({
-            event_id,
-            raid_date,
-            raid_note,
-            raid_value,
-            attendees,
-            purchases,
-            adjustments,
-          }) => {
-            const createdAt = new Date(raid_date * SECONDS).toISOString();
-            return {
-              typeId: getTypeId({ eqdkpEventId: event_id }),
-              createdAt,
-              payout: raid_value,
-              note: raid_note,
-              attendees: attendees
-                .map(({ member_id }) => {
-                  const c = charactersIdMap[member_id];
-                  return {
-                    characterName: c?.name || `${member_id}`,
-                    characterId: c?.valid ? c.id : null,
-                    walletId: c?.valid ? c.walletId : null,
-                    createdAt,
-                  };
-                })
-                .filter((a) => a.characterId !== null),
-              purchases: purchases
-                .map(({ item_name, item_value, member_id, item_date }) => {
-                  const c = charactersIdMap[member_id];
-                  return {
-                    characterName: c?.name || `${member_id}`,
-                    characterId: c?.valid ? c.id : null,
-                    walletId: c?.valid ? c.walletId : null,
-                    amount: item_value,
-                    itemName: decode(item_name),
-                    createdAt: new Date(item_date * SECONDS).toISOString(),
-                  };
-                })
-                .filter((p) => p.characterId !== null),
-              adjustments: adjustments
-                .map(
-                  ({
-                    adjustment_value,
-                    adjustment_reason,
-                    member_id,
-                    adjustment_date,
-                  }) => {
-                    const c = charactersIdMap[member_id];
-                    return {
-                      characterName: c?.name || `${member_id}`,
-                      characterId: c?.valid ? c.id : null,
-                      walletId: c?.valid ? c.walletId : null,
-                      amount: adjustment_value,
-                      reason: adjustment_reason,
-                      createdAt: new Date(
-                        adjustment_date * SECONDS,
-                      ).toISOString(),
-                    };
-                  },
-                )
-                .filter((a) => a.characterId !== null),
-            };
-          },
-        ),
-      });
-    },
-  });
+  return item;
 };
 
 export const migrateController = (p?: PrismaTransactionClient) => ({
+  restartCharacterMigration: async () => {
+    return prisma.$transaction(
+      async (p) => {
+        await migrateRepository(p).deleteAllCharacters();
+        await characterController(p).deleteAllCharacters();
+        await migrateRepository(p).update({
+          lastMigratedRemoteCharacterId: 0,
+        });
+      },
+      {
+        timeout: 10 * SECONDS,
+      },
+    );
+  },
+
   isValidConnection: async ({
     dbUrl,
     siteUrl,
@@ -409,208 +68,473 @@ export const migrateController = (p?: PrismaTransactionClient) => ({
     }
   },
 
-  initializeUsers: async ({ dbUrl }: { dbUrl: string }) => {
-    const eqdkpController = createEqdkpController({ dbUrl });
-
-    return prisma.$transaction(
-      async (p) =>
-        processManyInBatches({
-          batchSize: 1000,
-          get: eqdkpController().getManyUsers,
-          process: async (users) => {
-            return migrateRepository(p).createUsers({
-              users: users.map((u) => ({
-                name: u.name,
-                eqdkpUserId: Number(u.user_id),
-                currentDkp:
-                  u.attendance_total + u.adjustment_total - u.purchase_total,
-              })),
-            });
-          },
-        }),
-      {
-        timeout: 1 * MINUTES,
-      },
-    );
+  getOrCreate: async ({ userId }: { userId: string }) => {
+    return migrateRepository(p).getOrCreate({ userId });
   },
 
-  getPreparationBatch: async ({ take }: { take: number }) => {
-    const users = await migrateRepository(p).getManyUsersWithoutEmails({
-      take,
-    });
-    const count = await migrateRepository(p).getUsersCount();
-    const countWithEmails =
-      await migrateRepository(p).getUsersCountWithEmails();
+  getManyInvalidCharacters: async (agGrid: AgGrid) => {
     return {
-      users,
-      status: {
-        state: getPreparationState({ count, countWithEmails }),
-        count,
-        countWithEmails,
-        countWithoutEmails: count - countWithEmails,
-      },
+      totalRowCount: await migrateRepository(p).countInvalidCharacters(agGrid),
+      rows: await migrateRepository(p).getManyInvalidCharacters(agGrid),
     };
   },
 
-  prepareUserBatch: async ({
+  getUserBatch: async ({
+    userId,
+    take,
     siteUrl,
     siteApiKey,
-    batch,
+    dbUrl,
   }: {
+    userId: string;
+    take: number;
     siteUrl: string;
     siteApiKey: string;
-    batch: { id: number; eqdkpUserId: number; currentDkp: number }[];
+    dbUrl: string;
   }) => {
-    const eqdkpService = createEqdkpService({
-      baseUrl: siteUrl,
-      apiKey: siteApiKey,
-    });
-    const eqdkpUsers = await Promise.all(
-      batch.map((u) =>
-        eqdkpService.getUserById(u).then(({ email, username }) => ({
-          email,
-          id: u.id,
-          name: username,
-          currentDkp: u.currentDkp,
-          eqdkpUserId: u.eqdkpUserId,
-        })),
-      ),
-    );
-    await migrateRepository(p).prepareUsers({ users: eqdkpUsers });
+    const attempt = await migrateController(p).getOrCreate({ userId });
+
+    const eqdkpController = createEqdkpController({ dbUrl });
+
     return {
-      countWithEmails: await migrateRepository(p).getUsersCountWithEmails(),
+      batch: await eqdkpController().getManyUsers({
+        siteApiKey,
+        siteUrl,
+        take,
+        cursor: attempt.lastMigratedRemoteUserId,
+      }),
+      count: await userController(p).count(),
+      totalCount: await eqdkpController().countUsers(),
     };
   },
 
-  getLatest: async () => {
-    return migrateRepository(p).getLatest();
-  },
-
-  getDryRun: async ({
-    dbUrl,
-    userId,
-    botNamesCsv,
+  migrateUserBatch: async ({
+    batch,
   }: {
-    dbUrl: string;
-    userId: string;
-    botNamesCsv: string;
+    batch: {
+      remoteId: number;
+      name: string;
+      email: string;
+    }[];
   }) => {
-    return migrateController().start({
-      dryRun: true,
-      dbUrl,
-      userId,
-      botNamesCsv,
+    const emails = batch.flatMap(({ email }) => (email ? email : []));
+    const existing = await userController().getManyByEmails({ emails });
+    const missing = differenceBy(batch, existing, ({ email }) => email);
+
+    return prisma.$transaction(async (p) => {
+      const created = await userController(p).createManyStubUsers({
+        users: missing.map((u) => ({
+          email: u.email,
+          name: u.name,
+        })),
+      });
+
+      await migrateRepository(p).createManyUsers({
+        users: [...created, ...existing].map(({ id, email }) => ({
+          userId: id,
+          remoteUserId: findOrThrow(batch, (u) => u.email === email).remoteId,
+        })),
+      });
+
+      await migrateRepository(p).update({
+        lastMigratedRemoteUserId: maxBy(batch, ({ remoteId }) => remoteId)
+          ?.remoteId,
+      });
     });
   },
 
-  start: async ({
-    dbUrl,
-    dryRun,
+  getCharacterBatch: async ({
     userId,
+    take,
+    dbUrl,
+  }: {
+    userId: string;
+    take: number;
+    dbUrl: string;
+  }) => {
+    const attempt = await migrateController().getOrCreate({ userId });
+
+    const eqdkpController = createEqdkpController({ dbUrl });
+
+    const characters = await eqdkpController().getManyCharacters({
+      take,
+      cursor: attempt.lastMigratedRemoteCharacterId,
+    });
+
+    return {
+      batch: characters.map((c) => ({
+        remoteId: c.eqdkpId,
+        remoteUserId: c.eqdkpUserId,
+        name: c.name,
+        classId: c.classId,
+        raceId: c.raceId,
+      })),
+      invalidCount: await migrateRepository().countInvalidCharacters({}),
+      count: await characterController().count(),
+      totalCount: await eqdkpController().countCharacters(),
+    };
+  },
+
+  migrateCharacterBatch: async ({
+    batch,
     botNamesCsv,
   }: {
-    dbUrl: string;
-    dryRun: boolean;
-    userId: string;
+    batch: {
+      remoteId: number;
+      remoteUserId?: number;
+      name: string;
+      classId: number;
+      raceId: number;
+    }[];
     botNamesCsv: string;
   }) => {
-    // Check if already installed
-    const latest = await migrateRepository().getLatest();
-    if (latest?.status === "COMPLETE") {
-      throw new TRPCError({ code: "CONFLICT", message: "Already migrated" });
-    }
+    const botNames = new Set(
+      botNamesCsv.split(",").map(character.normalizeName),
+    );
 
-    // Check that there are prepared users and they all have emails
-    const count = await migrateRepository().getUsersCount();
-    if (count === 0) {
-      throw new TRPCError({ code: "NOT_FOUND", message: "No prepared users" });
-    }
-    const countWithEmails = await migrateRepository().getUsersCountWithEmails();
-    if (countWithEmails !== count) {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "Not all users are prepared",
+    const isDuplicateNormalizedName =
+      await characterController().getNameDuplicateValidator({
+        names: batch.map(({ name }) => name),
       });
-    }
 
-    const outcomes: MigrateSummary = {
-      users: [],
-      characters: [],
-      raidActivityTypes: [],
-      raidActivities: [],
+    const owners = await migrateRepository().getManyUsersByRemoteUserIds({
+      remoteUserIds: uniq(
+        batch.flatMap(({ remoteUserId }) =>
+          remoteUserId == undefined ? [] : remoteUserId,
+        ),
+      ),
+    });
+
+    const { valid, invalid } = batch.reduce<{
+      valid: {
+        name: string;
+        remoteId: number;
+        classId: number;
+        raceId: number;
+        defaultPilotId: string | null;
+      }[];
+      invalid: {
+        name: string;
+        remoteId: number;
+        missingOwner: boolean;
+        invalidName: boolean;
+        duplicateNormalizedName: boolean;
+      }[];
+    }>(
+      (acc, { remoteId, remoteUserId, name, classId, raceId }) => {
+        const owner = owners.find((o) => o.remoteUserId === remoteUserId);
+        const missingOwner = owner === undefined;
+        const duplicateNormalizedName = isDuplicateNormalizedName(name);
+        const invalidOwner = missingOwner && !botNames.has(name);
+        const invalidName = !character.isValidName(name);
+        const valid = !invalidName && !invalidOwner && !duplicateNormalizedName;
+        if (valid) {
+          acc.valid.push({
+            name,
+            remoteId,
+            classId,
+            raceId,
+            defaultPilotId: owner?.userId || null,
+          });
+        } else {
+          acc.invalid.push({
+            name,
+            remoteId,
+            missingOwner,
+            duplicateNormalizedName,
+            invalidName,
+          });
+        }
+        return acc;
+      },
+      {
+        valid: [],
+        invalid: [],
+      },
+    );
+
+    return prisma.$transaction(async (p) => {
+      const created = await characterController(p).createMany({
+        characters: valid,
+      });
+
+      await migrateRepository(p).createManyCharacters({
+        characters: created.map(({ id, name }) => ({
+          characterId: id,
+          remoteCharacterId: findOrThrow(batch, (c) => c.name === name)
+            .remoteId,
+        })),
+      });
+
+      await migrateRepository(p).createManyInvalidCharacters({
+        invalidCharacters: invalid,
+      });
+
+      await migrateRepository(p).update({
+        lastMigratedRemoteCharacterId: maxBy(
+          [...valid, ...invalid],
+          (c) => c.remoteId,
+        )?.remoteId,
+      });
+    });
+  },
+
+  getRaidActivityTypeBatch: async ({
+    userId,
+    take,
+    dbUrl,
+  }: {
+    userId: string;
+    take: number;
+    dbUrl: string;
+  }) => {
+    const attempt = await migrateController().getOrCreate({ userId });
+
+    const eqdkpController = createEqdkpController({ dbUrl });
+
+    const raidActivityTypes = await eqdkpController().getManyRaidActivityTypes({
+      take,
+      cursor: attempt.lastMigratedRemoteRaidActivityTypeId,
+    });
+
+    return {
+      batch: raidActivityTypes.map((t) => ({
+        remoteId: t.event_id,
+        name: t.event_name,
+        defaultPayout: t.event_value,
+      })),
+      count: await raidActivityController().countTypes({}),
+      totalCount: await eqdkpController().countRaidActivityTypes(),
     };
+  },
 
-    // Start migration
-    const data: Partial<CreateMigrateAttempt> = {};
+  migrateRaidActivityTypeBatch: async ({
+    userId,
+    batch,
+  }: {
+    userId: string;
+    batch: {
+      remoteId: number;
+      name: string;
+      defaultPayout: number;
+    }[];
+  }) => {
+    return prisma.$transaction(async (p) => {
+      const created = await raidActivityController(p).createManyTypes({
+        types: batch.map((t) => ({
+          name: t.name,
+          defaultPayout: t.defaultPayout,
+        })),
+        createdById: userId,
+      });
 
-    // This nested try/catch ensures that dry runs are not committed to the DB, but also
-    // do not appear as failed runs or function executions.
-    try {
-      await prisma.$transaction(
-        async (p) => {
-          try {
-            // Users
-            outcomes.users = await ingestStubUsers({ p });
-            data.importedUsers = true;
+      await migrateRepository(p).createManyRaidActivityTypes({
+        raidActivityTypes: created.map(({ id, name }) => ({
+          raidActivityTypeId: id,
+          remoteRaidActivityTypeId: findOrThrow(batch, (t) => t.name === name)
+            .remoteId,
+        })),
+      });
 
-            // Characters
-            outcomes.characters = await ingestCharacters({
-              p,
-              dbUrl,
-              users: outcomes.users,
-              botNames: botNamesCsv.split(",").map(character.normalizeName),
-            });
-            data.importedCharacters = true;
+      await migrateRepository(p).update({
+        lastMigratedRemoteRaidActivityTypeId: maxBy(batch, (t) => t.remoteId)
+          ?.remoteId,
+      });
+    });
+  },
 
-            // Raid Activity Types
-            outcomes.raidActivityTypes = await ingestRaidActivityTypes({
-              p,
-              dbUrl,
-              userId,
-            });
-            data.importedRaidActivityTypes = true;
+  getRaidActivitiesBatch: async ({
+    userId,
+    take,
+    dbUrl,
+  }: {
+    userId: string;
+    take: number;
+    dbUrl: string;
+  }) => {
+    const attempt = await migrateController().getOrCreate({ userId });
 
-            // Raid Activities
-            outcomes.raidActivities = await ingestRaidActivities({
-              p,
-              dbUrl,
-              characters: outcomes.characters,
-              raidActivityTypes: outcomes.raidActivityTypes,
-              userId,
-            });
-            data.importedRaidActivities = true;
+    const eqdkpController = createEqdkpController({ dbUrl });
 
-            await installController(p).complete({ userId });
+    const raidActivities = await eqdkpController().getManyRaidActivities({
+      take,
+      cursor: attempt.lastMigratedRemoteRaidActivityId,
+    });
 
-            if (dryRun) {
-              throw new DryRunSuccess();
-            }
+    return {
+      batch: raidActivities.map((r) => ({
+        remoteId: r.raid_id,
+        remoteTypeId: r.event_id,
+        createdAt: new Date(r.raid_date * SECONDS).toISOString(),
+        payout: r.raid_value,
+        note: r.raid_note || undefined,
+        attendees: r.attendees.map((a) => ({
+          remoteCharacterId: a.member_id,
+        })),
+        adjustments: r.adjustments.map((a) => ({
+          createdAt: new Date(a.adjustment_date * SECONDS).toISOString(),
+          remoteCharacterId: a.member_id,
+          amount: a.adjustment_value,
+          reason: a.adjustment_reason,
+        })),
+        purchases: r.purchases.map((p) => ({
+          createdAt: new Date(p.item_date * SECONDS).toISOString(),
+          remoteCharacterId: p.member_id,
+          itemName: p.item_name,
+          amount: p.item_value,
+        })),
+      })),
+      count: await raidActivityController().count({}),
+      totalCount: await eqdkpController().countRaidActivities(),
+    };
+  },
 
-            await migrateRepository().create({
-              ...data,
-              createdById: userId,
-              status: "COMPLETE",
-            });
-          } catch (err) {
-            await migrateRepository(dryRun ? p : undefined).create({
-              ...data,
-              createdById: userId,
-              status: "FAIL",
-              error: String(err),
-            });
-            throw err;
-          }
-        },
+  migrateRaidActivitiesBatch: async ({
+    userId,
+    batch,
+  }: {
+    userId: string;
+    batch: {
+      remoteId: number;
+      remoteTypeId: number;
+      createdAt: string;
+      payout: number;
+      note?: string;
+      attendees: {
+        remoteCharacterId: number;
+      }[];
+      adjustments: {
+        createdAt: string;
+        remoteCharacterId: number;
+        amount: number;
+        reason: string;
+      }[];
+      purchases: {
+        createdAt: string;
+        remoteCharacterId: number;
+        itemName: string;
+        amount: number;
+      }[];
+    }[];
+  }) => {
+    // In rare circumstances, we encounter cases where the raid activity type has an ID of 0, signifying
+    // that the transactions were not associated with a raid activity. This may occur if the migrated
+    // system allows transactions to be directly associated with a user. In these cases, we use a fallback
+    // raid activity type.
+    const fallback = await raidActivityController(p).upsertTypeByName({
+      name: "Migration Transactions without Raid Activities",
+      defaultPayout: 0,
+      userId,
+    });
+    await migrateRepository(p).upsertRaidActivityTypeById({
+      raidActivityTypeId: fallback.id,
+      remoteRaidActivityTypeId: 0,
+    });
+
+    const remoteCharacterIds = uniq(
+      batch.flatMap((b) => [
+        ...b.adjustments.map((a) => a.remoteCharacterId),
+        ...b.purchases.map((p) => p.remoteCharacterId),
+        ...b.attendees.map((a) => a.remoteCharacterId),
+      ]),
+    );
+    const characterIds =
+      await migrateRepository().getManyCharactersByRemoteCharacterIds({
+        remoteCharacterIds,
+      });
+    const characters = await characterController().getManyByIds({
+      ids: characterIds.map((c) => c.characterId),
+    });
+    const charactersMap = characterIds.reduce<
+      Record<
+        number,
         {
-          timeout: 5 * MINUTES,
-        },
-      );
-    } catch (err) {
-      if (!(err instanceof DryRunSuccess)) {
-        throw err;
+          name: string;
+          id: number;
+          defaultPilot: { wallet: { id: number } | null } | null;
+        }
+      >
+    >((acc, { remoteCharacterId, characterId }) => {
+      const c = characters.find((c) => c.id === characterId);
+      if (c) {
+        acc[remoteCharacterId] = c;
       }
-    }
+      return acc;
+    }, {});
 
-    return { data, outcomes };
+    const remoteRaidActivityTypeIds = uniq(batch.map((b) => b.remoteTypeId));
+    const raidActivityTypeIds =
+      await migrateRepository().getManyRaidActivityTypesByRemoteRaidActivityTypeIds(
+        { remoteRaidActivityTypeIds },
+      );
+
+    return prisma.$transaction(async (p) => {
+      await raidActivityController(p).createMany({
+        activities: batch.map(
+          ({
+            remoteTypeId,
+            createdAt,
+            note,
+            payout,
+            attendees,
+            purchases,
+            adjustments,
+          }) => {
+            return {
+              typeId: findOrThrow(
+                raidActivityTypeIds,
+                (t) => t.remoteRaidActivityTypeId === remoteTypeId,
+              ).raidActivityTypeId,
+              createdAt,
+              payout: payout,
+              note: note,
+              attendees: attendees
+                .map(({ remoteCharacterId }) => {
+                  const c = charactersMap[remoteCharacterId];
+                  return {
+                    characterName: c?.name || `Remote ${remoteCharacterId}`,
+                    characterId: c?.id || null,
+                    walletId: c?.defaultPilot?.wallet?.id || null,
+                    createdAt,
+                  };
+                })
+                .filter((a) => a.characterId !== null),
+              purchases: purchases
+                .map(({ itemName, amount, remoteCharacterId, createdAt }) => {
+                  const c = charactersMap[remoteCharacterId];
+                  return {
+                    characterName: c?.name || `Remote ${remoteCharacterId}`,
+                    characterId: c?.id || null,
+                    walletId: c?.defaultPilot?.wallet?.id || null,
+                    amount,
+                    itemName: decode(itemName),
+                    createdAt,
+                  };
+                })
+                .filter((p) => p.characterId !== null),
+              adjustments: adjustments
+                .map(({ amount, createdAt, reason, remoteCharacterId }) => {
+                  const c = charactersMap[remoteCharacterId];
+                  return {
+                    characterName: c?.name || `Remote ${remoteCharacterId}`,
+                    characterId: c?.id || null,
+                    walletId: c?.defaultPilot?.wallet?.id || null,
+                    amount,
+                    reason,
+                    createdAt,
+                  };
+                })
+                .filter((a) => a.characterId !== null),
+            };
+          },
+        ),
+        userId,
+      });
+
+      await migrateRepository(p).update({
+        lastMigratedRemoteRaidActivityId: maxBy(batch, (r) => r.remoteId)
+          ?.remoteId,
+      });
+    });
   },
 });

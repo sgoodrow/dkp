@@ -3,6 +3,8 @@ import { ingestTestUser } from "prisma/dataMigrations/testdata/ingestTestUser";
 import { createLogger } from "prisma/dataMigrations/util/log";
 import { installTestGuild } from "prisma/dataMigrations/testdata/installTestGuild";
 import { migrateTestGuild } from "prisma/dataMigrations/testdata/migrateTestGuild";
+import { installController } from "@/api/controllers/installController";
+import { ingestTestDiscordMetadata } from "prisma/dataMigrations/testdata/ingestTestDiscordMetadata";
 
 const logger = createLogger("Ingesting test data");
 
@@ -13,9 +15,9 @@ export const testDataDataMigration = async () => {
   const { userId } = await ingestTestUser();
 
   await installTestGuild({ userId });
-  await migrateTestGuild({ userId });
+  // await migrateTestGuild({ userId });
+  // await installController().complete({ userId });
 
-  // await ingestTestDiscordMetadata({ userId });
   // await ingestTestCharacters({ userId });
   // await ingestTestRaidActivities({ userId });
 

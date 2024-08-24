@@ -22,9 +22,8 @@ export const ingestTestRaidActivities = async ({
       { name: "Plane of Growth", defaultPayout: 1 },
       { name: "Cazic Thule", defaultPayout: 3 },
     ].map(async ({ name, defaultPayout }) =>
-      raidActivityController().upsertType({
-        createdById: userId,
-        updatedById: userId,
+      raidActivityController().upsertTypeByName({
+        userId,
         name,
         defaultPayout,
       }),

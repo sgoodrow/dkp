@@ -6,11 +6,15 @@ import { useRef, useState } from "react";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { trpc } from "@/api/views/trpc/trpc";
 import superjson from "superjson";
+import { MINUTES } from "@/shared/constants/time";
 
 export const TrpcProvider: FCWithChildren = ({ children }) => {
   const queryClient = useRef(
     new QueryClient({
-      defaultOptions: { queries: { staleTime: 5 * 1000 } },
+      defaultOptions: {
+        queries: { staleTime: 1 * MINUTES, throwOnError: true },
+        mutations: { throwOnError: true },
+      },
     }),
   );
   const [trpcClient] = useState(() =>

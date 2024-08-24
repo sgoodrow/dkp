@@ -39,7 +39,9 @@ export type GetRows<TData extends Data> = (params: {
 
 export interface Column<TData extends Data>
   extends Omit<ColDef<TData>, "cellRenderer" | "cellEditor"> {
-  cellRenderer?: (params: ICellRendererParams<TData>) => JSX.Element;
+  cellRenderer?:
+    | ((params: ICellRendererParams<TData>) => JSX.Element)
+    | "agCheckboxCellRenderer";
   cellEditor?: (params: ICellEditorParams<TData>) => JSX.Element;
 }
 

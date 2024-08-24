@@ -22,6 +22,31 @@ const normalizeClass = (c: string) => {
 };
 
 export const characterRepository = (p: PrismaTransactionClient = prisma) => ({
+  deleteAll: async () => {
+    await p.$executeRaw`TRUNCATE TABLE "Character" RESTART IDENTITY CASCADE;`;
+  },
+
+  count: async () => {
+    return p.character.count();
+  },
+
+  getManyByIds: async ({ ids }: { ids: number[] }) => {
+    return p.character.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      include: {
+        defaultPilot: {
+          include: {
+            wallet: true,
+          },
+        },
+      },
+    });
+  },
+
   upsert: async ({
     name,
     raceId,

@@ -2,130 +2,211 @@ import {
   prisma,
   PrismaTransactionClient,
 } from "@/api/repositories/shared/prisma";
-import { MakeFieldNonNullable } from "@/ui/shared/utils/nonNullable";
-import { MigrateAttemptStatus, MigrateEqdkpUser } from "@prisma/client";
+import {
+  AgFilterModel,
+  agFilterModelToPrismaWhere,
+} from "@/api/shared/agGridUtils/filter";
+import {
+  AgSortModel,
+  agSortModelToPrismaOrderBy,
+} from "@/api/shared/agGridUtils/sort";
 
-export type CreateMigrateAttempt = {
-  status: MigrateAttemptStatus;
-  createdById: string;
-  error?: string;
-  importedUsers?: boolean;
-  importedCharacters?: boolean;
-  importedRaidActivityTypes?: boolean;
-  importedRaidActivities?: boolean;
-};
+// Since migrations are incremental and apply directly to our database, we only allow one attempt.
+// If it fails or needs to be rolled back, we delete it along with all of the partially applied data.
+const id = 1;
 
 export const migrateRepository = (p: PrismaTransactionClient = prisma) => ({
-  createUsers: async ({
+  deleteAllCharacters: async () => {
+    await p.$executeRaw`TRUNCATE TABLE "MigrateInvalidCharacter", "MigrateCharacter" RESTART IDENTITY CASCADE;`;
+  },
+
+  createManyUsers: async ({
     users,
   }: {
-    users: { eqdkpUserId: number; currentDkp: number; name: string }[];
+    users: { userId: string; remoteUserId: number }[];
   }) => {
-    await p.migrateEqdkpUser.createMany({
+    await p.migrateUser.createMany({
       data: users,
     });
-    return p.migrateEqdkpUser.findMany({
-      where: {
-        eqdkpUserId: {
-          in: users.map(({ eqdkpUserId }) => eqdkpUserId),
-        },
-      },
-    });
   },
 
-  getUsersMap: async ({ eqdkpUserIds }: { eqdkpUserIds: number[] }) => {
-    return p.migrateEqdkpUser.findMany({
-      where: {
-        eqdkpUserId: {
-          in: eqdkpUserIds,
-        },
-      },
-    });
-  },
-
-  getManyUsersWithEmails: async ({
-    take,
-    skip,
+  createManyCharacters: async ({
+    characters,
   }: {
-    take: number;
-    skip: number;
+    characters: { characterId: number; remoteCharacterId: number }[];
   }) => {
-    const users = await p.migrateEqdkpUser.findMany({
-      where: {
-        email: { not: null },
-      },
-      orderBy: {
-        id: "asc",
-      },
-      take,
-      skip,
-    });
-    // Ensure type safety
-    return users.flatMap((u) =>
-      u.email !== null ? [{ ...u, email: u.email }] : [],
-    );
-  },
-
-  getUsersCount: async () => {
-    return p.migrateEqdkpUser.count();
-  },
-
-  getUsersCountWithEmails: async () => {
-    return p.migrateEqdkpUser.count({ where: { email: { not: null } } });
-  },
-
-  getManyUsersWithoutEmails: async ({ take }: { take: number }) => {
-    return p.migrateEqdkpUser.findMany({
-      where: {
-        email: null,
-      },
-      orderBy: {
-        id: "asc",
-      },
-      take,
+    await p.migrateCharacter.createMany({
+      data: characters,
     });
   },
 
-  prepareUsers: async ({
-    users,
+  createManyRaidActivityTypes: async ({
+    raidActivityTypes,
   }: {
-    users: {
-      id: number;
-      currentDkp: number;
-      eqdkpUserId: number;
-      email: string;
-      name: string;
+    raidActivityTypes: {
+      raidActivityTypeId: number;
+      remoteRaidActivityTypeId: number;
     }[];
   }) => {
-    return prisma.$transaction(async (p) => {
-      await p.migrateEqdkpUser.deleteMany({
-        where: {
-          eqdkpUserId: {
-            in: users.map((u) => u.eqdkpUserId),
-          },
-        },
-      });
-      await p.migrateEqdkpUser.createMany({
-        data: users,
-      });
+    await p.migrateRaidActivityType.createMany({
+      data: raidActivityTypes,
     });
   },
 
-  getLatest: async () => {
-    return p.migrateAttempt.findFirst({
-      orderBy: {
-        updatedAt: "desc",
+  createManyInvalidCharacters: async ({
+    invalidCharacters,
+  }: {
+    invalidCharacters: {
+      name: string;
+      remoteId: number;
+      invalidName: boolean;
+      missingOwner: boolean;
+      duplicateNormalizedName: boolean;
+    }[];
+  }) => {
+    await p.migrateInvalidCharacter.createMany({
+      data: invalidCharacters,
+    });
+  },
+
+  countInvalidCharacters: async ({
+    filterModel,
+  }: {
+    filterModel?: AgFilterModel;
+  }) => {
+    return p.migrateInvalidCharacter.count({
+      where: agFilterModelToPrismaWhere(filterModel),
+    });
+  },
+
+  getOrCreate: async ({ userId }: { userId: string }) => {
+    const attempt = await p.migrateAttempt.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (attempt) {
+      return attempt;
+    }
+
+    return p.migrateAttempt.create({
+      data: {
+        id,
+        createdById: userId,
       },
     });
   },
 
-  create: async (data: {
-    status: MigrateAttemptStatus;
-    createdById: string;
-    error?: string;
+  getAllInvalidCharacters: async () => {
+    return p.migrateInvalidCharacter.findMany();
+  },
+
+  getManyInvalidCharacters: async ({
+    startRow,
+    endRow,
+    filterModel,
+    sortModel,
+  }: {
+    startRow: number;
+    endRow: number;
+    filterModel?: AgFilterModel;
+    sortModel?: AgSortModel;
   }) => {
-    return p.migrateAttempt.create({
-      data,
+    return p.migrateInvalidCharacter.findMany({
+      skip: startRow,
+      take: endRow - startRow,
+      where: agFilterModelToPrismaWhere(filterModel),
+      orderBy: agSortModelToPrismaOrderBy(sortModel) || {
+        id: "desc",
+      },
+    });
+  },
+
+  update: async ({
+    lastMigratedRemoteUserId,
+    lastMigratedRemoteCharacterId,
+    lastMigratedRemoteRaidActivityId,
+    lastMigratedRemoteRaidActivityTypeId,
+  }: {
+    lastMigratedRemoteUserId?: number;
+    lastMigratedRemoteCharacterId?: number;
+    lastMigratedRemoteRaidActivityId?: number;
+    lastMigratedRemoteRaidActivityTypeId?: number;
+  }) => {
+    return p.migrateAttempt.update({
+      where: {
+        id,
+      },
+      data: {
+        lastMigratedRemoteUserId,
+        lastMigratedRemoteCharacterId,
+        lastMigratedRemoteRaidActivityId,
+        lastMigratedRemoteRaidActivityTypeId,
+      },
+    });
+  },
+
+  upsertRaidActivityTypeById: async ({
+    raidActivityTypeId,
+    remoteRaidActivityTypeId,
+  }: {
+    raidActivityTypeId: number;
+    remoteRaidActivityTypeId: number;
+  }) => {
+    return p.migrateRaidActivityType.upsert({
+      where: {
+        raidActivityTypeId,
+      },
+      update: {
+        remoteRaidActivityTypeId,
+      },
+      create: {
+        raidActivityTypeId,
+        remoteRaidActivityTypeId,
+      },
+    });
+  },
+
+  getManyUsersByRemoteUserIds: async ({
+    remoteUserIds,
+  }: {
+    remoteUserIds: number[];
+  }) => {
+    return p.migrateUser.findMany({
+      where: {
+        remoteUserId: {
+          in: remoteUserIds,
+        },
+      },
+    });
+  },
+
+  getManyCharactersByRemoteCharacterIds: async ({
+    remoteCharacterIds,
+  }: {
+    remoteCharacterIds: number[];
+  }) => {
+    return p.migrateCharacter.findMany({
+      where: {
+        remoteCharacterId: {
+          in: remoteCharacterIds,
+        },
+      },
+    });
+  },
+
+  getManyRaidActivityTypesByRemoteRaidActivityTypeIds: async ({
+    remoteRaidActivityTypeIds,
+  }: {
+    remoteRaidActivityTypeIds: number[];
+  }) => {
+    return p.migrateRaidActivityType.findMany({
+      where: {
+        remoteRaidActivityTypeId: {
+          in: remoteRaidActivityTypeIds,
+        },
+      },
     });
   },
 });

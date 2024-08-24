@@ -1,3 +1,5 @@
+import { maxBy } from "lodash";
+
 export const processAllInBatches = async <T>({
   items,
   process,
@@ -19,19 +21,28 @@ export type BatchProcessor<TItem, TResult> = (
   batch: TItem[],
 ) => Promise<TResult[]>;
 
-export const processManyInBatches = async <TItem, TResult>({
+export const processManyInBatches = async <
+  TItem extends { id: number },
+  TResult,
+>({
   get,
   process,
   batchSize,
 }: {
-  get: ({ take, skip }: { take: number; skip: number }) => Promise<TItem[]>;
+  get: ({
+    take,
+    cursor,
+  }: {
+    take: number;
+    cursor: number | null;
+  }) => Promise<TItem[]>;
   process: BatchProcessor<TItem, TResult>;
   batchSize: number;
 }) => {
   let results: TResult[] = [];
-  let skip = 0;
+  let cursor = null;
   do {
-    const batch = await get({ take: batchSize, skip });
+    const batch = await get({ take: batchSize, cursor });
 
     if (batch.length === 0) {
       break;
@@ -39,7 +50,7 @@ export const processManyInBatches = async <TItem, TResult>({
 
     results = results.concat(await process(batch));
 
-    skip += batchSize;
+    cursor = maxBy(batch, (b) => b.id)?.id || null;
   } while (true);
 
   return results;

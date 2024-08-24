@@ -77,9 +77,8 @@ export const raidActivityApiRoutes = createRoutes({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      return raidActivityController().upsertType({
-        createdById: ctx.userId,
-        updatedById: ctx.userId,
+      return raidActivityController().upsertTypeByName({
+        userId: ctx.userId,
         name: input.name,
         defaultPayout: input.defaultPayout,
       });
