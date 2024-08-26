@@ -1,6 +1,6 @@
 import { OverflowTooltipTypography } from "@/ui/shared/components/typography/OverflowTooltipTypography";
 import { OpenInNew } from "@mui/icons-material";
-import { Link, TooltipProps, TypographyProps } from "@mui/material";
+import { Link, Stack, TooltipProps, TypographyProps } from "@mui/material";
 import { Property } from "csstype";
 import { FC, ReactNode } from "react";
 
@@ -59,9 +59,9 @@ export const SiteLink: FC<{
       {isExternal && <OpenInNew sx={{ ml: 0.25 }} fontSize="inherit" />}
     </Link>
   ) : (
-    <>
+    <Stack direction="row" spacing={1}>
       {startIcon}
       {typography}
-    </>
+    </Stack>
   );
 };

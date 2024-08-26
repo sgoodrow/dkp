@@ -20,6 +20,7 @@ import { getTransactionClearedColumn } from "@/ui/transactions/tables/getTransac
 import { getTransactionAmountColumn } from "@/ui/transactions/tables/getTransactionAmountColumn";
 import { getTransactionCharacterColumn } from "@/ui/transactions/tables/getTransactionCharacterColumn";
 import { getTransactionCreatedAtColumn } from "@/ui/transactions/tables/getTransactionCreatedAtColumn";
+import { GridApi } from "ag-grid-community";
 
 export type TransactionRow =
   TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
@@ -37,35 +38,42 @@ export const TransactionsTable: FC<{}> = ({}) => {
     [showCleared, utils.wallet.getManyTransactions],
   );
 
-  const columnDefs = useMemo<Column<TransactionRow>[]>(
-    () => [
-      getTransactionClearedColumn(),
-      getTransactionCreatedAtColumn(),
-      getTransactionTypeColumn(),
-      getTransactionPilotColumn({ editable: isAdmin }),
-      getTransactionItemColumn({ editable: isAdmin }),
-      getTransactionContextColumn(),
-      getTransactionAmountColumn({ editable: isAdmin }),
-      getTransactionCharacterColumn({ editable: isAdmin }),
-      getTransactionRejectedColumn({ editable: isAdmin }),
-    ],
+  const columnDefs = useMemo<Column<TransactionRow>[] | undefined>(
+    () =>
+      isAdmin === undefined
+        ? undefined
+        : [
+            getTransactionClearedColumn(),
+            getTransactionCreatedAtColumn(),
+            getTransactionTypeColumn(),
+            getTransactionPilotColumn({ editable: isAdmin }),
+            getTransactionItemColumn({ editable: isAdmin }),
+            getTransactionContextColumn(),
+            getTransactionAmountColumn({ editable: isAdmin }),
+            getTransactionCharacterColumn({ editable: isAdmin }),
+            getTransactionRejectedColumn({ editable: isAdmin }),
+          ],
     [isAdmin],
   );
+
+  const onFirstDataRendered = useCallback(() => {
+    (params: { api: GridApi<unknown> }) => {
+      params.api.setFilterModel({
+        rejected: {
+          filterType: "boolean",
+          type: "equals",
+          filter: false,
+        },
+      });
+    };
+  }, []);
 
   return (
     <InfiniteTable
       rowHeight={64}
       getRows={getRows}
       columnDefs={columnDefs}
-      onFirstDataRendered={(params) => {
-        params.api.setFilterModel({
-          rejected: {
-            filterType: "boolean",
-            type: "equals",
-            filter: false,
-          },
-        });
-      }}
+      onFirstDataRendered={onFirstDataRendered}
     >
       <Unstable_Grid2 xs={12} sm={12} md={6} lg={4} xl={3}>
         <SwitchCard

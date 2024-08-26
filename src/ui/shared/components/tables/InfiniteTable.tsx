@@ -93,7 +93,7 @@ export const InfiniteTable = <TData extends Data>({
   rowHeight?: AgGridReactProps["rowHeight"];
   onFirstDataRendered?: AgGridReactProps["onFirstDataRendered"];
   getRows: GetRows<TData>;
-  columnDefs: Column<TData>[];
+  columnDefs?: Column<TData>[];
   onGridReady?: (api: GridApi<TData>) => void;
 }>) => {
   const gridTheme = useGridTheme();

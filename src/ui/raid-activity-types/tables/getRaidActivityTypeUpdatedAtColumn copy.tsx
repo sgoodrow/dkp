@@ -15,6 +15,8 @@ export const getRaidActivityTypeNameColumn = ({
   headerName: "Name",
   field: "name",
   editable,
+  sortable: true,
+  filter: "agTextColumnFilter",
   cellEditor: (props) => (
     <AssignRaidActivityTypeNameDialog
       raidActivityTypeId={props.data.id}

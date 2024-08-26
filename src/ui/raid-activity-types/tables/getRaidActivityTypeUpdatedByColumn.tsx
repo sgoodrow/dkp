@@ -8,7 +8,8 @@ export const getRaidActivityTypeUpdatedByColumn =
   (): Column<RaidActivityTypeRow> => ({
     headerName: "Updated By",
     field: "updatedBy",
-    sortable: false,
+    sortable: true,
+    filter: "agTextColumnFilter",
     suppressNavigable: true,
     cellRenderer: (props) =>
       props.data === undefined ? (
