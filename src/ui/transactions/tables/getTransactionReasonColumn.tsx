@@ -7,6 +7,8 @@ import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 export const getTransactionReasonColumn = (): Column<TransactionRow> => ({
   headerName: "Reason",
   field: "reason",
+  sortable: true,
+  filter: "agTextColumnFilter",
   flex: 1,
   cellRenderer: ({ data }) => {
     return data === undefined ? (

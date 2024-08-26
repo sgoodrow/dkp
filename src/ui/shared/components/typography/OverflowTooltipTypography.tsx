@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Tooltip,
   TooltipProps,
@@ -19,24 +20,33 @@ export const OverflowTooltipTypography: React.FC<Props> = ({
   tooltip,
   ...typographyProps
 }) => {
-  const [isOverflowed, setIsOverflowed] = useState(false);
+  const [isActive, setIsActive] = useState({
+    hovered: false,
+    overflowed: false,
+  });
   const ref = useRef<HTMLDivElement>(null);
+  const text = typeof children === "string" ? children : tooltip;
+  const title = isActive.overflowed ? text : tooltip;
+  const open = isActive.overflowed || (isActive.hovered && !!tooltip);
 
   const handleHover = (hover: boolean) => {
     if (!ref.current) {
       return;
     }
-    setIsOverflowed(hover && ref.current.scrollWidth > ref.current.clientWidth);
+    setIsActive({
+      hovered: hover,
+      overflowed: hover && ref.current.scrollWidth > ref.current.clientWidth,
+    });
   };
 
   return (
     <Tooltip
       onMouseEnter={() => handleHover(true)}
       onMouseLeave={() => handleHover(false)}
-      disableHoverListener={!isOverflowed && !tooltip}
+      disableHoverListener={!isActive.hovered && !tooltip}
       disableInteractive
-      title={typeof children === "string" && isOverflowed ? children : tooltip}
-      open={tooltip === undefined ? isOverflowed : undefined}
+      title={title}
+      open={open}
       placement={placement}
     >
       <Typography

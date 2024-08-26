@@ -37,7 +37,6 @@ export const SiteLink: FC<{
       placement={placement}
       variant={variant}
     >
-      {startIcon}
       {label}
     </OverflowTooltipTypography>
   );
@@ -60,6 +59,9 @@ export const SiteLink: FC<{
       {isExternal && <OpenInNew sx={{ ml: 0.25 }} fontSize="inherit" />}
     </Link>
   ) : (
-    typography
+    <>
+      {startIcon}
+      {typography}
+    </>
   );
 };

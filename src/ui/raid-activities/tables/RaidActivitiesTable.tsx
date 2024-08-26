@@ -5,8 +5,9 @@ import { InfiniteTable } from "@/ui/shared/components/tables/InfiniteTable";
 import { trpc } from "@/api/views/trpc/trpc";
 import { TrpcRouteOutputs } from "@/api/views/trpc/trpcRoutes";
 import { getRaidActivityCreatedAtColumn } from "@/ui/raid-activities/tables/getRaidActivityCreatedAtColumn";
-import { getRaidActivityNameColumn } from "@/ui/raid-activities/tables/getRaidActivityNameColumn";
+import { getRaidActivityNoteColumn } from "@/ui/raid-activities/tables/getRaidActivityNoteColumn";
 import { getRaidActivityAttendeesColumn } from "@/ui/raid-activities/tables/getRaidActivityAttendeesColumn";
+import { getRaidActivityTypeColumn } from "@/ui/raid-activities/tables/getRaidActivityTypeColumn";
 
 export type RaidActivityRow =
   TrpcRouteOutputs["raidActivity"]["getMany"]["rows"][number];
@@ -19,7 +20,8 @@ export const RaidActivitiesTable: FC<{}> = ({}) => {
       getRows={utils.raidActivity.getMany.fetch}
       columnDefs={[
         getRaidActivityCreatedAtColumn(),
-        getRaidActivityNameColumn(),
+        getRaidActivityTypeColumn(),
+        getRaidActivityNoteColumn(),
         getRaidActivityAttendeesColumn(),
       ]}
     />

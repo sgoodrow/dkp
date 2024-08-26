@@ -9,7 +9,7 @@ const migrateUsers = async ({ userId }: { userId: string }) => {
     const lookupTimer = logger.startTimer();
     const { batch, totalCount } = await migrateController().getUserBatch({
       userId,
-      take: 50,
+      take: 300,
       dbUrl: DEVENV.DEV_EQ_DKP_PLUS_DB_URL,
       siteApiKey: DEVENV.DEV_EQ_DKP_PLUS_API_KEY,
       siteUrl: DEVENV.DEV_EQ_DKP_PLUS_BASE_URL,
@@ -36,7 +36,7 @@ const migrateCharacters = async ({ userId }: { userId: string }) => {
     const lookupTimer = logger.startTimer();
     const { batch, totalCount } = await migrateController().getCharacterBatch({
       userId,
-      take: 1000,
+      take: 2000,
       dbUrl: DEVENV.DEV_EQ_DKP_PLUS_DB_URL,
     });
     lookupTimer.done({
@@ -65,7 +65,7 @@ const migrateRaidActivityTypes = async ({ userId }: { userId: string }) => {
     const { batch, totalCount } =
       await migrateController().getRaidActivityTypeBatch({
         userId,
-        take: 1000,
+        take: 2000,
         dbUrl: DEVENV.DEV_EQ_DKP_PLUS_DB_URL,
       });
     lookupTimer.done({
@@ -91,7 +91,7 @@ const migrateRaidActivities = async ({ userId }: { userId: string }) => {
     const { batch, totalCount } =
       await migrateController().getRaidActivitiesBatch({
         userId,
-        take: 500,
+        take: 2000,
         dbUrl: DEVENV.DEV_EQ_DKP_PLUS_DB_URL,
       });
     lookupTimer.done({

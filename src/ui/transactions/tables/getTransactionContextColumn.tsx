@@ -9,10 +9,11 @@ import { monitoringIds } from "@/ui/shared/constants/monitoringIds";
 import { TransactionRow } from "@/ui/transactions/tables/TransactionsTable";
 
 export const getTransactionContextColumn = (): Column<TransactionRow> => ({
-  headerName: "Context",
+  headerName: "Reason",
   field: "raidActivity.type.name",
   sortable: true,
   filter: "agTextColumnFilter",
+  headerTooltip: "Filter by raid activity type",
   flex: 1,
   cellRenderer: ({ data }) => {
     return data === undefined ? (
@@ -27,7 +28,7 @@ export const getTransactionContextColumn = (): Column<TransactionRow> => ({
           label={data.raidActivity.type.name}
         />
         <OverflowTooltipTypography variant="body2" color="text.secondary">
-          {data.reason}
+          {data.reason || data.raidActivity.note}
         </OverflowTooltipTypography>
       </CellLayout>
     );

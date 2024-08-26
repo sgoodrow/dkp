@@ -38,10 +38,10 @@ export const RaidActivityAdjustmentsTable: FC<{ id: number }> = ({ id }) => {
   const columnDefs: Column<Row>[] = useMemo(
     () => [
       getTransactionClearedColumn(),
-      getTransactionAmountColumn({ editable: isAdmin }),
+      getTransactionPilotColumn({ editable: isAdmin }),
       getTransactionReasonColumn(),
       getTransactionCharacterColumn({ editable: isAdmin }),
-      getTransactionPilotColumn({ editable: isAdmin }),
+      getTransactionAmountColumn({ editable: isAdmin }),
       getTransactionRejectedColumn({ editable: isAdmin }),
     ],
     [isAdmin],

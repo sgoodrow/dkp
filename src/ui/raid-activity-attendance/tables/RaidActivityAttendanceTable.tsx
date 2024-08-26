@@ -52,9 +52,9 @@ export const RaidActivityAttendanceTable: FC<{ id: number }> = ({ id }) => {
   const columnDefs: Column<Row>[] = useMemo(
     () => [
       getTransactionClearedColumn(),
-      getTransactionAmountColumn({ editable: false }),
-      getTransactionCharacterColumn({ editable: isAdmin }),
       getTransactionPilotColumn({ editable: isAdmin }),
+      getTransactionCharacterColumn({ editable: isAdmin }),
+      getTransactionAmountColumn({ editable: false }),
       getTransactionRejectedColumn({ editable: isAdmin }),
     ],
     [isAdmin],
