@@ -5,9 +5,10 @@ import { UserRow } from "@/ui/players/tables/PlayersTable";
 import { PlayerLink } from "@/ui/shared/components/links/PlayerLink";
 
 export const getUserNameColumn = (): Column<UserRow> => ({
-  field: "displayName",
+  field: "discordMetadata.displayName",
   headerName: "Name",
-  sortable: false,
+  sortable: true,
+  filter: "agTextColumnFilter",
   minWidth: 100,
   cellRenderer: ({ data }) =>
     data === undefined ? (

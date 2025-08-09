@@ -2,29 +2,34 @@ import { z } from "zod";
 import { set } from "lodash";
 import { exhaustiveSwitchCheck } from "@/ui/shared/utils/exhaustiveSwitchCheck";
 import {
-  getNumberFilter,
+  getNumberPostgresFilter,
+  getNumberPrismaFilter,
   NumberFilter,
   numberFilterSchema,
 } from "@/api/shared/agGridUtils/filterTypes/number";
 import {
-  getTextFilter,
+  getTextPostgresFilter,
+  getTextPrismaFilter,
   TextFilter,
   textFilterSchema,
 } from "@/api/shared/agGridUtils/filterTypes/text";
 import {
+  getDatePrismaFilter,
   DateFilter,
   dateFilterSchema,
-  getDateFilter,
+  getDatePostgresFilter,
 } from "@/api/shared/agGridUtils/filterTypes/date";
 import {
+  getEnumPrismaFilter,
   EnumFilter,
   enumFilterSchema,
-  getEnumFilter,
+  getEnumPostgresFilter,
 } from "@/api/shared/agGridUtils/filterTypes/enum";
 import {
+  getBooleanPrismaFilter,
   BooleanFilter,
   booleanFilterSchema,
-  getBooleanFilter,
+  getBooleanPostgresFilter,
 } from "@/api/shared/agGridUtils/filterTypes/boolean";
 
 export const agFilterModelSchema = z
@@ -42,21 +47,44 @@ export const agFilterModelSchema = z
 
 export type AgFilterModel = z.infer<typeof agFilterModelSchema>;
 
-const getPrismaFilter = (
-  filter: NumberFilter | TextFilter | DateFilter | EnumFilter | BooleanFilter,
-) => {
+type Filters =
+  | NumberFilter
+  | TextFilter
+  | DateFilter
+  | EnumFilter
+  | BooleanFilter;
+
+const getPrismaFilter = (filter: Filters) => {
   const { filterType } = filter;
   switch (filterType) {
     case "number":
-      return getNumberFilter(filter);
+      return getNumberPrismaFilter(filter);
     case "text":
-      return getTextFilter(filter);
+      return getTextPrismaFilter(filter);
     case "date":
-      return getDateFilter(filter);
+      return getDatePrismaFilter(filter);
     case "enum":
-      return getEnumFilter(filter);
+      return getEnumPrismaFilter(filter);
     case "boolean":
-      return getBooleanFilter(filter);
+      return getBooleanPrismaFilter(filter);
+    default:
+      return exhaustiveSwitchCheck(filterType);
+  }
+};
+
+const getPostgresFilter = (filter: Filters) => {
+  const { filterType } = filter;
+  switch (filterType) {
+    case "number":
+      return getNumberPostgresFilter(filter);
+    case "text":
+      return getTextPostgresFilter(filter);
+    case "date":
+      return getDatePostgresFilter(filter);
+    case "enum":
+      return getEnumPostgresFilter(filter);
+    case "boolean":
+      return getBooleanPostgresFilter(filter);
     default:
       return exhaustiveSwitchCheck(filterType);
   }
@@ -71,4 +99,20 @@ export const agFilterModelToPrismaWhere = (filterModel: AgFilterModel) => {
     (where, [key, filter]) => set(where, key, getPrismaFilter(filter)),
     {},
   );
+};
+
+export const agFilterModelToPostgresWhere = (filterModel: AgFilterModel) => {
+  if (!filterModel) {
+    return;
+  }
+
+  return Object.entries(filterModel)
+    .reduce<string[]>(
+      (where, [columnName, filter]) => [
+        ...where,
+        `${columnName} ${getPostgresFilter(filter)}`,
+      ],
+      [],
+    )
+    .join(" AND ");
 };

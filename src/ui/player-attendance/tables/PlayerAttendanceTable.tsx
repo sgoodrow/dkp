@@ -14,7 +14,7 @@ import { getTransactionRejectedColumn } from "@/ui/transactions/tables/getTransa
 import { getTransactionCharacterColumn } from "@/ui/transactions/tables/getTransactionCharacterColumn";
 import { getTransactionClearedColumn } from "@/ui/transactions/tables/getTransactionClearedColumn";
 import { getTransactionAmountColumn } from "@/ui/transactions/tables/getTransactionAmountColumn";
-import { getTransactionReasonColumn } from "@/ui/transactions/tables/getTransactionReasonColumn";
+import { getTransactionContextColumn } from "@/ui/transactions/tables/getTransactionContextColumn";
 
 type Row = TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
 
@@ -38,7 +38,7 @@ export const PlayerAttendanceTable: FC<{ id: string }> = ({ id }) => {
     () => [
       getTransactionClearedColumn(),
       getTransactionAmountColumn({ editable: isAdmin }),
-      getTransactionReasonColumn(),
+      getTransactionContextColumn(),
       getTransactionCharacterColumn({ editable: isAdmin }),
       getTransactionRejectedColumn({ editable: isAdmin }),
     ],

@@ -15,6 +15,7 @@ import { getTransactionCharacterColumn } from "@/ui/transactions/tables/getTrans
 import { getTransactionClearedColumn } from "@/ui/transactions/tables/getTransactionClearedColumn";
 import { getTransactionAmountColumn } from "@/ui/transactions/tables/getTransactionAmountColumn";
 import { getTransactionItemColumn } from "@/ui/transactions/tables/getTransactionItemColumn";
+import { getTransactionContextColumn } from "@/ui/transactions/tables/getTransactionContextColumn";
 
 type Row = TrpcRouteOutputs["wallet"]["getManyTransactions"]["rows"][number];
 
@@ -40,6 +41,7 @@ export const PlayerPurchasesTable: FC<{ id: string }> = ({ id }) => {
       getTransactionAmountColumn({ editable: isAdmin }),
       getTransactionCharacterColumn({ editable: isAdmin }),
       getTransactionItemColumn({ editable: isAdmin }),
+      getTransactionContextColumn(),
       getTransactionRejectedColumn({ editable: isAdmin }),
     ],
     [isAdmin],

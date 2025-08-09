@@ -47,3 +47,10 @@ model WalletTransaction {
   updatedById    String
   updatedBy      User         @relation("WalletTransactionLatestUpdater", fields: [updatedById], references: [id])
 }
+
+model WalletWithBalance {
+  walletId Int   @id
+  amount   Float @map("amount")
+
+  @@map("wallet_with_balance")
+}

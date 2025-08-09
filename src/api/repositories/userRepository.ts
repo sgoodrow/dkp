@@ -11,6 +11,7 @@ import {
   agSortModelToPrismaOrderBy,
 } from "@/api/shared/agGridUtils/sort";
 import { AgGrid } from "@/api/shared/agGridUtils/table";
+import { WalletTransactionType } from "@prisma/client";
 
 const SYSTEM_USER_EMAIL = "system@dkp.com";
 
@@ -101,7 +102,7 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
 
   getMany: async ({ startRow, endRow, filterModel, sortModel }: AgGrid) => {
     const systemUserId = await userRepository(p).getSystemUserId();
-    return p.user.findMany({
+    const users = await p.user.findMany({
       where: {
         ...agFilterModelToPrismaWhere(filterModel),
         id: { not: systemUserId },
@@ -122,6 +123,43 @@ export const userRepository = (p: PrismaTransactionClient = prisma) => ({
       skip: startRow,
       take: endRow - startRow,
     });
+    const walletIds = users.flatMap((u) =>
+      u.wallet?.id === undefined ? [] : [u.wallet.id],
+    );
+    const walletBalances = await p.walletTransaction.groupBy({
+      by: ["walletId"],
+      _sum: {
+        amount: true,
+      },
+      where: {
+        AND: [
+          {
+            walletId: {
+              in: walletIds,
+            },
+            OR: [
+              {
+                // If it is a purchase, it must be missing an item, wallet or character ID
+                type: WalletTransactionType.PURCHASE,
+                OR: [{ itemId: { not: null } }, { characterId: { not: null } }],
+              },
+              {
+                // If it is not a purchase, it must be missing a wallet or character ID
+                type: { not: WalletTransactionType.PURCHASE },
+                OR: [{ characterId: { not: null } }],
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    return users.map((u) => ({
+      ...u,
+      walletBalance:
+        walletBalances.find((w) => w.walletId === u.wallet?.id)?._sum.amount ||
+        0,
+    }));
   },
 
   count: async ({ filterModel }: { filterModel?: AgFilterModel }) => {

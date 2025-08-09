@@ -72,7 +72,9 @@ export const numberFilterSchema = z.union([
 
 export type NumberFilter = z.infer<typeof numberFilterSchema>;
 
-export const getNumberFilter = (filter: z.infer<typeof numberFilterSchema>) => {
+export const getNumberPrismaFilter = (
+  filter: z.infer<typeof numberFilterSchema>,
+) => {
   const { type } = filter;
   switch (type) {
     case "equals":
@@ -93,6 +95,34 @@ export const getNumberFilter = (filter: z.infer<typeof numberFilterSchema>) => {
       return { equals: null };
     case "notBlank":
       return { not: null };
+    default:
+      return exhaustiveSwitchCheck(type);
+  }
+};
+
+export const getNumberPostgresFilter = (
+  filter: z.infer<typeof numberFilterSchema>,
+) => {
+  const { type } = filter;
+  switch (type) {
+    case "equals":
+      return `= ${filter.filter}`;
+    case "notEqual":
+      return `<> ${filter.filter}`;
+    case "greaterThan":
+      return `> ${filter.filter}`;
+    case "greaterThanOrEqual":
+      return `>= ${filter.filter}`;
+    case "lessThan":
+      return `< ${filter.filter}`;
+    case "lessThanOrEqual":
+      return `<= ${filter.filter}`;
+    case "inRange":
+      return `BETWEEN ${filter.filter} AND ${filter.filterTo}`;
+    case "blank":
+      return `IS NULL`;
+    case "notBlank":
+      return `IS NOT NULL`;
     default:
       return exhaustiveSwitchCheck(type);
   }

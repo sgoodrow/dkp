@@ -34,3 +34,27 @@ export const agSortModelToPrismaOrderBy = (sortModel?: AgSortModel) => {
     {},
   );
 };
+
+export const agSortModelToPostgresOrderBy = (
+  sortModel?: AgSortModel,
+): string | undefined => {
+  if (!sortModel?.length) {
+    return undefined;
+  }
+
+  const recurse = (parts: string[], sort: "asc" | "desc"): string => {
+    const [current, ...rest] = parts;
+    if (current === "_count") {
+      return `${rest[0]} ${sort}`;
+    }
+    return rest.length === 0
+      ? `${current} ${sort}`
+      : `${current}.${recurse(rest, sort)}`;
+  };
+
+  const orderClauses = sortModel.map(({ colId, sort }) =>
+    recurse(colId.split("."), sort),
+  );
+
+  return orderClauses.join(", ");
+};

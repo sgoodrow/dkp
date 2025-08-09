@@ -63,7 +63,9 @@ export const textFilterSchema = z.union([
 
 export type TextFilter = z.infer<typeof textFilterSchema>;
 
-export const getTextFilter = (filter: z.infer<typeof textFilterSchema>) => {
+export const getTextPrismaFilter = (
+  filter: z.infer<typeof textFilterSchema>,
+) => {
   const { type } = filter;
   switch (type) {
     case "contains":
@@ -82,6 +84,32 @@ export const getTextFilter = (filter: z.infer<typeof textFilterSchema>) => {
       return { equals: null };
     case "notBlank":
       return { not: null };
+    default:
+      return exhaustiveSwitchCheck(type);
+  }
+};
+
+export const getTextPostgresFilter = (
+  filter: z.infer<typeof textFilterSchema>,
+) => {
+  const { type } = filter;
+  switch (type) {
+    case "contains":
+      return `ILIKE '%${filter.filter}%'`;
+    case "notContains":
+      return `NOT ILIKE '%${filter.filter}%'`;
+    case "equals":
+      return `= '${filter.filter}'`;
+    case "notEqual":
+      return `<> '${filter.filter}'`;
+    case "startsWith":
+      return `ILIKE '${filter.filter}%'`;
+    case "endsWith":
+      return `ILIKE '%${filter.filter}'`;
+    case "blank":
+      return `IS NULL`;
+    case "notBlank":
+      return `IS NOT NULL`;
     default:
       return exhaustiveSwitchCheck(type);
   }

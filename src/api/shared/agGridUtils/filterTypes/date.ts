@@ -66,7 +66,9 @@ export const dateFilterSchema = z.union([
 
 export type DateFilter = z.infer<typeof dateFilterSchema>;
 
-export const getDateFilter = (filter: z.infer<typeof dateFilterSchema>) => {
+export const getDatePrismaFilter = (
+  filter: z.infer<typeof dateFilterSchema>,
+) => {
   const { type } = filter;
   switch (type) {
     case "equals":
@@ -86,6 +88,30 @@ export const getDateFilter = (filter: z.infer<typeof dateFilterSchema>) => {
       return { equals: undefined };
     case "notBlank":
       return { not: undefined };
+    default:
+      return exhaustiveSwitchCheck(type);
+  }
+};
+
+export const getDatePostgresFilter = (
+  filter: z.infer<typeof dateFilterSchema>,
+): string => {
+  const { type } = filter;
+  switch (type) {
+    case "equals":
+      return `= '${new Date(filter.dateFrom).toISOString()}'`;
+    case "notEqual":
+      return `<> '${new Date(filter.dateFrom).toISOString()}'`;
+    case "greaterThan":
+      return `> '${new Date(filter.dateFrom).toISOString()}'`;
+    case "lessThan":
+      return `< '${new Date(filter.dateFrom).toISOString()}'`;
+    case "inRange":
+      return `BETWEEN '${new Date(filter.dateFrom).toISOString()}' AND '${new Date(filter.dateTo).toISOString()}'`;
+    case "blank":
+      return `IS NULL`;
+    case "notBlank":
+      return `IS NOT NULL`;
     default:
       return exhaustiveSwitchCheck(type);
   }
